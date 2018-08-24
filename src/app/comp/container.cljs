@@ -33,7 +33,7 @@
             (.request
              axios
              (clj->js
-              {:url "http://192.168.1.180:4000/upload",
+              {:url (str (.-protocol js/location) "//" (.-host js/location) "/upload"),
                :data form,
                :method "post",
                :onUploadProgress (fn [ratio]

@@ -1,8 +1,11 @@
 {
-  "name": "calcit-workflow",
-  "version": "0.1.0",
-  "description": "ClojureScript workflow using Calcit Editor",
+  "name": "file-sucker",
+  "version": "0.1.1",
+  "description": "Grab files from phone to laptop very over WIFI",
   "main": "index.js",
+  "bin": {
+    "file-sucker": "./dist/server.js"
+  },
   "scripts": {
     "watch": "shadow-cljs watch client server",
     "serve": "http-server dist -s",
@@ -15,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:mvc-works/calcit-workflow.git"
+    "url": "git@github.com:mvc-works/file-sucker.git"
   },
   "author": "jiyinyiyong",
   "license": "MIT",
@@ -27,6 +30,7 @@
   "dependencies": {
     "finalhandler": "^1.1.1",
     "formidable": "^1.2.1",
+    "ip": "^1.1.5",
     "serve-static": "^1.13.2",
     "shortid": "^2.2.13"
   }

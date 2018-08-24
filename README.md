@@ -4,6 +4,10 @@ File Sucker
 
 > A simple tool for grabbing files from phone to laptop.
 
+```bash
+npm install -g file-sucker
+```
+
 Based on Node.js toolchains:
 
 * https://www.w3schools.com/nodejs/nodejs_uploadfiles.asp

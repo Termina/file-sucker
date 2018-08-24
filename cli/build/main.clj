@@ -13,6 +13,7 @@
 (defn build []
   (sh! "rm -rf dist/*")
   (shadow/release :client)
+  (shadow/release :server)
   (shadow/compile :page)
   (sh! "mode=release node target/page.js")
   (sh! "cp entry/manifest.json dist/"))
@@ -20,6 +21,7 @@
 (defn build-local []
   (sh! "rm -rf dist/*")
   (shadow/release :client)
+  (shadow/release :server)
   (shadow/compile :page)
   (sh! "mode=local-bundle node target/page.js")
   (sh! "cp entry/manifest.json dist/"))

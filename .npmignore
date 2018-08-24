@@ -1,0 +1,10 @@
+
+.shadow-cljs/
+cli/
+entry/
+src/
+target/
+.nrepl-port
+calcit.edn
+shadow-cljs.edn
+yarn.lock

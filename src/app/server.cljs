@@ -5,7 +5,8 @@
             ["serve-static" :as serve-static]
             ["path" :as path]
             ["finalhandler" :as finalhandler]
-            ["fs" :as fs]))
+            ["fs" :as fs]
+            ["ip" :as ip]))
 
 (def serve
   (serve-static (path/join js/__dirname "../dist") (clj->js {:index ["index.html"]})))
@@ -40,7 +41,7 @@
 
 (defn create-server! []
   (.listen (.createServer http #(on-request! %1 %2)) 4000)
-  (println "server listening on 4000"))
+  (println "server listening on" (str "http://" (.address ip) ":4000")))
 
 (defn main! [] (println "created!") (create-server!))
 
