@@ -7,13 +7,38 @@
             [respo.comp.space :refer [=<]]
             [reel.comp.reel :refer [comp-reel]]
             [respo-md.comp.md :refer [comp-md]]
-            [app.config :refer [dev?]]))
+            [app.config :refer [dev?]]
+            [axios :as axios]))
 
 (defcomp
  comp-container
  (reel)
  (let [store (:store reel), states (:states store)]
    (div
-    {:style (merge ui/global ui/row)}
-    (div {} (input {:type "file", :on-change (fn [e d! m!] (.log js.console (:event e)))}))
+    {:style (merge ui/global ui/column)}
+    (div
+     {:style {:padding 8}}
+     (input
+      {:type "file",
+       :mutilple false,
+       :on-change (fn [e d! m!]
+         (let [form (js/FormData.)
+               event (:event e)
+               target (.-target event)
+               file (-> target .-files (aget 0))]
+           (.append form "file" file)
+           (set! (-> event .-target .-value) nil)
+           (d! :log (str "sending" (.-name file)))
+           (.then
+            (.request
+             axios
+             (clj->js
+              {:url "http://192.168.1.180:4000/upload",
+               :data form,
+               :method "post",
+               :onUploadProgress (fn [ratio]
+                 (.log js/console ratio)
+                 (d! :log (/ (.-loaded ratio) (.-total ratio))))}))
+            (fn [response] (d! :log (str (.-name file) " uploaded!"))))))}))
+    (div {} (<> (:log store)))
     (when dev? (cursor-> :reel comp-reel states reel {})))))
