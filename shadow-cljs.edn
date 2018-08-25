@@ -30,4 +30,6 @@
           :server {:target :node-script
                    :output-to "target/server.js"
                    :main app.server/main!
-                   :devtools {:after-load app.server/reload!}}}}}
+                   :devtools {:after-load app.server/reload!}
+                   :release {:output-to "dist/server.js"
+                             :compiler-options {:optimizations :simple}}}}}}
