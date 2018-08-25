@@ -1,6 +1,6 @@
 {
   "name": "file-sucker",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Grab files from phone to laptop very over WIFI",
   "main": "index.js",
   "bin": {
@@ -25,7 +25,7 @@
   "devDependencies": {
     "axios": "^0.18.0",
     "http-server": "^0.11.1",
-    "shadow-cljs": "^2.6.2"
+    "shadow-cljs": "^2.6.3"
   },
   "dependencies": {
     "finalhandler": "^1.1.1",
