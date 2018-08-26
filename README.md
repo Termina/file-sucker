@@ -6,7 +6,15 @@ File Sucker
 
 ```bash
 npm install -g file-sucker
+
+file-sucker
 ```
+
+You will need to open an address from the phone, in the same WiFi of the laptop, then send file.
+
+The size limit of the file is 2G.
+
+### Resources
 
 Based on Node.js toolchains:
 

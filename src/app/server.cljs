@@ -18,13 +18,17 @@
   (.setHeader res "Access-Control-Allow-Methods" "POST,GET,OPTIONS")
   (case (.-method req)
     "POST"
-      (let [form (formidable/IncomingForm.)]
+      (let [form (formidable/IncomingForm.), size-limit (* 4 1024 1024 1024)]
+        (println "New request of file transferring...")
+        (set! (.-maxFieldsSize form) size-limit)
+        (set! (.-maxFileSize form) size-limit)
         (.parse
          form
          req
          (fn [error fields files]
+           (when (some? error) (throw error))
            (let [file (.-file files)]
-             (println "Got file" (.-name file))
+             (println "Received file:" (.-name file))
              (fs/rename
               (.-path file)
               (path/join (-> js/process .-env .-PWD) (.-name file))
@@ -36,13 +40,17 @@
     "OPTIONS" (do (.end res "ok"))
     (do (.write res "method not supported") (.end res))))
 
-(defn on-request! [req res]
-  (if (= "/upload" (.-url req)) (on-upload! req res) (on-page! req res)))
-
 (defn create-server! []
-  (.listen (.createServer http #(on-request! %1 %2)) 4000)
-  (println "server listening on" (str "http://" (.address ip) ":4000")))
+  (.listen
+   (.createServer
+    http
+    (fn [req res] (if (= "/upload" (.-url req)) (on-upload! req res) (on-page! req res))))
+   4000)
+  (println
+   "Open page on your phone and send file:"
+   "\n"
+   (str "\n" "http://" (.address ip) ":4000" "\n")))
 
-(defn main! [] (println "created!") (create-server!))
+(defn main! [] (create-server!))
 
 (defn reload! [] (println "reloaded!"))
