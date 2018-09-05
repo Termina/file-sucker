@@ -6,7 +6,8 @@
             ["path" :as path]
             ["finalhandler" :as finalhandler]
             ["fs" :as fs]
-            ["ip" :as ip]))
+            ["ip" :as ip]
+            ["qrcode-terminal" :as qrcode]))
 
 (def serve
   (serve-static (path/join js/__dirname "../dist") (clj->js {:index ["index.html"]})))
@@ -46,10 +47,9 @@
     http
     (fn [req res] (if (= "/upload" (.-url req)) (on-upload! req res) (on-page! req res))))
    4000)
-  (println
-   "Open page on your phone and send file:"
-   "\n"
-   (str "\n" "http://" (.address ip) ":4000" "\n")))
+  (let [address (str "\n" "http://" (.address ip) ":4000" "\n")]
+    (println "Open page on your phone and send file:" "\n" address)
+    (qrcode/generate address (clj->js {:small true}) (fn [code] (.log js/console code)))))
 
 (defn main! [] (create-server!))
 
