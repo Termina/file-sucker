@@ -69,5 +69,7 @@
                :opacity 0}}))
     (=< nil 16)
     (div {:style {}} (<> (or (:log store) "uploadded fie ratio")))
+    (=< nil 16)
+    (div {} (a {:href "/files"} (<> "Files")))
     (when dev?
       (cursor-> :reel comp-reel states (assoc reel :display? false) {:width "100%"})))))
