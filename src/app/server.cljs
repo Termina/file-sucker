@@ -27,7 +27,7 @@
                      (map
                       (fn [filename]
                         (str
-                         "<meta content=\"width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no\" name=\"viewport\"></meta>\n<div class=\"file\"><a href=\"/files/"
+                         "<meta content=\"width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no\" name=\"viewport\"></meta>\n<meta charset=\"utf8\"></meta>\n<div class=\"file\"><a href=\"/files/"
                          filename
                          "\""
                          ">"
