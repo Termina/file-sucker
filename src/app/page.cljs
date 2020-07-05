@@ -18,7 +18,7 @@
    (merge
     base-info
     {:styles ["/entry/main.css" (:dev-ui config/site)],
-     :scripts ["/client.js"],
+     :scripts [{:src "/client.js", :defer? true}],
      :inline-styles []})))
 
 (def local-bundle? (= "local-bundle" (get-env! "mode")))
@@ -34,7 +34,7 @@
      (merge
       base-info
       {:styles [(:release-ui config/site)],
-       :scripts (map #(-> % :output-name prefix-cdn) assets),
+       :scripts (map (fn [x] {:src (-> x :output-name prefix-cdn), :defer? true}) assets),
        :ssr "respo-ssr",
        :inline-styles [(slurp "./entry/main.css")]}))))
 
