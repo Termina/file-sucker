@@ -14,7 +14,7 @@
   (atom (-> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store))))
 
 (defn dispatch! [op op-data]
-  (comment println "Dispatch:" op)
+  (println "Dispatch:" op op-data)
   (reset! *reel (reel-updater updater @*reel op op-data)))
 
 (def mount-target (.querySelector js/document ".app"))
@@ -34,8 +34,10 @@
   (listen-devtools! "a" dispatch!)
   (.addEventListener js/window "beforeunload" persist-storage!)
   (js/setInterval persist-storage! (* 1000 60))
-  (let [raw (.getItem js/localStorage (:storage config/site))]
-    (when (some? raw) (dispatch! :hydrate-storage (assoc (read-string raw) :log "..."))))
+  (comment
+   let
+   ((raw (.getItem js/localStorage (:storage config/site))))
+   (when (some? raw) (dispatch! :hydrate-storage (read-string raw))))
   (println "App started."))
 
 (defn reload! []

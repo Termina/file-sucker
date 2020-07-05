@@ -8,7 +8,12 @@
             ["fs" :as fs]
             ["ip" :as ip]
             ["qrcode-terminal" :as qrcode]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [respo.render.html :refer [make-string]]
+            [respo.core :refer [div list-> <> span meta' a style link]]
+            [respo.comp.space :refer [comp-space]]
+            [respo-ui.core :as ui]
+            [hsl.core :refer [hsl]]))
 
 (def serve-files! (serve-static (.-PWD js/process.env) (clj->js {:index []})))
 
@@ -21,21 +26,40 @@
   (let [filenames (filter
                    (fn [filename] (.isFile (fs/lstatSync filename)))
                    (js->clj (fs/readdirSync ".")))
-        result (str
-                "<div>"
-                (->> filenames
-                     (map
-                      (fn [filename]
-                        (str
-                         "<meta content=\"width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no\" name=\"viewport\"></meta>\n<meta charset=\"utf8\"></meta>\n<div class=\"file\"><a href=\"/files/"
-                         filename
-                         "\""
-                         ">"
-                         filename
-                         "</a></div>\n\n<style>\n.file {\n  line-height: 32px;\n  padding: 0 16px;\n}\n</style>")))
-                     (string/join ""))
-                "</div>")]
-    (.writeHead res 200 (clj->js {"Content-Type" "text/html"}))
+        result (make-string
+                (div
+                 {}
+                 (meta
+                  {:content "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no",
+                   :name "viewport"})
+                 (meta {:charset "utf8"})
+                 (link
+                  {:rel "stylesheet",
+                   :href "http://cdn.tiye.me/favored-fonts/josefin-sans.css"})
+                 (if (empty? filenames)
+                   (div
+                    {:style (merge ui/center {:padding 80})}
+                    (<>
+                     "No files"
+                     {:font-family ui/font-fancy,
+                      :color (hsl 0 0 80),
+                      :font-size 40,
+                      :font-weight 300})))
+                 (list->
+                  {:style {:padding 40}}
+                  (->> filenames
+                       (map-indexed
+                        (fn [idx filename]
+                          [idx
+                           (div
+                            {:style {:line-height "40px",
+                                     :font-family ui/font-fancy,
+                                     :font-size 20}}
+                            (a
+                             {:href (str "/files/" filename),
+                              :inner-text filename,
+                              :style {:text-decoration :none}}))]))))))]
+    (.writeHead ^js res 200 (clj->js {"Content-Type" "text/html"}))
     (.end res result)))
 
 (def serve
@@ -44,8 +68,8 @@
 (defn on-page! [req res] (serve req res (finalhandler req res)))
 
 (defn on-upload! [req res]
-  (.setHeader res "Access-Control-Allow-Origin" (-> req .-headers .-origin))
-  (.setHeader res "Access-Control-Allow-Methods" "POST,GET,OPTIONS")
+  (.setHeader ^js res "Access-Control-Allow-Origin" (-> req .-headers .-origin))
+  (.setHeader ^js res "Access-Control-Allow-Methods" "POST,GET,OPTIONS")
   (case (.-method req)
     "POST"
       (let [form (formidable/IncomingForm.), size-limit (* 4 1024 1024 1024)]

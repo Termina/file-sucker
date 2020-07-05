@@ -1,4 +1,4 @@
 
 (ns app.schema )
 
-(def store {:states {}, :log nil})
+(def store {:states {}, :log '()})
