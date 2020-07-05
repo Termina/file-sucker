@@ -15,7 +15,7 @@
     "subl"
     ["%s:%s:%s" :file :line :column]
   ]
-  :socket-repl {:port 0}
+  :dev-http {7000 "target/"}
   :builds {
     :client {
       :target :browser, :output-dir "target/", :asset-path "./"
@@ -24,7 +24,7 @@
           :entries [app.main]
         }
       }
-      :devtools {:after-load app.main/reload!, :http-root "target", :http-port 7000, :loader-mode :eval}
+      :devtools {:after-load app.main/reload!}
       :compiler-options {:infer-externs :auto}
       :release {
         :output-dir "dist/", :module-hash-names 8

@@ -34,8 +34,10 @@
   (listen-devtools! "a" dispatch!)
   (.addEventListener js/window "beforeunload" persist-storage!)
   (js/setInterval persist-storage! (* 1000 60))
-  (let [raw (.getItem js/localStorage (:storage config/site))]
-    (when (some? raw) (dispatch! :hydrate-storage (read-string raw))))
+  (comment
+   let
+   ((raw (.getItem js/localStorage (:storage config/site))))
+   (when (some? raw) (dispatch! :hydrate-storage (read-string raw))))
   (println "App started."))
 
 (defn reload! []

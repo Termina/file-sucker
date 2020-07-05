@@ -1,6 +1,6 @@
 {
   "name": "file-sucker",
-  "version": "0.1.5",
+  "version": "0.1.6-a1",
   "description": "Grab files from phone to laptop very over WIFI",
   "main": "index.js",
   "bin": {
@@ -10,8 +10,8 @@
     "watch": "shadow-cljs watch client server",
     "serve": "http-server dist -s",
     "repl": "rlwrap shadow-cljs clj-repl",
+    "build-cdn": "shadow-cljs clj-run build.main/build-cdn",
     "build": "shadow-cljs clj-run build.main/build",
-    "build-local": "shadow-cljs clj-run build.main/build-local",
     "page": "shadow-cljs clj-run build.main/page",
     "upload": "lumo -c cli/:src/ -m build.upload",
     "ln": "cd target && rm -f entry && ln -s ../entry"

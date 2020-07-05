@@ -10,9 +10,10 @@
             ["qrcode-terminal" :as qrcode]
             [clojure.string :as string]
             [respo.render.html :refer [make-string]]
-            [respo.core :refer [div list-> span meta' a style link]]
+            [respo.core :refer [div list-> <> span meta' a style link]]
             [respo.comp.space :refer [comp-space]]
-            [respo-ui.core :as ui]))
+            [respo-ui.core :as ui]
+            [hsl.core :refer [hsl]]))
 
 (def serve-files! (serve-static (.-PWD js/process.env) (clj->js {:index []})))
 
@@ -35,6 +36,15 @@
                  (link
                   {:rel "stylesheet",
                    :href "http://cdn.tiye.me/favored-fonts/josefin-sans.css"})
+                 (if (empty? filenames)
+                   (div
+                    {:style (merge ui/center {:padding 80})}
+                    (<>
+                     "No files"
+                     {:font-family ui/font-fancy,
+                      :color (hsl 0 0 80),
+                      :font-size 40,
+                      :font-weight 300})))
                  (list->
                   {:style {:padding 40}}
                   (->> filenames
