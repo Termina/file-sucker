@@ -21,7 +21,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: build assets
-        run: 'yarn && yarn shadow-cljs release server'
+        run: 'yarn && yarn build && yarn shadow-cljs release server'
 
       - name: publish
         run: npm publish
