@@ -14,6 +14,10 @@ You will need to open an address from the phone, in the same WiFi of the laptop,
 
 The size limit of the file is 2G.
 
+Environment variable:
+
+* `POST`, for HTTP running port
+
 ### Resources
 
 Based on Node.js toolchains:

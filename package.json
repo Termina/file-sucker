@@ -25,7 +25,7 @@
   "devDependencies": {
     "axios": "^0.19.2",
     "http-server": "^0.12.3",
-    "shadow-cljs": "^2.10.14"
+    "shadow-cljs": "^2.10.21"
   },
   "dependencies": {
     "finalhandler": "^1.1.2",
