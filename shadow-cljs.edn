@@ -2,9 +2,9 @@
   :source-paths ["src" "cli"]
   :dependencies [
     [mvc-works/hsl "0.1.2"]
-    [mvc-works/verbosely "0.1.2"]
     [mvc-works/shell-page "0.1.15"]
-    [respo "0.12.3"]
+    [mvc-works/skir "0.0.9-a4"]
+    [respo "0.13.3-a1"]
     [respo/ui "0.3.15"]
     [respo/alerts "0.5.5"]
     [respo/value "0.3.0"]
@@ -24,7 +24,6 @@
           :entries [app.main]
         }
       }
-      :devtools {:after-load app.main/reload!}
       :compiler-options {:infer-externs :auto}
       :release {
         :output-dir "dist/", :module-hash-names 8
@@ -33,7 +32,6 @@
     }
     :page {
       :target :node-script, :output-to "target/page.js", :main app.page/main!
-      :devtools {:after-load app.page/main!}
     }
     :server {
       :target :node-script, :output-to "target/server.js", :main app.server/main!
