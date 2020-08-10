@@ -7,6 +7,8 @@
             ["fs" :as fs]
             ["ip" :as ip]
             ["qrcode-terminal" :as qrcode]
+            ["dayjs" :as dayjs]
+            ["prettysize" :as prettysize]
             [clojure.string :as string]
             [respo.render.html :refer [make-string]]
             [respo.core :refer [div list-> <> span meta' a style link]]
@@ -14,8 +16,26 @@
             [respo-ui.core :as ui]
             [hsl.core :refer [hsl]]
             [skir.core :as skir]
-            [cljs.core.async :refer [go <!]]
-            [cljs.core.async.interop :refer [<p!]]))
+            [cljs.core.async :refer [go <! chan]]
+            [cljs.core.async.interop :refer [<p!]]
+            [respo.comp.space :refer [=<]]))
+
+(defn load-stats! [xs]
+  (let [tasks (->> xs
+                   (map
+                    (fn [x]
+                      (let [<chan (chan)]
+                        (fs/stat
+                         x
+                         (fn [err ^js stat]
+                           (go
+                            (>!
+                             <chan
+                             {:name x, :size (.-size stat), :created-time (.-ctime stat)}))))
+                        <chan))))]
+    (go
+     (loop [acc [], xs tasks]
+       (if (empty? xs) acc (recur (conj acc (<! (first xs))) (rest xs)))))))
 
 (def serve-files! (serve-static (.-PWD js/process.env) (clj->js {:index []})))
 
@@ -26,43 +46,54 @@
   :effect)
 
 (defn on-file-indexed! [req res]
-  (let [filenames (filter
-                   (fn [filename] (.isFile (fs/lstatSync filename)))
-                   (js->clj (fs/readdirSync ".")))
-        result (make-string
-                (div
-                 {}
-                 (meta
-                  {:content "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no",
-                   :name "viewport"})
-                 (meta {:charset "utf8"})
-                 (link
-                  {:rel "stylesheet",
-                   :href "http://cdn.tiye.me/favored-fonts/josefin-sans.css"})
-                 (if (empty? filenames)
-                   (div
-                    {:style (merge ui/center {:padding 80})}
-                    (<>
-                     "No files"
-                     {:font-family ui/font-fancy,
-                      :color (hsl 0 0 80),
-                      :font-size 40,
-                      :font-weight 300})))
-                 (list->
-                  {:style {:padding 40}}
-                  (->> filenames
-                       (map-indexed
-                        (fn [idx filename]
-                          [idx
-                           (div
-                            {:style {:line-height "40px",
-                                     :font-family ui/font-fancy,
-                                     :font-size 20}}
-                            (a
-                             {:href (str "/files/" filename),
-                              :inner-text filename,
-                              :style {:text-decoration :none}}))]))))))]
-    {:code 200, :headers {"Content-Type" "text/html"}, :body result}))
+  (go
+   (let [filenames (filter
+                    (fn [filename] (.isFile (fs/lstatSync filename)))
+                    (js->clj (fs/readdirSync ".")))
+         files-info (<! (load-stats! filenames))
+         result (make-string
+                 (div
+                  {}
+                  (meta
+                   {:content "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no",
+                    :name "viewport"})
+                  (meta {:charset "utf8"})
+                  (link
+                   {:rel "stylesheet",
+                    :href "http://cdn.tiye.me/favored-fonts/josefin-sans.css"})
+                  (if (empty? filenames)
+                    (div
+                     {:style (merge ui/center {:padding 80})}
+                     (<>
+                      "No files"
+                      {:font-family ui/font-fancy,
+                       :color (hsl 0 0 80),
+                       :font-size 40,
+                       :font-weight 300})))
+                  (list->
+                   {:style {:padding 40}}
+                   (->> files-info
+                        (sort-by (fn [x] (unchecked-negate (:created-time x))))
+                        (map-indexed
+                         (fn [idx file]
+                           [idx
+                            (div
+                             {:style (merge ui/row {:line-height "40px"})}
+                             (<>
+                              (-> (:created-time file) dayjs (.format "MM-DD HH:mm"))
+                              {:font-family ui/font-fancy, :color (hsl 0 0 70)})
+                             (=< 16 nil)
+                             (a
+                              {:href (str "/files/" (:name file)),
+                               :inner-text (:name file),
+                               :style {:text-decoration :none,
+                                       :font-family ui/font-fancy,
+                                       :font-size 20}})
+                             (=< 16 nil)
+                             (<>
+                              (prettysize (:size file))
+                              {:font-family ui/font-fancy, :color (hsl 0 0 70)}))]))))))]
+     {:code 200, :headers {"Content-Type" "text/html"}, :body result})))
 
 (def serve
   (serve-static (path/join js/__dirname "../dist") (clj->js {:index ["index.html"]})))
@@ -110,7 +141,6 @@
      #(on-request! %1 %2)
      {:port port,
       :after-start (fn [options]
-        (println options)
         (let [address (str "\n" "http://" (.address ip) ":" port "\n")]
           (println "Open page on your phone and send file:" "\n" address)
           (qrcode/generate address (clj->js {:small true}) js/console.log)))})))
