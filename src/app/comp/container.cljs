@@ -25,11 +25,7 @@
            (-> (.request
                 axios
                 (clj->js
-                 {:url (str
-                        (.-protocol js/location)
-                        "//"
-                        (.-hostname js/location)
-                        ":4000/upload"),
+                 {:url (str (.-protocol js/location) "//" (.-host js/location) "/upload"),
                   :data form,
                   :method "post",
                   :onUploadProgress (fn [ratio]
