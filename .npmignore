@@ -5,6 +5,7 @@ entry/
 src/
 target/
 .nrepl-port
-calcit.edn
+calcit.cirru
 shadow-cljs.edn
 yarn.lock
+.github/

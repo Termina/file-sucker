@@ -16,7 +16,7 @@ The size limit of the file is 2G.
 
 Environment variable:
 
-* `POST`, for HTTP running port
+* `PORT`, for HTTP running port
 
 ### Resources
 

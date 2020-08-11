@@ -3,13 +3,15 @@
   :dependencies [
     [mvc-works/hsl "0.1.2"]
     [mvc-works/shell-page "0.1.15"]
-    [mvc-works/skir "0.0.9-a4"]
+    [mvc-works/skir "0.0.9-a5"]
     [respo "0.13.3-a1"]
     [respo/ui "0.3.15"]
     [respo/alerts "0.5.5"]
     [respo/value "0.3.0"]
     [respo/markdown "0.2.5"]
     [respo/reel "0.4.2"]
+    [cumulo/util "0.1.12"]
+    [org.clojure/core.incubator "0.1.4"]
   ]
   :open-file-command [
     "subl"
@@ -35,7 +37,10 @@
     }
     :server {
       :target :node-script, :output-to "target/server.js", :main app.server/main!
-      :devtools {:after-load app.server/reload!}
+      :devtools {
+        :build-notify cumulo-util.build-info/on-build!
+        :preloads [cumulo-util.build-info]
+      }
       :release {
         :output-to "dist/server.js"
         :compiler-options {:optimizations :simple}
