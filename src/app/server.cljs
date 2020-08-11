@@ -9,6 +9,8 @@
             ["qrcode-terminal" :as qrcode]
             ["dayjs" :as dayjs]
             ["prettysize" :as prettysize]
+            ["latest-version" :as latest-version]
+            ["chalk" :as chalk]
             [clojure.string :as string]
             [respo.render.html :refer [make-string]]
             [respo.core :refer [div list-> <> span meta' a style link]]
@@ -18,7 +20,20 @@
             [skir.core :as skir]
             [cljs.core.async :refer [go <! chan]]
             [cljs.core.async.interop :refer [<p!]]
-            [respo.comp.space :refer [=<]]))
+            [respo.comp.space :refer [=<]])
+  (:require-macros [clojure.core.strint :refer [<<]]))
+
+(defn check-version! []
+  (go
+   (let [pkg (.parse js/JSON (fs/readFileSync (path/join js/__dirname "../package.json")))
+         version (.-version pkg)
+         npm-version (<p! (latest-version (.-name pkg)))]
+     (if (= npm-version version)
+       (println "Running latest version" version)
+       (println
+        (chalk/yellow
+         (<<
+          "New version ~{npm-version} available, current one is ~{version} . Please upgrade!\n\nyarn global add file-sucker\n\n")))))))
 
 (defn load-stats! [xs]
   (let [tasks (->> xs
@@ -143,6 +158,7 @@
       :after-start (fn [options]
         (let [address (str "\n" "http://" (.address ip) ":" port "\n")]
           (println "Open page on your phone and send file:" "\n" address)
-          (qrcode/generate address (clj->js {:small true}) js/console.log)))})))
+          (qrcode/generate address (clj->js {:small true}) js/console.log)
+          (check-version!)))})))
 
 (defn ^:dev/after-load reload! [] (println "reloaded!"))
