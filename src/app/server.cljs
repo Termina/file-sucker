@@ -13,7 +13,7 @@
             ["chalk" :as chalk]
             [clojure.string :as string]
             [respo.render.html :refer [make-string]]
-            [respo.core :refer [div list-> <> span meta' a style link]]
+            [respo.core :refer [div html head body list-> <> span meta' a style link]]
             [respo.comp.space :refer [comp-space]]
             [respo-ui.core :as ui]
             [hsl.core :refer [hsl]]
@@ -67,47 +67,57 @@
                     (js->clj (fs/readdirSync ".")))
          files-info (<! (load-stats! filenames))
          result (make-string
-                 (div
+                 (html
                   {}
-                  (meta
-                   {:content "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no",
-                    :name "viewport"})
-                  (meta {:charset "utf8"})
-                  (link
-                   {:rel "stylesheet",
-                    :href "http://cdn.tiye.me/favored-fonts/josefin-sans.css"})
-                  (if (empty? filenames)
-                    (div
-                     {:style (merge ui/center {:padding 80})}
-                     (<>
-                      "No files"
-                      {:font-family ui/font-fancy,
-                       :color (hsl 0 0 80),
-                       :font-size 40,
-                       :font-weight 300})))
-                  (list->
-                   {:style {:padding 40}}
-                   (->> files-info
-                        (sort-by (fn [x] (unchecked-negate (:created-time x))))
-                        (map-indexed
-                         (fn [idx file]
-                           [idx
-                            (div
-                             {:style (merge ui/row {:line-height "40px"})}
-                             (<>
-                              (-> (:created-time file) dayjs (.format "MM-DD HH:mm"))
-                              {:font-family ui/font-fancy, :color (hsl 0 0 70)})
-                             (=< 16 nil)
-                             (a
-                              {:href (str "/files/" (:name file)),
-                               :inner-text (:name file),
-                               :style {:text-decoration :none,
-                                       :font-family ui/font-fancy,
-                                       :font-size 20}})
-                             (=< 16 nil)
-                             (<>
-                              (prettysize (:size file))
-                              {:font-family ui/font-fancy, :color (hsl 0 0 70)}))]))))))]
+                  (head
+                   {}
+                   (meta'
+                    {:content "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no",
+                     :name "viewport"})
+                   (meta' {:charset "utf8"})
+                   (link
+                    {:rel "stylesheet",
+                     :href "http://cdn.tiye.me/favored-fonts/josefin-sans.css"}))
+                  (body
+                   {}
+                   (div
+                    {}
+                    (if (empty? filenames)
+                      (div
+                       {:style (merge ui/center {:padding 80})}
+                       (<>
+                        "No files"
+                        {:font-family ui/font-fancy,
+                         :color (hsl 0 0 80),
+                         :font-size 40,
+                         :font-weight 300})))
+                    (list->
+                     {:style {:padding "24px 8px"}}
+                     (->> files-info
+                          (sort-by (fn [x] (unchecked-negate (:created-time x))))
+                          (map-indexed
+                           (fn [idx file]
+                             [idx
+                              (div
+                               {:style (merge ui/row {:line-height "40px"})}
+                               (a
+                                {:href (str "/files/" (:name file)),
+                                 :inner-text (:name file),
+                                 :style {:text-decoration :none,
+                                         :font-family ui/font-fancy,
+                                         :font-size 20}})
+                               (=< 16 nil)
+                               (<>
+                                (prettysize (:size file))
+                                {:font-family ui/font-fancy,
+                                 :color (hsl 0 0 70),
+                                 :font-size 12})
+                               (=< 16 nil)
+                               (<>
+                                (-> (:created-time file) dayjs (.format "MM-DD HH:mm"))
+                                {:font-family ui/font-fancy,
+                                 :color (hsl 0 0 70),
+                                 :font-size 12}))]))))))))]
      {:code 200, :headers {"Content-Type" "text/html"}, :body result})))
 
 (def serve

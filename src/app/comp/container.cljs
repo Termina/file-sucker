@@ -43,12 +43,6 @@
     {:style (merge ui/global ui/column {:padding 16, :font-size 16})}
     (div
      {:style (merge ui/row {:font-size 16, :color (hsl 0 0 50), :font-weight 500})}
-     (<> (str "Connected to "))
-     (=< 8 nil)
-     (a
-      {:style {:color (hsl 240 80 60), :font-family ui/font-fancy}}
-      (<> (if server? nil (.-host js/location))))
-     (=< 100 nil)
      (a {:href "/files", :style {:font-family ui/font-fancy}} (<> "Browse files")))
     (=< nil 16)
     (div
@@ -85,4 +79,11 @@
                         :font-family ui/font-fancy,
                         :line-height "24px"}}
                (<> log))]))))
+    (div
+     {:style (merge ui/row {:font-size 16, :color (hsl 0 0 50), :font-weight 500})}
+     (<> (str "Connected to "))
+     (=< 8 nil)
+     (a
+      {:style {:color (hsl 240 80 60), :font-family ui/font-fancy}}
+      (<> (if server? nil (.-host js/location)))))
     (when dev? (comp-reel (>> states :reel) (assoc reel :display? false) {:width "100%"})))))
