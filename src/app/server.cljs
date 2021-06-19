@@ -105,7 +105,10 @@
                                  :inner-text (:name file),
                                  :style {:text-decoration :none,
                                          :font-family ui/font-fancy,
-                                         :font-size 20}})
+                                         :font-size 16,
+                                         :max-width "50vw",
+                                         :overflow :hidden,
+                                         :text-overflow :ellipsis}})
                                (=< 16 nil)
                                (<>
                                 (prettysize (:size file))

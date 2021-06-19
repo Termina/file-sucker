@@ -2917,7 +2917,19 @@
                                                                                       |v $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1623606031205)
                                                                                         :data $ {}
                                                                                           |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1623606031205) (:text |:font-size)
-                                                                                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1623606031205) (:text |20)
+                                                                                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1624122580901) (:text |16)
+                                                                                      |x $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1624122514043)
+                                                                                        :data $ {}
+                                                                                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1624122515350) (:text |:max-width)
+                                                                                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1624122570429) (:text "|\"50vw")
+                                                                                      |y $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1624122523039)
+                                                                                        :data $ {}
+                                                                                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1624122528585) (:text |:overflow)
+                                                                                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1624122530039) (:text |:hidden)
+                                                                                      |yT $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1624122523039)
+                                                                                        :data $ {}
+                                                                                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1624122539006) (:text |:text-overflow)
+                                                                                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1624122542199) (:text |:ellipsis)
                                                                       |O $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1623606034494)
                                                                         :data $ {}
                                                                           |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1623606034494) (:text |=<)
