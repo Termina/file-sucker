@@ -9,3 +9,5 @@ calcit.cirru
 shadow-cljs.edn
 yarn.lock
 .github/
+
+server-out/
