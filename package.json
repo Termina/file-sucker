@@ -1,12 +1,13 @@
 {
   "name": "file-sucker",
-  "version": "0.1.8",
+  "version": "0.1.9-a1",
   "description": "Grab files from phone to laptop very over WIFI",
   "main": "index.js",
   "bin": {
     "file-sucker": "./dist/server.js"
   },
   "scripts": {
+    "compile-server": "cr --emit-js -1 --init-fn=app.server/main! --reload-fn=app.server/reload!",
     "w-server": "cr --emit-js --init-fn=app.server/main! --reload-fn=app.server/reload!"
   },
   "repository": {

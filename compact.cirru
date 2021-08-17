@@ -1,8 +1,8 @@
 
 {} (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
-    :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
-    :version |0.0.1
+    :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/
+    :version |0.1.9-a1
   :files $ {}
     |app.comp.container $ {}
       :ns $ quote
@@ -108,47 +108,38 @@
             :log $ []
     |app.server $ {}
       :ns $ quote
-        ns app.server $ :require ([] "\"formidable" :as formidable) ([] "\"serve-static" :as serve-static) ([] "\"path" :as path) ([] "\"finalhandler" :default finalhandler) ([] "\"fs" :as fs) ([] "\"ip" :as ip) ([] "\"qrcode-terminal" :as qrcode) ([] "\"dayjs" :as dayjs) ([] "\"prettysize" :as prettysize) ([] "\"latest-version" :as latest-version) ([] "\"chalk" :as chalk) ([] clojure.string :as string)
+        ns app.server $ :require ([] "\"formidable" :as formidable) ([] "\"serve-static" :default serve-static) ([] "\"path" :as path) ([] "\"finalhandler" :default finalhandler) ([] "\"fs" :as fs) ([] "\"ip" :as ip) ([] "\"qrcode-terminal" :as qrcode) ([] "\"dayjs" :default dayjs) ([] "\"prettysize" :default prettysize) ([] "\"latest-version" :default latest-version) ([] "\"chalk" :as chalk)
           [] respo.render.html :refer $ [] make-string
-          [] respo.core :refer $ [] div html head body list-> <> span meta' a style link
+          [] respo.core :refer $ [] div html head body list-> <> span a style link create-element
           [] respo.comp.space :refer $ [] comp-space
           [] respo-ui.core :as ui
-          [] hsl.core :refer $ [] hsl
+          [] respo-ui.core :refer $ hsl
           [] skir.core :as skir
-          [] cljs.core.async :refer $ [] go <! chan
-          [] cljs.core.async.interop :refer $ [] <p!
           [] respo.comp.space :refer $ [] =<
       :defs $ {}
         |load-stats! $ quote
-          defn load-stats! (xs)
+          defn load-stats! (xs) (hint-fn async)
             let
-                tasks $ ->> xs
-                  map $ fn (x)
-                    let
-                        <chan $ chan
-                      fs/stat x $ fn (err ^js stat)
-                        go $ >! <chan
-                          {} (:name x)
-                            :size $ .-size stat
-                            :created-time $ .-ctime stat
-                      , <chan
-              go $ loop
-                  acc $ []
-                  xs tasks
-                if (empty? xs) acc $ recur
-                  conj acc $ <! (first xs)
-                  rest xs
+                tasks $ js-array
+              &doseq (x xs)
+                .!push tasks $ new js/Promise
+                  fn (resolve reject)
+                    fs/stat x $ fn (err stat)
+                      resolve $ {} (:name x)
+                        :size $ .-size stat
+                        :created-time $ .-ctime stat
+              js-await $ js/Promise.all tasks
         |serve-files! $ quote
           def serve-files! $ serve-static (.-PWD js/process.env)
             js-object $ :index ([])
         |main! $ quote
           defn main! () $ let
               port $ or js/process.env.PORT js/process.env.port 4000
-            skir/create-server! (\ on-request! %1 %2)
+            skir/create-server! (\ on-request! % %2)
               {} (:port port)
                 :after-start $ fn (options)
                   let
-                      address $ str &newline "\"http://" (.!address ip) "\":" port &newline
+                      address $ str &newline "\"http://" (ip/address) "\":" port &newline
                     println "\"Open page on your phone and send file:" &newline address
                     qrcode/generate address
                       js-object $ :small true
@@ -156,12 +147,11 @@
                     check-version!
         |serve $ quote
           def serve $ serve-static (path/join js/__dirname "\"../dist")
-            clj->js $ {}
-              :index $ [] "\"index.html"
+            js-object $ :index ([] "\"index.html")
         |on-download! $ quote
           defn on-download! (req res)
             set! (.-url req)
-              string/replace (.-url req) "\"/files/" "\"/"
+              .replace (.-url req) "\"/files/" "\"/"
             println "\"url" $ .-url req
             serve-files! req res $ finalhandler req res
             , :effect
@@ -170,28 +160,28 @@
             serve req res $ finalhandler req res
             , :effect
         |check-version! $ quote
-          defn check-version! () $ go
+          defn check-version! () (hint-fn async)
             let
                 pkg $ .parse js/JSON
                   fs/readFileSync $ path/join js/__dirname "\"../package.json"
                 version $ .-version pkg
-                npm-version $ <p!
+                npm-version $ js-await
                   latest-version $ .-name pkg
               if (= npm-version version) (println "\"Running latest version" version)
-                println $ chalk/yellow (<< "\"New version ~{npm-version} available, current one is ~{version} . Please upgrade!\n\nyarn global add file-sucker\n\n")
+                println $ chalk/yellow (str "\"New version ~{npm-version} available, current one is \n\nyarn global add file-sucker\n\n" version "\" . Please upgrade!")
         |on-file-indexed! $ quote
-          defn on-file-indexed! (req res)
-            go $ let
+          defn on-file-indexed! (req res) (hint-fn async)
+            let
                 filenames $ filter
+                  to-calcit-data $ fs/readdirSync "\"."
                   fn (filename)
                     .isFile $ fs/lstatSync filename
-                  js->clj $ fs/readdirSync "\"."
-                files-info $ <! (load-stats! filenames)
+                files-info $ js-await (load-stats! filenames)
                 result $ make-string
                   html ({})
                     head ({})
-                      meta' $ {} (:content "\"width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no") (:name "\"viewport")
-                      meta' $ {} (:charset "\"utf8")
+                      create-element :meta $ {} (:content "\"width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no") (:name "\"viewport")
+                      create-element :meta $ {} (:charset "\"utf8")
                       link $ {} (:rel "\"stylesheet") (:href "\"http://cdn.tiye.me/favored-fonts/josefin-sans.css")
                     body ({})
                       div ({})
@@ -234,8 +224,8 @@
                 :body result
         |on-upload! $ quote
           defn on-upload! (req res)
-            .setHeader ^js res "\"Access-Control-Allow-Origin" $ -> req .-headers .-origin
-            .setHeader ^js res "\"Access-Control-Allow-Methods" "\"POST,GET,OPTIONS"
+            .!setHeader res "\"Access-Control-Allow-Origin" $ -> req .-headers .-origin
+            .!setHeader res "\"Access-Control-Allow-Methods" "\"POST,GET,OPTIONS"
             case-default (.-method req)
               {} (:code 404) (:body "\"method not supported")
               "\"POST" $ fn (send!)
@@ -246,31 +236,31 @@
                   set! (.-maxFieldsSize form) size-limit
                   set! (.-maxFileSize form) size-limit
                   .!parse form req $ fn (error fields files)
-                    when (some? error) (throw error)
+                    when (some? error) (raise error)
                     let
                         file $ .-file files
                       println "\"Received file:" $ .-name file
                       fs/rename (.-path file)
                         path/join (-> js/process .-env .-PWD) (.-name file)
                         fn (rename-error)
-                          when (some? rename-error) (throw rename-error)
+                          when (some? rename-error) (raise rename-error)
                           send! $ {} (:code 200) (:message "\"Uploaded")
               "\"GET" $ {} (:code 200) (:body "\"use POST")
               "\"OPTIONS" $ {} (:code 200) (:body "\"ok")
         |on-request! $ quote
-          defn on-request! (req-edn res)
+          defn on-request! (req-edn res) (hint-fn async)
             let
                 req $ :original-request req-edn
               cond
                   = "\"/upload" $ .-url req
                   on-upload! req res
                 (or (= (.-url req) "\"/files") (= (.-url req) "\"/files/"))
-                  on-file-indexed! req res
-                (string/starts-with? (.-url req) "\"/files/")
+                  js-await $ on-file-indexed! req res
+                (.starts-with? (.-url req) "\"/files/")
                   on-download! req res
                 true $ on-page! req res
         |reload! $ quote
-          defn ^:dev/after-load reload! () $ println "\"reloaded!"
+          defn reload! () $ println "\"reloaded!"
     |app.updater $ {}
       :ns $ quote
         ns app.updater $ :require
