@@ -7,8 +7,10 @@ yarn.lock
 js-out/
 server-out/
 
-main.js
-index.html
-build.js
+/main.js
+/index.html
+/build.js
+/server.js
 
 .*.cirru
+.gitattributes
