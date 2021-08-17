@@ -2,7 +2,7 @@
 {} (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/
-    :version |0.1.9-a3
+    :version |0.1.9-a4
   :files $ {}
     |app.comp.container $ {}
       :ns $ quote
@@ -179,7 +179,7 @@
                 npm-version $ js-await
                   latest-version $ .-name pkg
               if (= npm-version version) (println "\"Running latest version" version)
-                println $ chalk/yellow (str "\"New version ~{npm-version} available, current one is \n\nyarn global add file-sucker\n\n" version "\" . Please upgrade!")
+                println $ chalk/yellow (str "\"New version " npm-version "\" available, current one is " version "\" . Please upgrade!" "\"\n\nyarn global add file-sucker\n")
         |on-file-indexed! $ quote
           defn on-file-indexed! (req res) (hint-fn async)
             let
@@ -208,7 +208,7 @@
                           {} $ :style
                             {} $ :padding "\"24px 8px"
                           -> (turn-list files-info)
-                            .sort-by $ fn (x) (println "\"x" x)
+                            .sort-by $ fn (x)
                               negate $ :created-time x
                             map-indexed $ fn (idx file)
                               [] idx $ div
@@ -241,7 +241,7 @@
               {} (:code 404) (:body "\"method not supported")
               "\"POST" $ fn (send!)
                 let
-                    form $ formidable/IncomingForm.
+                    form $ new formidable/IncomingForm
                     size-limit $ * 4 1024 1024 1024
                   println "\"New request of file transferring..."
                   set! (.-maxFieldsSize form) size-limit
@@ -255,7 +255,9 @@
                         path/join (-> js/process .-env .-PWD) (.-name file)
                         fn (rename-error)
                           when (some? rename-error) (raise rename-error)
-                          send! $ {} (:code 200) (:message "\"Uploaded")
+                          send! $ {} (:code 200)
+                            :headers $ {}
+                            :message "\"Uploaded"
               "\"GET" $ {} (:code 200) (:body "\"use POST")
               "\"OPTIONS" $ {} (:code 200) (:body "\"ok")
         |on-request! $ quote

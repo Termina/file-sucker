@@ -1,6 +1,6 @@
 
 {}
-  :configs $ {} (:reload-fn |app.main/reload!) (:port 6001) (:output |src) (:storage-key |calcit.cirru) (:version |0.1.9-a3)
+  :configs $ {} (:reload-fn |app.main/reload!) (:port 6001) (:output |src) (:storage-key |calcit.cirru) (:version |0.1.9-a4)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/
     :init-fn |app.main/main!
     :extension |.cljs
@@ -2223,9 +2223,12 @@
                               |r $ {}
                                 :data $ {}
                                   |T $ {} (:text |str) (:type :leaf) (:at 1629196765014) (:by |rJG4IHzWf) (:id |HhNUAtSH4gS)
-                                  |j $ {} (:text "|\"New version ~{npm-version} available, current one is \n\nyarn global add file-sucker\n\n") (:type :leaf) (:at 1629196762710) (:by |rJG4IHzWf) (:id |YnJuxr33NJ8)
+                                  |j $ {} (:text "|\"New version ") (:type :leaf) (:at 1629222082772) (:by |rJG4IHzWf) (:id |YnJuxr33NJ8)
+                                  |k $ {} (:text |npm-version) (:type :leaf) (:at 1629222071131) (:by |rJG4IHzWf)
+                                  |l $ {} (:text "|\" available, current one is ") (:type :leaf) (:at 1629222064452) (:by |rJG4IHzWf)
                                   |n $ {} (:text |version) (:type :leaf) (:at 1629196763348) (:by |rJG4IHzWf)
                                   |r $ {} (:text "|\" . Please upgrade!") (:type :leaf) (:at 1629196759626) (:by |rJG4IHzWf)
+                                  |v $ {} (:text "|\"\n\nyarn global add file-sucker\n") (:type :leaf) (:at 1629222090639) (:by |rJG4IHzWf)
                                 :type :expr
                                 :at 1597112490894
                                 :by |rJG4IHzWf
@@ -2638,14 +2641,6 @@
                                                             :at 1597074688024
                                                             :by |rJG4IHzWf
                                                             :id |-Hd70bM0MK
-                                                          |P $ {}
-                                                            :data $ {}
-                                                              |T $ {} (:text |println) (:type :leaf) (:at 1629217737670) (:by |rJG4IHzWf)
-                                                              |j $ {} (:text "|\"x") (:type :leaf) (:at 1629217738611) (:by |rJG4IHzWf)
-                                                              |r $ {} (:text |x) (:type :leaf) (:at 1629217739034) (:by |rJG4IHzWf)
-                                                            :type :expr
-                                                            :at 1629217736540
-                                                            :by |rJG4IHzWf
                                                           |T $ {}
                                                             :data $ {}
                                                               |D $ {} (:text |negate) (:type :leaf) (:at 1629190286793) (:by |rJG4IHzWf) (:id |h4Yfnb9Yk)
@@ -3160,7 +3155,8 @@
                                       |T $ {} (:text |form) (:type :leaf) (:at 1535080294375) (:by |rJG4IHzWf) (:id |gjv_5PI-1vw)
                                       |j $ {}
                                         :data $ {}
-                                          |T $ {} (:text |formidable/IncomingForm.) (:type :leaf) (:at 1535080294375) (:by |rJG4IHzWf) (:id |2JiRDjXdl53)
+                                          |D $ {} (:text |new) (:type :leaf) (:at 1629222139571) (:by |rJG4IHzWf)
+                                          |T $ {} (:text |formidable/IncomingForm) (:type :leaf) (:at 1629222138812) (:by |rJG4IHzWf) (:id |2JiRDjXdl53)
                                         :type :expr
                                         :at 1535080294375
                                         :by |rJG4IHzWf
@@ -3394,6 +3390,18 @@
                                                             :at 1596988302442
                                                             :by |rJG4IHzWf
                                                             :id |HuC5wihFyZ
+                                                          |f $ {}
+                                                            :data $ {}
+                                                              |T $ {} (:text |:headers) (:type :leaf) (:at 1629222327496) (:by |rJG4IHzWf)
+                                                              |j $ {}
+                                                                :data $ {}
+                                                                  |T $ {} (:text |{}) (:type :leaf) (:at 1629222328224) (:by |rJG4IHzWf)
+                                                                :type :expr
+                                                                :at 1629222327910
+                                                                :by |rJG4IHzWf
+                                                            :type :expr
+                                                            :at 1629222324715
+                                                            :by |rJG4IHzWf
                                                           |j $ {}
                                                             :data $ {}
                                                               |T $ {} (:text |:message) (:type :leaf) (:at 1596988062422) (:by |rJG4IHzWf) (:id |WT79D0Osr4)

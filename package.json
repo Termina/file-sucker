@@ -1,6 +1,6 @@
 {
   "name": "file-sucker",
-  "version": "0.1.9-a3",
+  "version": "0.1.9-a4",
   "description": "Grab files from phone to laptop very over WIFI",
   "main": "index.js",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "compile-server": "cr --emit-js -1 --init-fn=app.server/main! --reload-fn=app.server/reload! --emit-path=server-out/",
-    "w-server": "cr --emit-js --init-fn=app.server/main! --reload-fn=app.server/reload!"
+    "w-server": "cr --emit-js --init-fn=app.server/main! --reload-fn=app.server/reload! --emit-path=server-out/"
   },
   "repository": {
     "type": "git",
