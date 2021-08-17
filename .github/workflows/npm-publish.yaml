@@ -18,6 +18,11 @@ jobs:
       id: yarn-cache
       run: echo "::set-output name=dir::$(yarn cache dir)"
 
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        registry-url: 'https://registry.npmjs.org'
+
     - uses: actions/cache@v2
       name: Cache node modules of yarn
       with:
