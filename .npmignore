@@ -1,13 +1,14 @@
-
-.shadow-cljs/
-cli/
-entry/
-src/
-target/
-.nrepl-port
 calcit.cirru
-shadow-cljs.edn
+compact.cirru
+entry
 yarn.lock
 .github/
 
+js-out/
 server-out/
+
+main.js
+index.html
+build.js
+
+.*.cirru

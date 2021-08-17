@@ -2,7 +2,7 @@
 {} (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/
-    :version |0.1.9-a2
+    :version |0.1.9-a3
   :files $ {}
     |app.comp.container $ {}
       :ns $ quote
@@ -128,10 +128,10 @@
                       resolve $ {} (:name x)
                         :size $ .-size stat
                         :created-time $ .-ctime stat
-              js-await $ js/Promise.all tasks
+              js/Promise.all tasks
         |serve-files! $ quote
           def serve-files! $ serve-static (.-PWD js/process.env)
-            js-object $ :index ([])
+            js-object $ "\"index" (js-array)
         |main! $ quote
           defn main! () $ let
               port $ or js/process.env.PORT js/process.env.port 4000
@@ -147,7 +147,18 @@
                     check-version!
         |serve $ quote
           def serve $ serve-static (path/join js/__dirname "\"../dist")
-            js-object $ :index ([] "\"index.html")
+            js-object $ "\"index" (js-array "\"index.html")
+        |turn-list $ quote
+          defn turn-list (arr)
+            apply-args
+                []
+                , arr
+              fn (xs as)
+                if
+                  = 0 $ .-length as
+                  , xs $ recur
+                    conj xs $ .-0 as
+                    .!slice as 1
         |on-download! $ quote
           defn on-download! (req res)
             set! (.-url req)
@@ -196,8 +207,8 @@
                         list->
                           {} $ :style
                             {} $ :padding "\"24px 8px"
-                          -> files-info
-                            .sort-by $ fn (x)
+                          -> (turn-list files-info)
+                            .sort-by $ fn (x) (println "\"x" x)
                               negate $ :created-time x
                             map-indexed $ fn (idx file)
                               [] idx $ div
@@ -248,14 +259,14 @@
               "\"GET" $ {} (:code 200) (:body "\"use POST")
               "\"OPTIONS" $ {} (:code 200) (:body "\"ok")
         |on-request! $ quote
-          defn on-request! (req-edn res) (hint-fn async)
+          defn on-request! (req-edn res)
             let
                 req $ :original-request req-edn
               cond
                   = "\"/upload" $ .-url req
                   on-upload! req res
                 (or (= (.-url req) "\"/files") (= (.-url req) "\"/files/"))
-                  js-await $ on-file-indexed! req res
+                  on-file-indexed! req res
                 (.starts-with? (.-url req) "\"/files/")
                   on-download! req res
                 true $ on-page! req res
