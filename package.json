@@ -1,20 +1,14 @@
 {
   "name": "file-sucker",
-  "version": "0.1.8",
+  "version": "0.1.9-a5",
   "description": "Grab files from phone to laptop very over WIFI",
   "main": "index.js",
   "bin": {
     "file-sucker": "./dist/server.js"
   },
   "scripts": {
-    "watch": "shadow-cljs watch client server",
-    "serve": "http-server dist -s",
-    "repl": "rlwrap shadow-cljs clj-repl",
-    "build-cdn": "shadow-cljs clj-run build.main/build-cdn",
-    "build": "shadow-cljs clj-run build.main/build",
-    "page": "shadow-cljs clj-run build.main/page",
-    "upload": "lumo -c cli/:src/ -m build.upload",
-    "ln": "cd target && rm -f entry && ln -s ../entry"
+    "compile-server": "cr --emit-js -1 --init-fn=app.server/main! --reload-fn=app.server/reload! --emit-path=server-out/",
+    "w-server": "cr --emit-js --init-fn=app.server/main! --reload-fn=app.server/reload! --emit-path=server-out/"
   },
   "repository": {
     "type": "git",
@@ -24,11 +18,13 @@
   "license": "MIT",
   "devDependencies": {
     "axios": "^0.21.1",
+    "bottom-tip": "^0.1.2",
+    "estrella": "^1.4.1",
     "http-server": "^0.12.3",
-    "node-notifier": "^8.0.1",
-    "shadow-cljs": "^2.10.21"
+    "vite": "^2.4.4"
   },
   "dependencies": {
+    "@calcit/procs": "^0.4.16",
     "chalk": "^4.1.0",
     "dayjs": "^1.8.33",
     "finalhandler": "^1.1.2",
