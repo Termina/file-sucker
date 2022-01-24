@@ -2,7 +2,7 @@
 {} (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/
-    :version |0.1.9-a6
+    :version |0.1.9-a7
   :entries $ {}
   :files $ {}
     |app.comp.container $ {}
@@ -89,16 +89,16 @@
                     .append form "\"file" file
                     d! :log $ str "\"sending " (.-name file)
                     ->
-                      .request axios $ js-object
+                      .!request axios $ js-object
                         :url $ str (.-protocol js/location) "\"//" (.-host js/location) "\"/upload"
                         :data form
                         :method "\"post"
                         :onUploadProgress $ fn (ratio)
                           d! :log $ str "\"Uploading "
                             format-percent (.-loaded ratio) (.-total ratio)
-                      .then $ fn (response)
+                      .!then $ fn (response)
                         d! :log $ str (.-name file) "\" uploaded!"
-                      .catch $ fn (error) (.log js/console error)
+                      .!catch $ fn (error) (.log js/console error)
                         d! :log $ str error
     |app.schema $ {}
       :ns $ quote (ns app.schema)
