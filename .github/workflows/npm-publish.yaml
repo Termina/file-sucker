@@ -51,13 +51,13 @@ jobs:
         && git clone https://github.com/Respo/reel.calcit.git
         && git clone https://github.com/Respo/respo-markdown.calcit.git
         && git clone https://github.com/Respo/respo-ui.calcit.git
-        && git clone https://github.com/calcit-lang/skir.git --branch 0.0.10
+        && git clone https://github.com/calcit-lang/skir.git --branch 0.0.11
 
     - name: "compiles to js"
       run: >
         cr --emit-js --once
         && yarn && yarn vite build --base=./
-        && yarn compile-server && node ./build.js
+        && yarn compile-server && yarn bundle
 
     - name: publish
       run: npm publish

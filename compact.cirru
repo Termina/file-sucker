@@ -2,7 +2,8 @@
 {} (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/
-    :version |0.1.9-a5
+    :version |0.1.9-a6
+  :entries $ {}
   :files $ {}
     |app.comp.container $ {}
       :ns $ quote
