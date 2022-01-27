@@ -2,7 +2,7 @@
 {} (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/
-    :version |0.1.9-a7
+    :version |0.1.9-a8
   :entries $ {}
   :files $ {}
     |app.comp.container $ {}
@@ -117,6 +117,7 @@
           [] respo-ui.core :refer $ hsl
           [] skir.core :as skir
           [] respo.comp.space :refer $ [] =<
+          "\"../entry/address" :refer $ addresses
       :defs $ {}
         |load-stats! $ quote
           defn load-stats! (xs) (hint-fn async)
@@ -139,13 +140,14 @@
             skir/create-server! (\ on-request! % %2)
               {} (:port port)
                 :after-start $ fn (options)
-                  let
-                      address $ str &newline "\"http://" (ip/address) "\":" port &newline
-                    println "\"Open page on your phone and send file:" &newline address
-                    qrcode/generate address
-                      js-object $ :small true
-                      , js/console.log
-                    check-version!
+                  .!forEach addresses $ fn (ip-address _idx _a)
+                    let
+                        address $ str &newline "\"http://" ip-address "\":" port &newline
+                      println "\"Open page on your phone and send file:" &newline address
+                      qrcode/generate address
+                        js-object $ :small true
+                        , js/console.log
+                      check-version!
         |serve $ quote
           def serve $ serve-static (path/join js/__dirname "\"../dist")
             js-object $ "\"index" (js-array "\"index.html")
