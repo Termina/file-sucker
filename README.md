@@ -24,6 +24,7 @@ Based on Node.js toolchains:
 
 * https://www.w3schools.com/nodejs/nodejs_uploadfiles.asp
 * https://www.npmjs.com/package/serve-static
+* https://www.scaler.com/topics/javascript/install-node-js/
 
 ### Workflow
 
