@@ -4,7 +4,6 @@ yarn.lock
 .github/
 
 js-out/
-server-out/
 
 /main.js
 /index.html

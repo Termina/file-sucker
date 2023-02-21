@@ -1,11 +1,16 @@
 
-export let addresses = Object.entries(require("os").networkInterfaces())
+import os from 'os';
+
+// console.log(os.networkInterfaces())
+
+export let addresses = Object.entries(os.networkInterfaces())
   .map(([name, nets]) => [
     name,
-    nets.filter((net) => net.family === "IPv4" && !net.internal),
+    nets.filter((net) => net.family === 4 && !net.internal),
   ])
   .reduce(
     (prev, cur) => {
+      // console.log("reduce", prev, cur)
       if (cur[1].length) {
         // console.log("curr", cur);
         return prev.concat(
