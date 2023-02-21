@@ -1,6 +1,6 @@
 
 {} (:package |app)
-  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.1.10-a1)
+  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.1.10)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/
   :entries $ {}
     :server $ {} (:init-fn |app.server/main!) (:reload-fn |app.server/reload!) (:storage-key |calcit.cirru)
@@ -204,7 +204,7 @@
                       .!generate qrcode address
                         js-object $ :small true
                         , js/console.log
-                      check-version!
+                      if (not= js/process.env.NO_VERSION_CHECK "\"false") (check-version!) (println "\"[INFO] skipped version checking.")
         |on-download! $ quote
           defn on-download! (req res)
             set! (.-url req)
@@ -291,7 +291,7 @@
               {} (:code 404) (:body "\"method not supported")
               "\"POST" $ fn (send!)
                 let
-                    form $ new formidable/IncomingForm
+                    form $ new (.-IncomingForm formidable)
                     size-limit $ * 4 1024 1024 1024
                   println "\"New request of file transferring..."
                   set! (.-maxFieldsSize form) size-limit
@@ -300,9 +300,9 @@
                     when (some? error) (raise error)
                     let
                         file $ .-file files
-                      println "\"Received file:" $ .-name file
-                      fs/rename (.-path file)
-                        path/join (-> js/process .-env .-PWD) (.-name file)
+                      println "\"Received file:" $ .-originalFilename file
+                      fs/rename (.-filepath file)
+                        path/join (-> js/process .-env .-PWD) (.-originalFilename file)
                         fn (rename-error)
                           when (some? rename-error) (raise rename-error)
                           send! $ {} (:code 200)
@@ -330,7 +330,7 @@
                     conj xs $ .-0 as
                     .!slice as 1
       :ns $ quote
-        ns app.server $ :require ([] "\"formidable" :as formidable) ([] "\"serve-static" :default serve-static) ([] "\"path" :as path) ([] "\"finalhandler" :default finalhandler) ([] "\"fs" :as fs) ([] "\"ip" :as ip) ([] "\"qrcode-terminal" :default qrcode) ([] "\"dayjs" :default dayjs) ([] "\"prettysize" :default prettysize) ([] "\"latest-version" :default latest-version) ([] "\"chalk" :default chalk)
+        ns app.server $ :require ([] "\"formidable" :default formidable) ([] "\"serve-static" :default serve-static) ([] "\"path" :as path) ([] "\"finalhandler" :default finalhandler) ([] "\"fs" :as fs) ([] "\"ip" :as ip) ([] "\"qrcode-terminal" :default qrcode) ([] "\"dayjs" :default dayjs) ([] "\"prettysize" :default prettysize) ([] "\"latest-version" :default latest-version) ([] "\"chalk" :default chalk)
           [] respo.render.html :refer $ [] make-string
           [] respo.core :refer $ [] div html head body list-> <> span a style link create-element
           [] respo.comp.space :refer $ [] comp-space

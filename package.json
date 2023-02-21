@@ -1,6 +1,6 @@
 {
   "name": "file-sucker",
-  "version": "0.1.10-a1",
+  "version": "0.1.10",
   "description": "Grab files from phone to laptop very over WIFI",
   "main": "index.js",
   "bin": {
