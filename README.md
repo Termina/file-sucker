@@ -17,6 +17,7 @@ The size limit of the file is 2G.
 Environment variable:
 
 * `PORT`, for HTTP running port
+* `NO_VERSION_CHECK`, skip version checking
 
 ### Resources
 
