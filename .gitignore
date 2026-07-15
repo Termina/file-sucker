@@ -6,6 +6,13 @@ js-out/
 node_modules/
 dist/
 
-server-out/
-
 .DS_Store
+
+calcit.cirru
+
+.yarn/*.gz
+
+
+.copilot-tmp/
+
+server-out
