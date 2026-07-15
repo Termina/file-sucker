@@ -3,9 +3,7 @@
   "version": "0.1.11",
   "description": "Grab files from phone to laptop very over WIFI",
   "main": "index.js",
-  "bin": {
-    "file-sucker": "./server.mjs"
-  },
+  "bin": "./server.mjs",
   "scripts": {
     "compile-server": "cr --emit-js -1 --entry server --emit-path=server-out/",
     "w-server": "cr --emit-js --entry server --emit-path=server-out/"
@@ -23,7 +21,7 @@
     "vite": "^4.1.4"
   },
   "dependencies": {
-    "@calcit/procs": "^0.6.23",
+    "@calcit/procs": "^0.12.49",
     "chalk": "^5.2.0",
     "dayjs": "^1.11.7",
     "finalhandler": "^1.2.0",
