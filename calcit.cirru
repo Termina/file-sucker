@@ -204,7 +204,7 @@
       :defs $ {}
         |check-version! $ %{} :CodeEntry (:doc |)
           :code $ quote
-            defn check-version! () (hint-fn async)
+            defn check-version! () (hint-fn $ {} (:async true))
               let
                   pkg $ js/JSON.parse
                     fs/readFileSync $ path/join dirname |../package.json
@@ -229,7 +229,7 @@
               :features $ #{} :js-ffi
         |load-stats! $ %{} :CodeEntry (:doc |)
           :code $ quote
-            defn load-stats! (xs) (hint-fn async)
+            defn load-stats! (xs) (hint-fn $ {} (:async true))
               let
                   tasks $ js-array
                 &doseq (x xs)
@@ -276,7 +276,7 @@
               :features $ #{} :js-ffi
         |on-file-indexed! $ %{} :CodeEntry (:doc |)
           :code $ quote
-            defn on-file-indexed! (req res) (hint-fn async)
+            defn on-file-indexed! (req res) (hint-fn $ {} (:async true))
               let
                   filenames $ filter
                     to-calcit-data $ fs/readdirSync |.
