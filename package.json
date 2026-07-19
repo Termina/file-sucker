@@ -5,8 +5,8 @@
   "main": "index.js",
   "bin": "./server.mjs",
   "scripts": {
-    "compile-server": "cr js --entry server --emit-path=server-out/",
-    "w-server": "cr js --entry server --emit-path=server-out/"
+    "compile-server": "cr --entry server --emit-path server-out/ js",
+    "w-server": "cr --entry server --emit-path server-out/ js"
   },
   "repository": {
     "type": "git",
