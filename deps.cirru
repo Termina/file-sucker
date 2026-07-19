@@ -6,4 +6,4 @@
     |Respo/respo.calcit |0.16.51
     |calcit-lang/lilac |0.5.1
     |calcit-lang/memof |0.0.24
-    |calcit-lang/skir |0.0.18
+    |calcit-lang/skir |0.0.19
