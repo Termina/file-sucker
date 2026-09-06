@@ -1,14 +1,18 @@
 
 {} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app)
-  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.1.11)
-    :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/
   :entries $ {}
-    :server $ {} (:init-fn |app.server/main!) (:reload-fn |app.server/reload!) (:version |0.0.0)
+    :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!)
+      :feature-policy $ {}
+      :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/ |js-ffi/
+      :type-slots $ {}
+    :server $ {} (:description |) (:init-fn 'app.server/main!) (:mode :native) (:reload-fn 'app.server/reload!)
+      :feature-policy $ {}
       :modules $ [] |lilac/ |memof/ |skir/ |respo.calcit/ |respo-ui.calcit/
+      :type-slots $ {}
   :files $ {}
-    |app.comp.container $ %{} :FileEntry
+    |app.comp.container $ %{} 'FileEntry
       :defs $ {}
-        |comp-container $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-container (reel)
               let
@@ -64,7 +68,8 @@
                   when dev? $ comp-reel (>> states :reel) (assoc reel :display? false)
                     {} $ :width |100%
           :examples $ []
-        |on-file-selected! $ %{} :CodeEntry (:doc |)
+          :schema $ :: 'Dynamic
+        |on-file-selected! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn on-file-selected! (e d!)
               let
@@ -94,11 +99,11 @@
                         .!catch $ fn (error) (.log js/console error)
                           d! :log $ str error
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
-              :args $ [] :dynamic :dynamic
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'Dynamic 'Dynamic
               :features $ #{} :js-ffi
-      :ns $ %{} :NsEntry (:doc |)
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require
             [] respo-ui.core :refer $ [] hsl
@@ -110,32 +115,36 @@
             [] app.config :refer $ [] dev?
             [] |axios :default axios
             [] app.util :refer $ [] format-percent
-    |app.config $ %{} :FileEntry
+    |app.config $ %{} 'FileEntry
       :defs $ {}
-        |dev? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def dev? $ = |env (get-env |mode)
           :examples $ []
-        |site $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |site $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:storage |file-sucker) (:dev-ui |http://localhost:8100/main.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main.css) (:cdn-url |http://cdn.tiye.me/file-sucker/) (:title "|File Sucker") (:icon |http://cdn.tiye.me/logo/mvc-works.png)
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.config $ :require
             [] app.util :refer $ [] get-env!
-    |app.main $ %{} :FileEntry
+    |app.main $ %{} 'FileEntry
       :defs $ {}
-        |*reel $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
           :examples $ []
-        |dispatch! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn dispatch! (op op-data) (println |Dispatch: op op-data)
               reset! *reel $ reel-updater updater @*reel (:: op op-data)
           :examples $ []
-        |main! $ %{} :CodeEntry (:doc |)
+          :schema $ :: 'Dynamic
+        |main! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn main! ()
               if config/dev? $ load-console-formatter!
@@ -150,21 +159,23 @@
                   dispatch! $ :: :hydrate-storage (parse-cirru-edn raw)
               println "|App started."
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
               :args $ []
               :features $ #{} :js-ffi
-        |mount-target $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def mount-target $ js/document.querySelector |.app
           :examples $ []
-        |persist-storage! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn persist-storage! (? e)
               js/localStorage.setItem (:storage config/site)
                 format-cirru-edn $ :store @*reel
           :examples $ []
-        |reload! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ if (nil? build-errors)
               do (remove-watch *reel :changes) (clear-cache!)
@@ -173,11 +184,13 @@
                 hud! |ok~ |Ok
               hud! |error build-errors
           :examples $ []
-        |render-app! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.main $ :require
             [] respo.core :refer $ [] render! clear-cache!
@@ -190,21 +203,23 @@
             [] app.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
-    |app.schema $ %{} :FileEntry
+    |app.schema $ %{} 'FileEntry
       :defs $ {}
-        |store $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |store $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def store $ {}
               :states $ {}
               :log $ []
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns app.schema)
-    |app.server $ %{} :FileEntry
+    |app.server $ %{} 'FileEntry
       :defs $ {}
-        |check-version! $ %{} :CodeEntry (:doc |)
+        |check-version! $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            defn check-version! () (hint-fn $ {} (:async true))
+            defn check-version! ()
+              hint-fn $ {} (:async true)
               let
                   pkg $ js/JSON.parse
                     fs/readFileSync $ path/join dirname |../package.json
@@ -214,22 +229,23 @@
                 if (= npm-version version) (println "|Running latest version" version)
                   println $ .!yellow chalk (str "|New version " npm-version "| available, current one is " version "| . Please upgrade!" "|\n\nyarn global add file-sucker\n")
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
               :args $ []
               :features $ #{} :js-ffi
-        |dirname $ %{} :CodeEntry (:doc |)
+        |dirname $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def dirname $ path/dirname
               .!fileURLToPath url $ new js/URL | js/import.meta.url
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
-              :args $ [] :dynamic
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'Dynamic
               :features $ #{} :js-ffi
-        |load-stats! $ %{} :CodeEntry (:doc |)
+        |load-stats! $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            defn load-stats! (xs) (hint-fn $ {} (:async true))
+            defn load-stats! (xs)
+              hint-fn $ {} (:async true)
               let
                   tasks $ js-array
                 &doseq (x xs)
@@ -241,11 +257,11 @@
                           :created-time $ .-ctime stat
                 js/Promise.all tasks
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
-              :args $ [] :list
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'List
               :features $ #{} :js-ffi
-        |main! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |main! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn main! () $ let
                 port $ or js/process.env.PORT js/process.env.port 4000
@@ -261,7 +277,8 @@
                           , js/console.log
                         if (not= js/process.env.NO_VERSION_CHECK |false) (check-version!) (println "|[INFO] skipped version checking.")
           :examples $ []
-        |on-download! $ %{} :CodeEntry (:doc |)
+          :schema $ :: 'Dynamic
+        |on-download! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn on-download! (req res)
               set! (.-url req)
@@ -270,13 +287,14 @@
               serve-files! req res $ finalhandler req res
               , :effect
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
-              :args $ [] :dynamic :dynamic
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'Dynamic 'Dynamic
               :features $ #{} :js-ffi
-        |on-file-indexed! $ %{} :CodeEntry (:doc |)
+        |on-file-indexed! $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            defn on-file-indexed! (req res) (hint-fn $ {} (:async true))
+            defn on-file-indexed! (req res)
+              hint-fn $ {} (:async true)
               let
                   filenames $ filter
                     to-calcit-data $ fs/readdirSync |.
@@ -329,17 +347,18 @@
                   :headers $ {} (|Content-Type |text/html)
                   :body result
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
-              :args $ [] :dynamic :dynamic
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'Dynamic 'Dynamic
               :features $ #{} :js-ffi
-        |on-page! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |on-page! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn on-page! (req res)
               serve req res $ finalhandler req res
               , :effect
           :examples $ []
-        |on-request! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |on-request! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn on-request! (req-edn res)
               let
@@ -353,7 +372,8 @@
                     on-download! req res
                   true $ on-page! req res
           :examples $ []
-        |on-upload! $ %{} :CodeEntry (:doc |)
+          :schema $ :: 'Dynamic
+        |on-upload! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn on-upload! (req res)
               if-let
@@ -384,33 +404,34 @@
                 |GET $ {} (:code 200) (:body "|use POST")
                 |OPTIONS $ {} (:code 200) (:body |ok)
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
-              :args $ [] :dynamic :dynamic
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'Dynamic 'Dynamic
               :features $ #{} :js-ffi
-        |reload! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ println |reloaded!
           :examples $ []
-        |serve $ %{} :CodeEntry (:doc |)
+          :schema $ :: 'Dynamic
+        |serve $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def serve $ serve-static (path/join dirname |../dist)
               js-object $ |index (js-array |index.html)
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
-              :args $ [] :dynamic :dynamic
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'Dynamic 'Dynamic
               :features $ #{} :js-ffi
-        |serve-files! $ %{} :CodeEntry (:doc |)
+        |serve-files! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def serve-files! $ serve-static (.-PWD js/process.env)
               js-object $ |index (js-array)
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
-              :args $ [] :dynamic :dynamic
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'Dynamic 'Dynamic
               :features $ #{} :js-ffi
-        |turn-list $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |turn-list $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn turn-list (arr)
               apply-args
@@ -423,7 +444,8 @@
                       conj xs $ .-0 as
                       .!slice as 1
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.server $ :require ([] |formidable :default formidable) ([] |serve-static :default serve-static) ([] |path :as path) ([] |finalhandler :default finalhandler) ([] |fs :as fs) ([] |ip :as ip) ([] |qrcode-terminal :default qrcode) ([] |dayjs :default dayjs) ([] |prettysize :default prettysize) ([] |latest-version :default latest-version) ([] |chalk :default chalk)
             [] respo.render.html :refer $ [] make-string
@@ -435,9 +457,9 @@
             [] respo.comp.space :refer $ [] =<
             |../entry/address.mjs :refer $ addresses
             |url :default url
-    |app.updater $ %{} :FileEntry
+    |app.updater $ %{} 'FileEntry
       :defs $ {}
-        |updater $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |updater $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn updater (store op op-id op-time)
               tag-match op
@@ -449,13 +471,14 @@
                   assoc store :logs $ []
                 _ $ do (println "|Unknown op:" op) store
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.updater $ :require
             [] respo.cursor :refer $ [] update-states
-    |app.util $ %{} :FileEntry
+    |app.util $ %{} 'FileEntry
       :defs $ {}
-        |format-percent $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |format-percent $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn format-percent (part total)
               str
@@ -464,10 +487,12 @@
                   , 1
                 , |%
           :examples $ []
-        |get-env! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |get-env! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn get-env! (property)
               aget (.-env js/process) property
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns app.util)

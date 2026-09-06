@@ -1,4 +1,5 @@
 {
+  "packageManager": "yarn@4.12.0",
   "name": "file-sucker",
   "version": "0.1.11",
   "description": "Grab files from phone to laptop very over WIFI",
@@ -21,7 +22,7 @@
     "vite": "^8.1.5"
   },
   "dependencies": {
-    "@calcit/procs": "^0.12.49",
+    "@calcit/procs": "0.13.77",
     "chalk": "^5.2.0",
     "dayjs": "^1.11.7",
     "finalhandler": "^1.2.0",
