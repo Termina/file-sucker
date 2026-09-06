@@ -6,8 +6,8 @@
   "main": "index.js",
   "bin": "./server.mjs",
   "scripts": {
-    "compile-server": "cr --entry server --emit-path server-out/ js",
-    "w-server": "cr --entry server --emit-path server-out/ js"
+    "compile-server": "caps --strict --ci && calcit calcit.cirru --entry server --emit-path server-out/ js",
+    "w-server": "calcit calcit.cirru --entry server --emit-path server-out/ js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
     "axios": "^1.3.4",
     "bottom-tip": "^0.1.4",
     "http-server": "^14.1.1",
-    "vite": "^8.1.5"
+    "vite": "8.2.2"
   },
   "dependencies": {
     "@calcit/procs": "0.13.77",
