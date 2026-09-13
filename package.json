@@ -22,7 +22,7 @@
     "vite": "8.2.2"
   },
   "dependencies": {
-    "@calcit/procs": "0.13.77",
+    "@calcit/procs": "0.14.16",
     "chalk": "^5.2.0",
     "dayjs": "^1.11.7",
     "finalhandler": "^1.2.0",
