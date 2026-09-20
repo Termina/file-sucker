@@ -553,7 +553,7 @@
             , :effect
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'app.server/RequestHost 'skir.schema/NodeServerResponseHost
+            :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'on-file-indexed! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-indexed! (req res)
@@ -611,7 +611,7 @@
                 :body result
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'app.server/RequestHost 'skir.schema/NodeServerResponseHost
+            :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'on-page! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-page! (req res)
@@ -619,7 +619,7 @@
             , :effect
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'app.server/RequestHost 'skir.schema/NodeServerResponseHost
+            :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'on-request! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-request! (req-edn res)
@@ -635,7 +635,7 @@
                 true $ on-page! req res
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'skir.schema/Request 'skir.schema/NodeServerResponseHost
+            :args $ [] 'skir.schema/Request 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'on-upload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-upload! (req res)
@@ -675,7 +675,7 @@
               |OPTIONS $ {} (:code 200) (:body |ok)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'app.server/RequestHost 'skir.schema/NodeServerResponseHost
+            :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'read-file-names $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-file-names ()
