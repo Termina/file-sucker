@@ -9,7 +9,7 @@
       :type-slots $ {}
     :server $ {} (:description |) (:init-fn 'app.server/main!) (:mode :js) (:reload-fn 'app.server/reload!)
       :feature-policy $ {}
-      :modules $ [] |lilac/ |memof/ |skir/ |respo.calcit/ |respo-ui.calcit/
+      :modules $ [] |skir/ |respo.calcit/ |respo-ui.calcit/
       :type-slots $ {}
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
