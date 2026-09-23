@@ -5,11 +5,11 @@
   :entries $ {}
     :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!)
       :feature-policy $ {}
-      :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/ |js-ffi/
+      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/ |js-ffi/
       :type-slots $ {}
     :server $ {} (:description |) (:init-fn 'app.server/main!) (:mode :js) (:reload-fn 'app.server/reload!)
       :feature-policy $ {}
-      :modules $ [] |lilac/ |memof/ |skir/ |respo.calcit/ |respo-ui.calcit/
+      :modules $ [] |skir/ |respo.calcit/ |respo-ui.calcit/
       :type-slots $ {}
   :files $ {}
     'app.comp.container $ %{} 'FileEntry

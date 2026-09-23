@@ -16,3 +16,5 @@ calcit.cirru
 .copilot-tmp/
 
 server-out
+.pnp.cjs
+.pnp.loader.mjs
