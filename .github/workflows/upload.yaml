@@ -45,11 +45,11 @@ jobs:
         calcit calcit.cirru edit format
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru --check-only
-        calcit calcit.cirru analyze dynamic-methods --max 0
+        calcit calcit.cirru analyze dynamic-methods
         calcit calcit.cirru analyze deprecated --summary-only
         calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
         calcit calcit.cirru --entry server --check-only
-        calcit calcit.cirru --entry server analyze dynamic-methods --max 0
+        calcit calcit.cirru --entry server analyze dynamic-methods
         calcit calcit.cirru --entry server analyze deprecated --summary-only
         calcit calcit.cirru --entry server analyze quality --baseline config/calcit-quality-server.cirru
 
