@@ -54,6 +54,11 @@ HOST=127.0.0.1 NO_VERSION_CHECK=1 node /absolute/path/to/server.mjs
 npm 包改用明确的运行文件 allowlist，保留服务端产物、网页构建与两个运行期 bridge，
 不包含 `.calcit/` 迁移报告、缓存或本地模块目录。
 
+两份原质量门禁继续保留。经逐项审阅批准，仅迁移 `app.main/dispatch!` 的
+schemaDynamic/unresolved 各 0→1（Respo 的真实派发合同是 `Fn<Dynamic, Unit>`，
+入口仍检查 Enum）。其他定义预算不增加；全局 unsafe 32→0、typeNotFull 23→13、
+unresolved 7→6、codeNil 6→5，schemaDynamic 仍为 1，typeNone/deprecated 为 0。
+
 ### Resources
 
 Based on Node.js toolchains:

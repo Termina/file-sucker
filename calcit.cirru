@@ -14,15 +14,6 @@
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
-        'AxiosHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait AxiosHost
-            .request! $ :: 'Fn $ {}
-              :args $ [] 'app.comp.container/AxiosHost 'JsObject
-              :return 'app.comp.container/PromiseHost
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
-            :names $ {} $ :request! |request
-          :schema $ :: 'Trait
         'EventHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait EventHost (:target 'app.comp.container/InputTargetHost)
           :examples $ []
@@ -156,7 +147,6 @@
                     (:some raw) (js/Array.from raw)
                     (:none) (js-array)
                   , 'app.comp.container/FileArrayHost
-                axios-client $ js-cast axios 'app.comp.container/AxiosHost
               set! (.-value target) |
               d! $ schema/Op :clear-logs
               files .for-each! $ fn (file i file-array)
@@ -168,21 +158,23 @@
                     form .append! |file file
                     d! $ schema/Op :log $ str "|sending " (.-name file)
                     let
-                        promise $ axios-client .request! $ js-object
-                          :url $ str (.-protocol location) |// (.-host location) |/upload
-                          :data form
-                          :method |post
-                          :onUploadProgress $ fn (ratio)
-                            let
-                                progress $ js-cast ratio 'app.comp.container/UploadProgressHost
-                              d! $ schema/Op :log $ match
-                                js-nullish->option $ .-total progress
-                                (:some total)
-                                  if (> total 0)
-                                    str "|Uploading " $ format-percent (.-loaded progress) total
+                        promise $ js-cast
+                          axios $ js-object
+                            :url $ str (.-protocol location) |// (.-host location) |/upload
+                            :data form
+                            :method |post
+                            :onUploadProgress $ fn (ratio)
+                              let
+                                  progress $ js-cast ratio 'app.comp.container/UploadProgressHost
+                                d! $ schema/Op :log $ match
+                                  js-nullish->option $ .-total progress
+                                  (:some total)
+                                    if (> total 0)
+                                      str "|Uploading " $ format-percent (.-loaded progress) total
+                                      str "|Uploading " (.-loaded progress) "| bytes"
+                                  (:none)
                                     str "|Uploading " (.-loaded progress) "| bytes"
-                                (:none)
-                                  str "|Uploading " (.-loaded progress) "| bytes"
+                          , 'app.comp.container/PromiseHost
                       let
                           handled $ promise .then! $ fn (response)
                             d! $ schema/Op :log $ str (.-name file) "| uploaded!"
