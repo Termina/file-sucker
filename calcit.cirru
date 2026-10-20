@@ -3,11 +3,11 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |app
   :entries $ {}
-    :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!)
+    :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/ |js-ffi/
       :type-slots $ {}
-    :server $ {} (:description |) (:init-fn 'app.server/main!) (:mode :js) (:reload-fn 'app.server/reload!)
+    :server $ {} (:description |) (:init-fn 'app.server/main!) (:mode :js) (:reload-fn 'app.server/reload!) (:target :node)
       :feature-policy $ {}
       :modules $ [] |skir/ |respo.calcit/ |respo-ui.calcit/
       :type-slots $ {}
@@ -55,15 +55,12 @@
             :names $ {} $ :append! |append
           :schema $ :: 'Trait
         'InputTargetHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait InputTargetHost (:files 'JsObject) (:value 'Dynamic)
+          :code $ quote $ deftrait InputTargetHost
+            :files $ :: 'JsNullish 'JsObject
+            :value 'String
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :writable $ #{} :value
-          :schema $ :: 'Trait
-        'LocationHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait LocationHost (:host 'String) (:protocol 'String)
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
           :schema $ :: 'Trait
         'PromiseHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait PromiseHost
@@ -84,16 +81,17 @@
             :names $ {} (:catch! |catch) (:then! |then)
           :schema $ :: 'Trait
         'UploadProgressHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait UploadProgressHost (:loaded 'Number) (:total 'Number)
+          :code $ quote $ deftrait UploadProgressHost (:loaded 'Number)
+            :total $ :: 'JsNullish 'Number
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
           :schema $ :: 'Trait
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
-                store $ unsafe-coerce (reel.schema/read-field reel :store) 'app.schema/Store
+                store $ :store reel
                 states $ :states store
-                location $ unsafe-coerce js/location 'app.comp.container/LocationHost
+                location $ browser/location-host
               div
                 {} $ :style $ merge ui/global ui/column
                   {} (:padding |16px) (:font-size |16px)
@@ -137,64 +135,80 @@
                     {} $ :style $ {}
                       :color $ hsl 240 80 60
                       :font-family ui/font-fancy
-                    <> $ unsafe-coerce (.-host location) String
-                when dev? $ comp-reel (>> states :reel) (assoc reel :display? false)
+                    <> $ .-host location
+                when dev? $ comp-typed-reel (>> states :reel) (assoc reel :display? false)
                   {} $ :width |100%
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'reel.typed/State 'app.schema/Op 'app.schema/Store
             :features $ #{} :js-ffi
         'on-file-selected! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-selected! (e d!)
             let
-                event $ unsafe-coerce
-                  option:unwrap-or (get e :event) (js-object)
-                  , app.comp.container/EventHost
+                event $ js-cast
+                  option:unwrap $ get e :event
+                  , 'app.comp.container/EventHost
                 target $ .-target event
-                location $ unsafe-coerce js/location app.comp.container/LocationHost
-                files $ unsafe-coerce
-                  js/Array.from $ .-files target
-                  , app.comp.container/FileArrayHost
-                axios-client $ unsafe-coerce axios app.comp.container/AxiosHost
-              set! (.-value target) nil
-              d! $ :: :clear-logs
+                location $ browser/location-host
+                files $ js-cast
+                  match
+                    js-nullish->option $ .-files target
+                    (:some raw) (js/Array.from raw)
+                    (:none) (js-array)
+                  , 'app.comp.container/FileArrayHost
+                axios-client $ js-cast axios 'app.comp.container/AxiosHost
+              set! (.-value target) |
+              d! $ schema/Op :clear-logs
               files .for-each! $ fn (file i file-array)
                 if
                   > (.-size file) (* 4 1024 1024 1024)
-                  d! :log "|File larger than 4G, which is not supported."
+                  d! $ schema/Op :log "|File larger than 4G, which is not supported."
                   let
-                      form $ unsafe-coerce (new js/FormData) app.comp.container/FormDataHost
-                      promise $ axios-client .request! $ js-object
-                        :url $ str (.-protocol location) |// (.-host location) |/upload
-                        :data form
-                        :method |post
-                        :onUploadProgress $ fn (ratio)
-                          let
-                              progress $ unsafe-coerce ratio app.comp.container/UploadProgressHost
-                            d! :log $ str "|Uploading " $ format-percent (.-loaded progress) (.-total progress)
+                      form $ js-cast (new js/FormData) 'app.comp.container/FormDataHost
                     form .append! |file file
-                    d! :log $ str "|sending " $ .-name file
+                    d! $ schema/Op :log $ str "|sending " (.-name file)
                     let
-                        handled $ promise .then! $ fn (response)
-                          d! :log $ str (.-name file) "| uploaded!"
-                      handled .catch! $ fn (error) (.log js/console error)
-                        d! :log $ str error
+                        promise $ axios-client .request! $ js-object
+                          :url $ str (.-protocol location) |// (.-host location) |/upload
+                          :data form
+                          :method |post
+                          :onUploadProgress $ fn (ratio)
+                            let
+                                progress $ js-cast ratio 'app.comp.container/UploadProgressHost
+                              d! $ schema/Op :log $ match
+                                js-nullish->option $ .-total progress
+                                (:some total)
+                                  if (> total 0)
+                                    str "|Uploading " $ format-percent (.-loaded progress) total
+                                    str "|Uploading " (.-loaded progress) "| bytes"
+                                (:none)
+                                  str "|Uploading " (.-loaded progress) "| bytes"
+                      let
+                          handled $ promise .then! $ fn (response)
+                            d! $ schema/Op :log $ str (.-name file) "| uploaded!"
+                        handled .catch! $ fn (error) (eprintln error)
+                          d! $ schema/Op :log $ str error
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] (:: 'Map 'Dynamic 'Dynamic)
+              :: 'Fn $ {} (:return 'Unit)
+                :args $ [] 'Dynamic
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
-            [] respo-ui.core :refer $ [] hsl
-            [] respo-ui.core :as ui
-            [] respo.core :refer $ [] defcomp >> <> list-> div button textarea input span a
-            [] respo.comp.space :refer $ [] =<
-            [] reel.comp.reel :refer $ [] comp-reel
-            [] respo-md.comp.md :refer $ [] comp-md
-            [] app.config :refer $ [] dev?
-            [] |axios :default axios
-            [] app.util :refer $ [] format-percent
+            respo-ui.core :refer $ hsl
+            respo-ui.core :as ui
+            respo.core :refer $ defcomp >> <> list-> div button textarea input span a
+            respo.comp.space :refer $ =<
+            respo-md.comp.md :refer $ comp-md
+            app.config :refer $ dev?
+            |axios :default axios
+            app.util :refer $ format-percent
+            reel.comp.reel :refer $ comp-typed-reel
+            js-ffi.browser :as browser
+            app.schema :as schema
     'app.config $ %{} 'FileEntry
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
@@ -209,95 +223,138 @@
           :schema $ :: 'Map 'Tag 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
-          :require $ [] app.util :refer $ [] get-env!
     'app.main $ %{} 'FileEntry
       :defs $ {}
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *reel
-            -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+          :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Ref $ :: 'reel.typed/State 'app.schema/Op 'app.schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch! (op) (println |Dispatch: op)
-            reset! *reel $ reel-updater updater @*reel op
+          :code $ quote $ defn dispatch! (op)
+            let
+                event $ if (enum? op) op $ raise "|Expected operation Enum"
+                control $ typed/decode-control event
+              reset! *reel $ match control
+                (:some action) (typed/apply-control updater @*reel action)
+                (:none)
+                  typed/record-op updater @*reel (schema/decode-op event) (generate-id!)
+                    :timestamp $ shared/date-now-snapshot
             , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
-            if config/dev? $ load-console-formatter!
+            when config/dev? $ load-console-formatter!
             render-app!
-            add-watch *reel :changes $ fn (r p) (render-app!)
+            add-watch! *reel :changes $ fn (r p) (render-app!)
             listen-devtools! |k dispatch!
-            js/window.addEventListener |beforeunload $ fn (e) (persist-storage!)
-            js/setInterval persist-storage! $ * 1000 60
-            ; let
-              (raw (js/localStorage.getItem (:storage config/site)))
-              when (some? raw)
-                dispatch! $ :: :hydrate-storage $ parse-cirru-edn raw
+            browser/set-before-unload! $ fn (e) (persist-storage!)
+            browser/set-interval! persist-storage! 60000
             println "|App started."
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def mount-target (js/document.querySelector |.app)
+          :code $ quote $ defn mount-target ()
+            option:unwrap $ dom/query-selector |.app
           :examples $ []
-          :schema $ :: 'JsNullish 'JsObject
+          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
+            :args $ []
+            :features $ #{} :js-ffi
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
-            js/localStorage.setItem
+            browser/storage-set!
               option:unwrap-or (get config/site :storage) |file-sucker
-              format-cirru-edn $ reel.schema/read-field @*reel :store
+              format-cirru-edn $ :store @*reel
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
-              do (remove-watch *reel :changes) (clear-cache!)
-                add-watch *reel :changes $ fn (reel prev) (render-app!)
-                reset! *reel $ assert-type (refresh-reel @*reel schema/store updater) (:: 'Map 'Tag 'Dynamic)
+              do (remove-watch! *reel :changes) (clear-cache!)
+                add-watch! *reel :changes $ fn (reel prev) (render-app!)
+                reset! *reel $ typed/refresh updater @*reel schema/store
                 hud! |ok~ |Ok
               hud! |error build-errors
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! mount-target (comp-container @*reel) dispatch!
+            render! (mount-target) (comp-container @*reel) dispatch!
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
-            :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
-            [] respo.core :refer $ [] render! clear-cache!
-            [] app.comp.container :refer $ [] comp-container
-            [] app.updater :refer $ [] updater
-            [] app.schema :as schema
-            [] reel.util :refer $ [] listen-devtools!
-            [] reel.core :refer $ [] reel-updater refresh-reel
-            [] reel.schema :as reel-schema
-            [] app.config :as config
+            respo.core :refer $ render! clear-cache!
+            app.comp.container :refer $ comp-container
+            app.updater :refer $ updater
+            app.schema :as schema
+            reel.util :refer $ listen-devtools!
+            app.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
+            reel.typed :as typed
+            respo.ffi.browser :as dom
+            js-ffi.browser :as browser
+            js-ffi.shared :as shared
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'FileInfo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct FileInfo (:name 'String) (:size 'Number) (:created-time 'Number)
           :examples $ []
-          :schema $ :: 'Enum
+          :schema $ :: 'StructDef
+        'Op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum Op
+            :states (:: 'List 'Dynamic) 'Dynamic
+            :log 'String
+            :clear-logs
+            :hydrate-storage 'Store
+          :examples $ []
+          :schema $ :: 'EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store (:states 'Map)
             :logs $ :: 'List 'String
           :examples $ []
-          :schema $ :: 'Enum
+          :schema $ :: 'StructDef
+        'decode-op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-op (op)
+            match op
+              (:states cursor value)
+                if (list? cursor) (Op :states cursor value) (raise "|Expected state cursor List")
+              (:log text)
+                if (string? text) (Op :log text) (raise "|Expected log String")
+              (:clear-logs) (Op :clear-logs)
+              (:hydrate-storage data)
+                if (struct? data)
+                  struct-match data
+                    Store store $ Op :hydrate-storage store
+                    _ _ $ raise "|Expected Store"
+                  raise "|Expected Store"
+              _ $ raise "|Unknown application operation"
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Op)
+            :args $ [] 'Enum
+          :tests $ [] $ %{} 'TestEntry (:name |operation-contracts)
+            :code $ quote $ do
+              assert= (Op :log "|上传完成")
+                decode-op $ :: :log "|上传完成"
+              assert= (Op :clear-logs)
+                decode-op $ :: :clear-logs
+              assert=
+                Op :states ([] :upload)
+                  {} $ :progress 50
+                decode-op $ :: :states ([] :upload)
+                  {} $ :progress 50
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :states ({}) :logs $ []
@@ -338,15 +395,10 @@
             :names $ {} $ :format! |format
           :schema $ :: 'Trait
         'FilesHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait FilesHost (:file 'app.server/UploadedFileHost)
+          :code $ quote $ deftrait FilesHost
+            :file $ :: 'JsNullish 'app.server/UploadedFilesHost
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
-          :schema $ :: 'Trait
-        'FormidableModuleHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait FormidableModuleHost (:incoming-form 'JsObject)
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
-            :names $ {} $ :incoming-form |IncomingForm
           :schema $ :: 'Trait
         'FsStatHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FsStatHost (:size 'Number) (:ctime-ms 'Number)
@@ -364,17 +416,16 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
           :schema $ :: 'Trait
         'IncomingFormHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait IncomingFormHost (:max-fields-size 'Number) (:max-file-size 'Number)
+          :code $ quote $ deftrait IncomingFormHost
             .parse! $ :: 'Fn $ {}
               :args $ [] 'app.server/IncomingFormHost 'app.server/RequestHost $ :: 'Fn
                 {}
-                  :args $ [] 'Dynamic 'Dynamic 'app.server/FilesHost
+                  :args $ [] (:: 'JsNullish 'JsObject) 'Dynamic 'app.server/FilesHost
                   :return 'Dynamic
               :return 'Dynamic
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :parse! |parse
-            :writable $ #{} :max-fields-size :max-file-size
           :schema $ :: 'Trait
         'PackageHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait PackageHost (:name 'String) (:version 'String)
@@ -421,7 +472,17 @@
             :names $ {} $ :push! |push
           :schema $ :: 'Trait
         'UploadedFileHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait UploadedFileHost (:original-filename 'String) (:filepath 'String)
+          :code $ quote $ deftrait UploadedFileHost
+            :original-filename $ :: 'JsNullish 'String
+            :filepath 'String
+          :examples $ []
+          :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
+          :schema $ :: 'Trait
+        'UploadedFilesHost $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ deftrait UploadedFilesHost
+            .at $ :: 'Fn $ {}
+              :args $ [] 'app.server/UploadedFilesHost 'Number
+              :return $ :: 'JsNullish 'app.server/UploadedFileHost
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
           :schema $ :: 'Trait
@@ -436,16 +497,19 @@
           :schema $ :: 'Trait
         'as-file-info-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-file-info-list (value)
-            unsafe-coerce
-              turn-list $ unsafe-coerce value JsObject
-              :: 'List 'app.schema/FileInfo
+            map
+              decode-map-as (to-calcit-data value) (:: 'List 'Dynamic)
+              fn (item)
+                decode-map-as
+                  if (struct? item) (&struct:to-map item) item
+                  , 'app.schema/FileInfo
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
             :return $ :: 'List 'app.schema/FileInfo
         'as-fs-stat $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn as-fs-stat (value) (unsafe-coerce value app.server/FsStatHost)
+          :code $ quote $ defn as-fs-stat (value) (js-cast value app.server/FsStatHost)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.server/FsStatHost)
             :args $ [] 'Dynamic
@@ -459,9 +523,9 @@
             let
                 pkg $ read-package-info
                 version $ .-version pkg
-                npm-version $ assert-type
-                  js-await $ latest-version $ .-name pkg
-                  , 'String
+                npm-version $ let
+                    version $ js-await $ latest-version (.-name pkg)
+                  if (string? version) version $ raise "|Registry version must be a String"
               if (= npm-version version) (println "|Running latest version" version)
                 println $ yellow-text $ str "|New version " npm-version "| available, current one is " version "| . Please upgrade!" "|\n\nyarn global add file-sucker\n"
           :examples $ []
@@ -471,16 +535,28 @@
         'dirname $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dirname ()
             let
-                url-module $ unsafe-coerce url app.server/UrlModuleHost
-              path/dirname $ url-module .file-url-to-path! $ new js/URL | js/import.meta.url
+                url-module $ js-cast url app.server/UrlModuleHost
+              node/path-dirname $ url-module .file-url-to-path! $ new js/URL | js/import.meta.url
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
             :args $ []
             :features $ #{} :js-ffi
+        'first-uploaded-file $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn first-uploaded-file (files)
+            match
+              js-nullish->option $ .-file files
+              (:none) (Option :none)
+              (:some items)
+                js-nullish->option $ items .at 0
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'app.server/FilesHost
+            :features $ #{} :js-ffi
+            :return $ :: 'Option 'app.server/UploadedFileHost
         'format-created-time $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn format-created-time (timestamp)
             let
-                value $ unsafe-coerce (dayjs timestamp) app.server/DayjsHost
+                value $ js-cast (dayjs timestamp) app.server/DayjsHost
               value .format! "|MM-DD HH:mm"
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
@@ -489,7 +565,7 @@
         'is-file-path? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn is-file-path? (filename)
             let
-                stat $ unsafe-coerce (fs/lstatSync filename) app.server/FsStatHost
+                stat $ js-cast (fs/lstatSync filename) app.server/FsStatHost
               stat .is-file?
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Bool)
@@ -517,29 +593,42 @@
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             let
-                port $ js/parseInt $ or js/process.env.PORT js/process.env.port |4000
-                address-list $ unsafe-coerce addresses app.server/AddressArrayHost
-                qrcode-client $ unsafe-coerce qrcode app.server/QrcodeHost
-              skir/create-server! on-request! $ %some $ {} (:port port)
-                :after-start $ fn (options)
+                port $ decode-map-as
+                  js/parseInt $ node/env-or |PORT $ node/env-or |port |4000
+                  , 'Number
+                host $ node/env-or |HOST |0.0.0.0
+                address-list $ js-cast
+                  if (= host |0.0.0.0) addresses $ js-array host
+                  , 'app.server/AddressArrayHost
+                qrcode-client $ js-cast qrcode 'app.server/QrcodeHost
+              skir/create-server! on-request! $ Option :some $ {} (:port port) (:host host)
+                :after-start $ fn (_options)
                   address-list .for-each! $ fn (ip-address _idx _array)
                     let
-                        address $ str &newline |http:// ip-address |: port &newline
+                        address $ str |http:// ip-address |: port
                       println "|Open page on your phone and send file:" &newline address
                       qrcode-client .generate! address
                         js-object $ :small true
-                        , js/console.log
-                      if
-                        not= (unsafe-coerce js/process.env.NO_VERSION_CHECK String) |false
-                        check-version!
-                        println "|[INFO] skipped version checking."
+                        fn (text)
+                          hint-fn $ {}
+                            :args $ [] 'String
+                            :return 'Unit
+                          println text
+                          , &unit
+                      , &unit
+                  match (node/env-get |NO_VERSION_CHECK)
+                    (:none) (check-version!)
+                    (:some value)
+                      if (= value |false) (check-version!) (println "|[INFO] skipped version checking.")
+                  , &unit
+              , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'make-task-array $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-task-array ()
-            unsafe-coerce (js-array) app.server/TaskArrayHost
+            js-cast (js-array) app.server/TaskArrayHost
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.server/TaskArrayHost)
             :args $ []
@@ -549,7 +638,7 @@
             set! (.-url req)
               &str:replace (.-url req) |/files/ |/
             println |url $ .-url req
-            serve-files! req res $ finalhandler req res
+            serve-files! req res
             , :effect
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
@@ -586,26 +675,30 @@
                             :font-weight 300
                       list->
                         {} $ :style $ {} (:padding "|24px 8px")
-                        foldl sorted-files ({})
-                          fn (acc file)
-                            hint-fn $ {} $ :args ([] 'Map 'app.schema/FileInfo)
-                            assoc acc file.:name $ div
-                              {} $ :style $ merge ui/row
-                                {} $ :line-height |40px
-                              a $ {}
-                                :href $ str |/files/ file.:name
-                                :inner-text file.:name
-                                :style $ {} (:text-decoration :none) (:font-family ui/font-fancy) (:font-size 16) (:max-width |50vw) (:overflow :hidden) (:text-overflow :ellipsis)
-                              =< 16 nil
-                              <> (prettysize file.:size)
-                                {} (:font-family ui/font-fancy)
-                                  :color $ hsl 0 0 70
-                                  :font-size 12
-                              =< 16 nil
-                              <> (format-created-time file.:created-time)
-                                {} (:font-family ui/font-fancy)
-                                  :color $ hsl 0 0 70
-                                  :font-size 12
+                        map sorted-files $ fn (file)
+                          hint-fn $ {}
+                            :args $ [] 'app.schema/FileInfo
+                            :return $ :: 'List 'Dynamic
+                          [] file.:name $ div
+                            {} $ :style $ merge ui/row
+                              {} $ :line-height |40px
+                            a $ {}
+                              :href $ str |/files/ file.:name
+                              :inner-text file.:name
+                              :style $ {} (:text-decoration :none) (:font-family ui/font-fancy) (:font-size 16) (:max-width |50vw) (:overflow :hidden) (:text-overflow :ellipsis)
+                            =< 16 nil
+                            <>
+                              let
+                                  size-text $ prettysize file.:size
+                                if (string? size-text) size-text $ raise "|File size formatter must return a String"
+                              {} (:font-family ui/font-fancy)
+                                :color $ hsl 0 0 70
+                                :font-size 12
+                            =< 16 nil
+                            <> (format-created-time file.:created-time)
+                              {} (:font-family ui/font-fancy)
+                                :color $ hsl 0 0 70
+                                :font-size 12
               {} (:code 200)
                 :headers $ {} $ |Content-Type |text/html
                 :body result
@@ -614,74 +707,95 @@
             :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'on-page! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn on-page! (req res)
-            serve req res $ finalhandler req res
-            , :effect
+          :code $ quote $ defn on-page! (req res) (serve req res) :effect
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
             :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'on-request! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-request! (req-edn res)
-            let
-                req $ unsafe-coerce (:original-request req-edn) 'app.server/RequestHost
-                req-url $ unsafe-coerce (.-url req) String
-              cond
-                  = |/upload req-url
-                  on-upload! req res
-                (or (= req-url |/files) (= req-url |/files/))
-                  on-file-indexed! req res
-                (starts-with? req-url |/files/) (on-download! req res)
-                true $ on-page! req res
+            match (:original-request req-edn)
+              (:none)
+                {} (:code 500) (:body "|Missing original Node request")
+              (:some original)
+                let
+                    req $ js-cast original 'app.server/RequestHost
+                    req-url $ :url req-edn
+                  cond
+                      = |/upload req-url
+                      on-upload! req res
+                    (or (= req-url |/files) (= req-url |/files/))
+                      on-file-indexed! req res
+                    (starts-with? req-url |/files/) (on-download! req res)
+                    true $ on-page! req res
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
             :args $ [] 'skir.schema/Request 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'on-upload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-upload! (req res)
-            let
-                headers $ .-headers req
-                origin $ .-origin headers
-              when (js-present? origin)
-                res .set-header |Access-Control-Allow-Origin $ unsafe-coerce origin String
+            match
+              js-nullish->option $ .-origin $ .-headers req
+              (:some origin) (res .set-header |Access-Control-Allow-Origin origin)
+              (:none) &unit
             res .set-header |Access-Control-Allow-Methods |POST,GET,OPTIONS
-            case-default (.-method req)
-              {} (:code 404) (:body "|method not supported")
+            match (.-method req)
               |POST $ fn (send!)
+                hint-fn $ {}
+                  :args $ [] $ :: 'Fn
+                    {} (:return 'Unit)
+                      :args $ [] 'Dynamic
+                  :return 'Unit
+                  :features $ #{} :js-ffi
                 let
-                    formidable-module $ unsafe-coerce formidable app.server/FormidableModuleHost
-                    form $ unsafe-coerce
-                      new $ .-incoming-form formidable-module
-                      , app.server/IncomingFormHost
                     size-limit $ * 4 1024 1024 1024
+                    form $ js-cast
+                      formidable $ js-object (:maxFieldsSize size-limit) (:maxFileSize size-limit) (:maxTotalFileSize size-limit) (:maxFiles 1)
+                      , 'app.server/IncomingFormHost
                   println "|New request of file transferring..."
-                  set! (.-max-fields-size form) size-limit
-                  set! (.-max-file-size form) size-limit
                   form .parse! req $ fn (error fields files)
-                    when (some? error) (raise error)
-                    let
-                        file $ .-file files
-                        filename $ .-original-filename file
-                        filepath $ .-filepath file
-                        pwd $ unsafe-coerce js/process.env.PWD String
-                      println "|Received file:" filename
-                      fs/rename filepath (path/join pwd filename)
-                        fn (rename-error)
-                          when (some? rename-error) (raise rename-error)
-                          send! $ {} (:code 200)
-                            :headers $ {}
-                            :message |Uploaded
+                    if (js-nullish? error)
+                      match (first-uploaded-file files)
+                        (:none)
+                          send! $ {} (:code 400) (:body "|Missing file")
+                        (:some file)
+                          match
+                            js-nullish->option $ .-original-filename file
+                            (:none)
+                              send! $ {} (:code 400) (:body "|Missing filename")
+                            (:some original-name)
+                              let
+                                  filename $ node/path-basename original-name
+                                  filepath $ .-filepath file
+                                if
+                                  or (empty? filename) (= filename |.) (= filename |..)
+                                  send! $ {} (:code 400) (:body "|Invalid filename")
+                                  do (println "|Received file:" filename)
+                                    fs/rename filepath
+                                      node/path-join (node/cwd) filename
+                                      fn (rename-error)
+                                        hint-fn $ {}
+                                          :args $ [] $ :: 'JsNullish 'JsObject
+                                          :return 'Unit
+                                          :features $ #{} :js-ffi
+                                        if (js-nullish? rename-error)
+                                          send! $ {} (:code 200)
+                                            :headers $ {}
+                                            :message |Uploaded
+                                          send! $ {} (:code 500) (:body "|Could not save uploaded file")
+                                        , &unit
+                      send! $ {} (:code 400) (:body "|Invalid upload")
+                    , &unit
+                  , &unit
               |GET $ {} (:code 200) (:body "|use POST")
               |OPTIONS $ {} (:code 200) (:body |ok)
+              _ $ {} (:code 404) (:body "|method not supported")
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
             :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'read-file-names $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn read-file-names ()
-            unsafe-coerce
-              to-calcit-data $ fs/readdirSync |.
-              :: 'List 'String
+          :code $ quote $ defn read-file-names () (node/read-dir! |.)
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ []
@@ -689,9 +803,9 @@
             :return $ :: 'List 'String
         'read-package-info $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-package-info ()
-            unsafe-coerce
-              js/JSON.parse $ fs/readFileSync $ path/join (dirname) |../package.json
-              , app.server/PackageHost
+            js-cast
+              js/JSON.parse $ node/read-text! $ node/path-join (dirname) |../package.json
+              , 'app.server/PackageHost
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.server/PackageHost)
             :args $ []
@@ -703,28 +817,20 @@
             :args $ []
             :features $ #{} :js-ffi
         'serve $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def serve
-            serve-static
-              path/join (dirname) |../dist
-              js-object $ |index $ js-array |index.html
+          :code $ quote $ defn serve (req res) (static/servePage req res) &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'serve-files! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def serve-files!
-            let
-                process-env $ unsafe-coerce js/process.env 'app.server/ProcessEnvHost
-              serve-static
-                unsafe-coerce (.-pwd process-env) String
-                js-object $ |index $ js-array
+          :code $ quote $ defn serve-files! (req res) (static/serveFiles req res) &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
             :features $ #{} :js-ffi
         'turn-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn turn-list (arr)
-            unsafe-coerce (to-calcit-data arr) (:: 'List 'Dynamic)
+            decode-map-as (to-calcit-data arr) (:: 'List 'Dynamic)
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] 'JsObject
@@ -733,7 +839,7 @@
         'yellow-text $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn yellow-text (text)
             let
-                chalk-client $ unsafe-coerce chalk app.server/ChalkHost
+                chalk-client $ js-cast chalk app.server/ChalkHost
               chalk-client .yellow! text
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
@@ -741,42 +847,42 @@
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.server
-          :require ([] |formidable :default formidable) ([] |serve-static :default serve-static) ([] |path :as path) ([] |finalhandler :default finalhandler) ([] |fs :as fs) ([] |ip :as ip) ([] |qrcode-terminal :default qrcode) ([] |dayjs :default dayjs) ([] |prettysize :default prettysize) ([] |latest-version :default latest-version) ([] |chalk :default chalk)
-            [] respo.render.html :refer $ [] make-string
-            [] respo.core :refer $ [] div html head body list-> <> span a style link create-element
-            [] respo.comp.space :refer $ [] comp-space
-            [] respo-ui.core :as ui
-            [] respo-ui.core :refer $ hsl
-            [] skir.core :as skir
-            [] respo.comp.space :refer $ [] =<
+          :require (|formidable :default formidable) (|fs :as fs) (|qrcode-terminal :default qrcode) (|dayjs :default dayjs) (|prettysize :default prettysize) (|latest-version :default latest-version) (|chalk :default chalk)
+            respo.render.html :refer $ make-string
+            respo.core :refer $ div html head body list-> <> span a style link create-element
+            respo.comp.space :refer $ comp-space
+            respo-ui.core :as ui
+            respo-ui.core :refer $ hsl
+            skir.core :as skir
+            respo.comp.space :refer $ =<
             |../entry/address.mjs :refer $ addresses
             |url :default url
+            js-ffi.node :as node
+            |../entry/static.mjs :as static
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
             match op
               (:states cursor s)
-                assert-type (update-states store cursor s) 'app.schema/Store
-              (:hydrate-storage data) (assert-type data 'app.schema/Store)
+                assoc store :states $ decode-map-as
+                  respo.cursor/update-state-tree (:states store) cursor s
+                  , 'Map
+              (:hydrate-storage data) data
               (:log data)
-                update store :logs $ fn (logs)
-                  hint-fn $ {}
-                    :args $ [] $ :: 'List 'String
-                    :return $ :: 'List 'String
-                  prepend logs $ assert-type data 'String
+                assoc store :logs $ prepend (:logs store) data
               (:clear-logs)
                 assoc store :logs $ []
               _ $ do (println "|Unknown op:" op) store
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
-            :args $ [] 'app.schema/Store 'Enum 'String 'Number
+            :args $ [] 'app.schema/Store 'app.schema/Op 'String 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ [] respo.cursor :refer $ [] update-states
+          :require $ respo.cursor :refer $ update-states
     'app.util $ %{} 'FileEntry
-      :defs $ {}
-        'format-percent $ %{} 'CodeEntry (:doc |)
+      :defs $ {} $ 'format-percent
+        %{} 'CodeEntry (:doc |)
           :code $ quote $ defn format-percent (part total)
             str
               .!toFixed
@@ -786,15 +892,6 @@
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
             :args $ [] 'Number 'Number
-            :features $ #{} :js-ffi
-        'get-env! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn get-env! (property)
-            let
-                env $ unsafe-coerce js/process.env JsObject
-              aget env property
-          :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'String
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.util
