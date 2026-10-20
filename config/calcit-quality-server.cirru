@@ -6,19 +6,19 @@
       :deprecatedCalls 0
       :schemaDynamic 0
       :typeNone 0
-      :typeNotFull 1
+      :typeNotFull 0
       :unresolved 3
-      :unsafeCoerce 3
+      :unsafeCoerce 0
     |app.comp.container/on-file-selected! $ {} (:codeDynamic 0)
-      :codeNil 1
+      :codeNil 0
       :declaredOptional 0
       :deprecatedCalls 0
       :schemaDynamic 0
       :typeNone 0
       :typeNotFull 1
-      :unresolved 1
-      :unsafeCoerce 6
-    |app.main/*reel $ {} (:codeDynamic 0)
+      :unresolved 0
+      :unsafeCoerce 0
+    |app.main/dispatch! $ {} (:codeDynamic 0)
       :codeNil 0
       :declaredOptional 0
       :deprecatedCalls 0
@@ -26,51 +26,6 @@
       :typeNone 0
       :typeNotFull 1
       :unresolved 1
-      :unsafeCoerce 0
-    |app.main/dispatch! $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 0
-      :unsafeCoerce 0
-    |app.main/main! $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 0
-      :unsafeCoerce 0
-    |app.main/persist-storage! $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 0
-      :unsafeCoerce 0
-    |app.main/reload! $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 0
-      :unsafeCoerce 0
-    |app.main/render-app! $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 0
       :unsafeCoerce 0
     |app.server/as-file-info-list $ {} (:codeDynamic 0)
       :codeNil 0
@@ -80,7 +35,7 @@
       :typeNone 0
       :typeNotFull 1
       :unresolved 0
-      :unsafeCoerce 2
+      :unsafeCoerce 0
     |app.server/as-fs-stat $ {} (:codeDynamic 0)
       :codeNil 0
       :declaredOptional 0
@@ -89,7 +44,7 @@
       :typeNone 0
       :typeNotFull 1
       :unresolved 0
-      :unsafeCoerce 1
+      :unsafeCoerce 0
     |app.server/check-version! $ {} (:codeDynamic 0)
       :codeNil 0
       :declaredOptional 0
@@ -99,33 +54,6 @@
       :typeNotFull 1
       :unresolved 0
       :unsafeCoerce 0
-    |app.server/dirname $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 0
-      :unresolved 0
-      :unsafeCoerce 1
-    |app.server/format-created-time $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 0
-      :unresolved 0
-      :unsafeCoerce 1
-    |app.server/is-file-path? $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 0
-      :unresolved 0
-      :unsafeCoerce 1
     |app.server/load-stats! $ {} (:codeDynamic 0)
       :codeNil 0
       :declaredOptional 0
@@ -135,24 +63,6 @@
       :typeNotFull 1
       :unresolved 0
       :unsafeCoerce 0
-    |app.server/main! $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 0
-      :unsafeCoerce 3
-    |app.server/make-task-array $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 0
-      :unresolved 0
-      :unsafeCoerce 1
     |app.server/on-download! $ {} (:codeDynamic 0)
       :codeNil 0
       :declaredOptional 0
@@ -188,7 +98,7 @@
       :typeNone 0
       :typeNotFull 1
       :unresolved 0
-      :unsafeCoerce 2
+      :unsafeCoerce 0
     |app.server/on-upload! $ {} (:codeDynamic 0)
       :codeNil 0
       :declaredOptional 0
@@ -197,25 +107,7 @@
       :typeNone 0
       :typeNotFull 1
       :unresolved 0
-      :unsafeCoerce 4
-    |app.server/read-file-names $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 0
-      :unresolved 0
-      :unsafeCoerce 1
-    |app.server/read-package-info $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 0
-      :unresolved 0
-      :unsafeCoerce 1
+      :unsafeCoerce 0
     |app.server/reload! $ {} (:codeDynamic 0)
       :codeNil 0
       :declaredOptional 0
@@ -225,24 +117,6 @@
       :typeNotFull 1
       :unresolved 0
       :unsafeCoerce 0
-    |app.server/serve $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 0
-      :unsafeCoerce 0
-    |app.server/serve-files! $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 0
-      :unsafeCoerce 2
     |app.server/turn-list $ {} (:codeDynamic 0)
       :codeNil 0
       :declaredOptional 0
@@ -251,34 +125,16 @@
       :typeNone 0
       :typeNotFull 1
       :unresolved 0
-      :unsafeCoerce 1
-    |app.server/yellow-text $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 0
-      :unresolved 0
-      :unsafeCoerce 1
-    |app.util/get-env! $ {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 0
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 0
-      :unsafeCoerce 1
+      :unsafeCoerce 0
   :metrics $ {} (:codeDynamic 0)
-    :codeNil 6
+    :codeNil 5
     :declaredOptional 0
     :deprecatedCalls 0
     :schemaDynamic 1
     :typeNone 0
-    :typeNotFull 23
-    :unresolved 7
-    :unsafeCoerce 32
+    :typeNotFull 13
+    :unresolved 6
+    :unsafeCoerce 0
   :scope $ {} (:includeDependencies false)
     :namespace nil
     :namespacePrefix nil

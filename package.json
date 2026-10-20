@@ -1,13 +1,25 @@
 {
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.18.0",
   "name": "file-sucker",
   "version": "0.1.14",
   "description": "Grab files from phone to laptop very over WIFI",
-  "main": "index.js",
   "bin": "./server.mjs",
+  "files": [
+    "server.mjs",
+    "server-out/",
+    "dist/",
+    "entry/address.mjs",
+    "entry/static.mjs"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
-    "compile-server": "caps --strict --ci && calcit calcit.cirru --entry server --emit-path server-out/ js",
-    "w-server": "calcit calcit.cirru --entry server --emit-path server-out/ js"
+    "compile": "calcit calcit.cirru js",
+    "build": "yarn compile && vite build",
+    "dev": "vite",
+    "compile-server": "calcit calcit.cirru --entry server --emit-path server-out/ js",
+    "w-server": "calcit calcit.cirru --entry server --emit-path server-out/ js --watch"
   },
   "repository": {
     "type": "git",
@@ -22,16 +34,14 @@
     "vite": "8.2.2"
   },
   "dependencies": {
-    "@calcit/procs": "0.22.0-alpha.3",
+    "@calcit/procs": "0.30.1-alpha.5",
     "chalk": "^5.2.0",
     "dayjs": "^1.11.7",
     "finalhandler": "^1.2.0",
-    "formidable": "^2.1.1",
-    "ip": "^1.1.8",
+    "formidable": "^3.5.4",
     "latest-version": "^7.0.0",
     "prettysize": "^2.0.0",
     "qrcode-terminal": "^0.12.0",
-    "serve-static": "^1.15.0",
-    "shortid": "^2.2.16"
+    "serve-static": "^2.2.1"
   }
 }
