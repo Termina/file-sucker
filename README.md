@@ -56,8 +56,9 @@ HOST=127.0.0.1 NO_VERSION_CHECK=1 node /absolute/path/to/server.mjs
 只有公开 Demo 工作流使用 COS base。没有发布新的 npm 版本。
 npm 包改用明确的运行文件 allowlist，保留服务端产物、网页构建与两个运行期 bridge，
 不包含 `.calcit/` 迁移报告、缓存或本地模块目录。
-浏览器/服务端两套 entry 分别运行完整 strict，项目定义使用一次全定义检查，
-不再复制逐命名空间清单；两套原质量预算与原测试保留，不扩大预算。
+浏览器/服务端两套 entry 分别运行完整 strict，公开定义按各自 browser/Node target
+检查；共享定义在两个入口分别检查，不能用 browser 下的全定义检查误判 Node FFI。
+两套原质量预算与原测试保留，不扩大预算。
 服务端监听使用 `yarn w-server`，由 server JS entry 选择后端，不与一次性 `js` 子命令混用。
 
 两份原质量门禁继续保留。经逐项审阅批准，仅迁移 `app.main/dispatch!` 的
