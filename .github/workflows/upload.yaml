@@ -91,6 +91,7 @@ jobs:
         name: runtime-${{ github.run_id }}-${{ github.run_attempt }}
         path: |
           server-out/
+          js-out/
           dist/
         if-no-files-found: error
         retention-days: 3
