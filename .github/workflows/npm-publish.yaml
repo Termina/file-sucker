@@ -47,12 +47,14 @@ jobs:
     - name: Validate Calcit snapshot and types
       run: |
         set -euo pipefail
+        # Public definitions must be checked under their actual browser/Node target.
         calcit --check-only --ns 'app.$meta' --ns app.comp.container --ns app.config --ns app.main --ns app.schema --ns app.updater --ns app.util
         calcit analyze weak-types --only dynamic-method --summary-only --format json | jq -e '.data.summary.findings == 0'
         calcit analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
         calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
         calcit --entry server --check-only --ns app.server --ns app.schema --ns app.util
         calcit fix --workflow strict --verify --format edn
+        calcit --entry server fix --workflow strict --verify --format edn
         calcit test app.schema --require-match
         calcit --entry server analyze weak-types --only dynamic-method --summary-only --format json | jq -e '.data.summary.findings == 0'
         calcit --entry server analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'

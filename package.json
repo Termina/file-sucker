@@ -19,7 +19,7 @@
     "build": "yarn compile && vite build",
     "dev": "vite",
     "compile-server": "calcit calcit.cirru --entry server --emit-path server-out/ js",
-    "w-server": "calcit calcit.cirru --entry server --emit-path server-out/ js --watch"
+    "w-server": "calcit -w calcit.cirru --entry server --emit-path server-out/"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
     "vite": "8.2.2"
   },
   "dependencies": {
-    "@calcit/procs": "0.30.1-alpha.5",
+    "@calcit/procs": "0.30.1",
     "chalk": "^5.2.0",
     "dayjs": "^1.11.7",
     "finalhandler": "^1.2.0",
