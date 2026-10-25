@@ -1,0 +1,91 @@
+name: Prepare File Sucker source migration
+on:
+  push:
+    branches: [prepare/file-sucker-source031]
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6.5.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - run: |
+          corepack enable
+          corepack prepare yarn@4.18.0 --activate
+      - uses: calcit-lang/setup-calcit@v1.5.0
+        with:
+          tools: calcit,caps
+          caps-version: "0.1.1"
+          deps-file: deps.cirru
+      - name: Resolve original formal graph
+        run: |
+          set -euo pipefail
+          test "$(calcit -v)" = 0.30.1
+          caps --strict --ci
+          yarn install --immutable
+          caps verify --toolchain
+          git diff --quiet -- deps.cirru package.json yarn.lock .yarnrc.yml
+      - name: Preserve original dual-target gates
+        run: |
+          set -euo pipefail
+          mkdir -p acceptance
+          calcit --check-only --ns 'app.$meta' --ns app.comp.container --ns app.config --ns app.main --ns app.schema --ns app.updater --ns app.util --format json > acceptance/browser-before.json
+          calcit --entry server --check-only --ns app.server --ns app.schema --ns app.util --format json > acceptance/server-before.json
+          calcit fix --workflow strict --verify --format json | tee acceptance/strict-before.json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'
+          calcit --entry server fix --workflow strict --verify --format json | tee acceptance/strict-server-before.json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'
+          calcit analyze quality --baseline config/calcit-quality.cirru
+          calcit --entry server analyze quality --baseline config/calcit-quality-server.cirru
+          calcit test app.schema --require-match --format json | tee acceptance/tests-before.json
+          calcit js
+          calcit --entry server --emit-path server-out/ js
+          yarn vite build --base=./
+      - name: Official guarded source migration
+        run: node apply-reviewed.mjs
+      - name: Resolve coordinated target formal graph
+        run: |
+          set -euo pipefail
+          cp target-deps.cirru deps.cirru
+          cp target-package.json package.json
+          cp target-yarn.lock yarn.lock
+          caps --strict --ci
+          yarn install --immutable
+          caps verify --toolchain
+          cmp deps.cirru target-deps.cirru
+          cmp package.json target-package.json
+          cmp yarn.lock target-yarn.lock
+      - name: Complete original gates against migrated source and graph
+        run: |
+          set -euo pipefail
+          calcit edit format
+          test "$(git hash-object calcit.cirru)" = "$(cat acceptance/snapshot-after-blob.txt)"
+          calcit --check-only --ns 'app.$meta' --ns app.comp.container --ns app.config --ns app.main --ns app.schema --ns app.updater --ns app.util --format json > acceptance/browser.json
+          calcit --entry server --check-only --ns app.server --ns app.schema --ns app.util --format json > acceptance/server.json
+          calcit fix --workflow strict --verify --format json | tee acceptance/strict.json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'
+          calcit --entry server fix --workflow strict --verify --format json | tee acceptance/strict-server.json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'
+          calcit analyze quality --baseline config/calcit-quality.cirru
+          calcit --entry server analyze quality --baseline config/calcit-quality-server.cirru
+          calcit test app.schema --require-match --format json | tee acceptance/tests.json
+          calcit analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
+          calcit analyze weak-types --only dynamic-method --summary-only --format json | jq -e '.data.summary.findings == 0'
+          calcit --entry server analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
+          calcit --entry server analyze weak-types --only dynamic-method --summary-only --format json | jq -e '.data.summary.findings == 0'
+          calcit js
+          calcit --entry server --emit-path server-out/ js
+          yarn vite build --base=./
+          git diff --quiet -- config .yarnrc.yml entry server.mjs main.mjs
+          cp calcit.cirru acceptance/snapshot.cirru
+          cp -R dist js-out server-out acceptance/
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: file-sucker-source-evidence
+          path: acceptance
+          if-no-files-found: error
+          retention-days: 30

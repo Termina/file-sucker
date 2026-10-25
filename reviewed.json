@@ -1,0 +1,6469 @@
+{
+  "config": {
+    "schema_version": 1,
+    "command": "config.show",
+    "data": {
+      "package": "app",
+      "version": "0.1.14",
+      "selected_entry": null,
+      "entries": [
+        {
+          "name": "default",
+          "mode": "js",
+          "target": "browser",
+          "init_fn": "app.main/main!",
+          "reload_fn": "app.main/reload!",
+          "description": "",
+          "modules": [
+            "respo.calcit/",
+            "respo-ui.calcit/",
+            "respo-markdown.calcit/",
+            "reel.calcit/",
+            "skir/",
+            "js-ffi/"
+          ],
+          "type_slots": {},
+          "feature_policy": {}
+        },
+        {
+          "name": "server",
+          "mode": "js",
+          "target": "node",
+          "init_fn": "app.server/main!",
+          "reload_fn": "app.server/reload!",
+          "description": "",
+          "modules": [
+            "skir/",
+            "respo.calcit/",
+            "respo-ui.calcit/"
+          ],
+          "type_slots": {},
+          "feature_policy": {}
+        }
+      ],
+      "verification_schema_version": 1,
+      "verification_profiles": []
+    },
+    "diagnostics": [],
+    "revision": "md5:2dc93d0386698b8a72b958d338639e95"
+  },
+  "namespaces": [
+    {
+      "command": "query.ns",
+      "data": {
+        "definition_count": 2,
+        "doc": "",
+        "namespace": "app.$meta",
+        "ns_code": [
+          "ns",
+          "app.$meta"
+        ]
+      },
+      "schema_version": 1
+    },
+    {
+      "command": "query.ns",
+      "data": {
+        "definition_count": 9,
+        "doc": "",
+        "namespace": "app.comp.container",
+        "ns_code": [
+          "ns",
+          "app.comp.container",
+          [
+            ":require",
+            [
+              "respo-ui.core",
+              ":refer",
+              [
+                "hsl"
+              ]
+            ],
+            [
+              "respo-ui.core",
+              ":as",
+              "ui"
+            ],
+            [
+              "respo.core",
+              ":refer",
+              [
+                "defcomp",
+                ">>",
+                "<>",
+                "list->",
+                "div",
+                "button",
+                "textarea",
+                "input",
+                "span",
+                "a"
+              ]
+            ],
+            [
+              "respo.comp.space",
+              ":refer",
+              [
+                "=<"
+              ]
+            ],
+            [
+              "respo-md.comp.md",
+              ":refer",
+              [
+                "comp-md"
+              ]
+            ],
+            [
+              "app.config",
+              ":refer",
+              [
+                "dev?"
+              ]
+            ],
+            [
+              "|axios",
+              ":default",
+              "axios"
+            ],
+            [
+              "app.util",
+              ":refer",
+              [
+                "format-percent"
+              ]
+            ],
+            [
+              "reel.comp.reel",
+              ":refer",
+              [
+                "comp-typed-reel"
+              ]
+            ],
+            [
+              "js-ffi.browser",
+              ":as",
+              "browser"
+            ],
+            [
+              "app.schema",
+              ":as",
+              "schema"
+            ]
+          ]
+        ]
+      },
+      "schema_version": 1
+    },
+    {
+      "command": "query.ns",
+      "data": {
+        "definition_count": 2,
+        "doc": "",
+        "namespace": "app.config",
+        "ns_code": [
+          "ns",
+          "app.config"
+        ]
+      },
+      "schema_version": 1
+    },
+    {
+      "command": "query.ns",
+      "data": {
+        "definition_count": 7,
+        "doc": "",
+        "namespace": "app.main",
+        "ns_code": [
+          "ns",
+          "app.main",
+          [
+            ":require",
+            [
+              "respo.core",
+              ":refer",
+              [
+                "render!",
+                "clear-cache!"
+              ]
+            ],
+            [
+              "app.comp.container",
+              ":refer",
+              [
+                "comp-container"
+              ]
+            ],
+            [
+              "app.updater",
+              ":refer",
+              [
+                "updater"
+              ]
+            ],
+            [
+              "app.schema",
+              ":as",
+              "schema"
+            ],
+            [
+              "reel.util",
+              ":refer",
+              [
+                "listen-devtools!"
+              ]
+            ],
+            [
+              "app.config",
+              ":as",
+              "config"
+            ],
+            [
+              "|./calcit.build-errors",
+              ":default",
+              "build-errors"
+            ],
+            [
+              "|bottom-tip",
+              ":default",
+              "hud!"
+            ],
+            [
+              "reel.typed",
+              ":as",
+              "typed"
+            ],
+            [
+              "respo.ffi.browser",
+              ":as",
+              "dom"
+            ],
+            [
+              "js-ffi.browser",
+              ":as",
+              "browser"
+            ],
+            [
+              "js-ffi.shared",
+              ":as",
+              "shared"
+            ]
+          ]
+        ]
+      },
+      "schema_version": 1
+    },
+    {
+      "command": "query.ns",
+      "data": {
+        "definition_count": 5,
+        "doc": "",
+        "namespace": "app.schema",
+        "ns_code": [
+          "ns",
+          "app.schema"
+        ]
+      },
+      "schema_version": 1
+    },
+    {
+      "command": "query.ns",
+      "data": {
+        "definition_count": 38,
+        "doc": "",
+        "namespace": "app.server",
+        "ns_code": [
+          "ns",
+          "app.server",
+          [
+            ":require",
+            [
+              "|formidable",
+              ":default",
+              "formidable"
+            ],
+            [
+              "|fs",
+              ":as",
+              "fs"
+            ],
+            [
+              "|qrcode-terminal",
+              ":default",
+              "qrcode"
+            ],
+            [
+              "|dayjs",
+              ":default",
+              "dayjs"
+            ],
+            [
+              "|prettysize",
+              ":default",
+              "prettysize"
+            ],
+            [
+              "|latest-version",
+              ":default",
+              "latest-version"
+            ],
+            [
+              "|chalk",
+              ":default",
+              "chalk"
+            ],
+            [
+              "respo.render.html",
+              ":refer",
+              [
+                "make-string"
+              ]
+            ],
+            [
+              "respo.core",
+              ":refer",
+              [
+                "div",
+                "html",
+                "head",
+                "body",
+                "list->",
+                "<>",
+                "span",
+                "a",
+                "style",
+                "link",
+                "create-element"
+              ]
+            ],
+            [
+              "respo.comp.space",
+              ":refer",
+              [
+                "comp-space"
+              ]
+            ],
+            [
+              "respo-ui.core",
+              ":as",
+              "ui"
+            ],
+            [
+              "respo-ui.core",
+              ":refer",
+              [
+                "hsl"
+              ]
+            ],
+            [
+              "skir.core",
+              ":as",
+              "skir"
+            ],
+            [
+              "respo.comp.space",
+              ":refer",
+              [
+                "=<"
+              ]
+            ],
+            [
+              "|../entry/address.mjs",
+              ":refer",
+              [
+                "addresses"
+              ]
+            ],
+            [
+              "|url",
+              ":default",
+              "url"
+            ],
+            [
+              "js-ffi.node",
+              ":as",
+              "node"
+            ],
+            [
+              "|../entry/static.mjs",
+              ":as",
+              "static"
+            ]
+          ]
+        ]
+      },
+      "schema_version": 1
+    },
+    {
+      "command": "query.ns",
+      "data": {
+        "definition_count": 1,
+        "doc": "",
+        "namespace": "app.updater",
+        "ns_code": [
+          "ns",
+          "app.updater",
+          [
+            ":require",
+            [
+              "respo.cursor",
+              ":refer",
+              [
+                "update-states"
+              ]
+            ]
+          ]
+        ]
+      },
+      "schema_version": 1
+    },
+    {
+      "command": "query.ns",
+      "data": {
+        "definition_count": 1,
+        "doc": "",
+        "namespace": "app.util",
+        "ns_code": [
+          "ns",
+          "app.util"
+        ]
+      },
+      "schema_version": 1
+    }
+  ],
+  "definitions": [
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "def",
+          "calcit-dirname",
+          "|"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.$meta/calcit-dirname",
+        "js_ffi": null,
+        "schema": null,
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:b9c073ddc99189680e33ec22dc7f5689",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "def",
+          "calcit-filename",
+          "|calcit.cirru"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.$meta/calcit-filename",
+        "js_ffi": null,
+        "schema": null,
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:a2706c65c80308f07d99e2a9ab5bd02b",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "EventHost",
+          [
+            ":target",
+            "'app.comp.container/InputTargetHost"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "browser"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)",
+        "id": "app.comp.container/EventHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:f65779d9eab12c9c4a59237210ad7856",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "FileArrayHost",
+          [
+            ".for-each!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.comp.container/FileArrayHost",
+                    [
+                      "::",
+                      "'Fn",
+                      [
+                        "{}",
+                        [
+                          ":args",
+                          [
+                            "[]",
+                            "'app.comp.container/FileHost",
+                            "'Number",
+                            "'Dynamic"
+                          ]
+                        ],
+                        [
+                          ":return",
+                          "'Dynamic"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  ":return",
+                  "'Dynamic"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":for-each!": "forEach"
+          },
+          ":target": {
+            "__edn_tag": "browser"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)\n  :names $ {} $ :for-each! |forEach",
+        "id": "app.comp.container/FileArrayHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:4c10161a6c85e8a77ce329fa7fea57f7",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "FileHost",
+          [
+            ":name",
+            "'String"
+          ],
+          [
+            ":size",
+            "'Number"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "browser"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)",
+        "id": "app.comp.container/FileHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:d045816c41cedc54a8441f48c6834492",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "FormDataHost",
+          [
+            ".append!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.comp.container/FormDataHost",
+                    "'String",
+                    "'app.comp.container/FileHost"
+                  ]
+                ],
+                [
+                  ":return",
+                  "'Dynamic"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":append!": "append"
+          },
+          ":target": {
+            "__edn_tag": "browser"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)\n  :names $ {} $ :append! |append",
+        "id": "app.comp.container/FormDataHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:a705e8f34d904ae6cff22377ca4dc5db",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "InputTargetHost",
+          [
+            ":files",
+            [
+              "::",
+              "'JsNullish",
+              "'JsObject"
+            ]
+          ],
+          [
+            ":value",
+            "'String"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "browser"
+          },
+          ":writable": {
+            "__edn_set": [
+              {
+                "__edn_tag": "value"
+              }
+            ]
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)\n  :writable $ #{} :value",
+        "id": "app.comp.container/InputTargetHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:57d868d7d3f2585ddd57dc0616b34ec2",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "PromiseHost",
+          [
+            ".then!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.comp.container/PromiseHost",
+                    [
+                      "::",
+                      "'Fn",
+                      [
+                        "{}",
+                        [
+                          ":args",
+                          [
+                            "[]",
+                            "'Dynamic"
+                          ]
+                        ],
+                        [
+                          ":return",
+                          "'Dynamic"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  ":return",
+                  "'app.comp.container/PromiseHost"
+                ]
+              ]
+            ]
+          ],
+          [
+            ".catch!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.comp.container/PromiseHost",
+                    [
+                      "::",
+                      "'Fn",
+                      [
+                        "{}",
+                        [
+                          ":args",
+                          [
+                            "[]",
+                            "'Dynamic"
+                          ]
+                        ],
+                        [
+                          ":return",
+                          "'Dynamic"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  ":return",
+                  "'app.comp.container/PromiseHost"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":catch!": "catch",
+            ":then!": "then"
+          },
+          ":target": {
+            "__edn_tag": "browser"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)\n  :names $ {} (:catch! |catch) (:then! |then)",
+        "id": "app.comp.container/PromiseHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:2883052803771d0cbda9fdffe1627078",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "UploadProgressHost",
+          [
+            ":loaded",
+            "'Number"
+          ],
+          [
+            ":total",
+            [
+              "::",
+              "'JsNullish",
+              "'Number"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "browser"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)",
+        "id": "app.comp.container/UploadProgressHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:37a5ab57b9662459a02fcb40f159d6b9",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defcomp",
+          "comp-container",
+          [
+            "reel"
+          ],
+          [
+            "let",
+            [
+              [
+                "store",
+                [
+                  ":store",
+                  "reel"
+                ]
+              ],
+              [
+                "states",
+                [
+                  ":states",
+                  "store"
+                ]
+              ],
+              [
+                "location",
+                [
+                  "browser/location-host"
+                ]
+              ]
+            ],
+            [
+              "div",
+              [
+                "{}",
+                [
+                  ":style",
+                  [
+                    "merge",
+                    "ui/global",
+                    "ui/column",
+                    [
+                      "{}",
+                      [
+                        ":padding",
+                        "|16px"
+                      ],
+                      [
+                        ":font-size",
+                        "|16px"
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "div",
+                [
+                  "{}",
+                  [
+                    ":style",
+                    [
+                      "merge",
+                      "ui/row",
+                      [
+                        "{}",
+                        [
+                          ":font-size",
+                          "16"
+                        ],
+                        [
+                          ":color",
+                          [
+                            "hsl",
+                            "0",
+                            "0",
+                            "50"
+                          ]
+                        ],
+                        [
+                          ":font-weight",
+                          "500"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "a",
+                  [
+                    "{}",
+                    [
+                      ":href",
+                      "|/files"
+                    ],
+                    [
+                      ":style",
+                      [
+                        "{}",
+                        [
+                          ":font-family",
+                          "ui/font-fancy"
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "<>",
+                    "|Browse files"
+                  ]
+                ]
+              ],
+              [
+                "=<",
+                "nil",
+                "16"
+              ],
+              [
+                "div",
+                [
+                  "{}",
+                  [
+                    ":style",
+                    [
+                      "merge",
+                      "ui/center",
+                      [
+                        "{}",
+                        [
+                          ":padding",
+                          "8"
+                        ],
+                        [
+                          ":position",
+                          ":relative"
+                        ],
+                        [
+                          ":background-color",
+                          [
+                            "hsl",
+                            "240",
+                            "80",
+                            "70"
+                          ]
+                        ],
+                        [
+                          ":height",
+                          "120"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "<>",
+                  "|Select files to upload",
+                  [
+                    "{}",
+                    [
+                      ":color",
+                      ":white"
+                    ],
+                    [
+                      ":font-size",
+                      "24"
+                    ],
+                    [
+                      ":font-family",
+                      "ui/font-fancy"
+                    ]
+                  ]
+                ],
+                [
+                  "input",
+                  [
+                    "{}",
+                    [
+                      ":type",
+                      "|file"
+                    ],
+                    [
+                      ":multiple",
+                      "true"
+                    ],
+                    [
+                      ":on-change",
+                      "on-file-selected!"
+                    ],
+                    [
+                      ":style",
+                      [
+                        "{}",
+                        [
+                          ":position",
+                          ":absolute"
+                        ],
+                        [
+                          ":top",
+                          "0"
+                        ],
+                        [
+                          ":bottom",
+                          "0"
+                        ],
+                        [
+                          ":left",
+                          "0"
+                        ],
+                        [
+                          ":right",
+                          "0"
+                        ],
+                        [
+                          ":width",
+                          "|100%"
+                        ],
+                        [
+                          ":opacity",
+                          "0"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "=<",
+                "nil",
+                "16"
+              ],
+              [
+                "list->",
+                [
+                  "{}",
+                  [
+                    ":style",
+                    [
+                      "{}"
+                    ]
+                  ]
+                ],
+                [
+                  "->",
+                  [
+                    ":logs",
+                    "store"
+                  ],
+                  [
+                    "map-indexed",
+                    [
+                      "fn",
+                      [
+                        "idx",
+                        "log"
+                      ],
+                      [
+                        "[]",
+                        "idx",
+                        [
+                          "div",
+                          [
+                            "{}",
+                            [
+                              ":style",
+                              [
+                                "{}",
+                                [
+                                  ":color",
+                                  [
+                                    "hsl",
+                                    "0",
+                                    "0",
+                                    "60"
+                                  ]
+                                ],
+                                [
+                                  ":font-family",
+                                  "ui/font-fancy"
+                                ],
+                                [
+                                  ":line-height",
+                                  "|24px"
+                                ]
+                              ]
+                            ]
+                          ],
+                          [
+                            "<>",
+                            "log"
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "div",
+                [
+                  "{}",
+                  [
+                    ":style",
+                    [
+                      "merge",
+                      "ui/row",
+                      [
+                        "{}",
+                        [
+                          ":font-size",
+                          "16"
+                        ],
+                        [
+                          ":color",
+                          [
+                            "hsl",
+                            "0",
+                            "0",
+                            "50"
+                          ]
+                        ],
+                        [
+                          ":font-weight",
+                          "500"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "<>",
+                  [
+                    "str",
+                    "|Connected to "
+                  ]
+                ],
+                [
+                  "=<",
+                  "8",
+                  "nil"
+                ],
+                [
+                  "a",
+                  [
+                    "{}",
+                    [
+                      ":style",
+                      [
+                        "{}",
+                        [
+                          ":color",
+                          [
+                            "hsl",
+                            "240",
+                            "80",
+                            "60"
+                          ]
+                        ],
+                        [
+                          ":font-family",
+                          "ui/font-fancy"
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "<>",
+                    [
+                      ".-host",
+                      "location"
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "when",
+                "dev?",
+                [
+                  "comp-typed-reel",
+                  [
+                    ">>",
+                    "states",
+                    ":reel"
+                  ],
+                  [
+                    "assoc",
+                    "reel",
+                    ":display?",
+                    "false"
+                  ],
+                  [
+                    "{}",
+                    [
+                      ":width",
+                      "|100%"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.comp.container/comp-container",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'respo.schema/Component"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              [
+                "::",
+                "'reel.typed/State",
+                "'app.schema/Op",
+                "'app.schema/Store"
+              ]
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:317840206d730c399304706a39602e90",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "on-file-selected!",
+          [
+            "e",
+            "d!"
+          ],
+          [
+            "let",
+            [
+              [
+                "event",
+                [
+                  "js-cast",
+                  [
+                    "option:unwrap",
+                    [
+                      "get",
+                      "e",
+                      ":event"
+                    ]
+                  ],
+                  "'app.comp.container/EventHost"
+                ]
+              ],
+              [
+                "target",
+                [
+                  ".-target",
+                  "event"
+                ]
+              ],
+              [
+                "location",
+                [
+                  "browser/location-host"
+                ]
+              ],
+              [
+                "files",
+                [
+                  "js-cast",
+                  [
+                    "match",
+                    [
+                      "js-nullish->option",
+                      [
+                        ".-files",
+                        "target"
+                      ]
+                    ],
+                    [
+                      [
+                        ":some",
+                        "raw"
+                      ],
+                      [
+                        "js/Array.from",
+                        "raw"
+                      ]
+                    ],
+                    [
+                      [
+                        ":none"
+                      ],
+                      [
+                        "js-array"
+                      ]
+                    ]
+                  ],
+                  "'app.comp.container/FileArrayHost"
+                ]
+              ]
+            ],
+            [
+              "set!",
+              [
+                ".-value",
+                "target"
+              ],
+              "|"
+            ],
+            [
+              "d!",
+              [
+                "schema/Op",
+                ":clear-logs"
+              ]
+            ],
+            [
+              "files",
+              ".for-each!",
+              [
+                "fn",
+                [
+                  "file",
+                  "i",
+                  "file-array"
+                ],
+                [
+                  "if",
+                  [
+                    ">",
+                    [
+                      ".-size",
+                      "file"
+                    ],
+                    [
+                      "*",
+                      "4",
+                      "1024",
+                      "1024",
+                      "1024"
+                    ]
+                  ],
+                  [
+                    "d!",
+                    [
+                      "schema/Op",
+                      ":log",
+                      "|File larger than 4G, which is not supported."
+                    ]
+                  ],
+                  [
+                    "let",
+                    [
+                      [
+                        "form",
+                        [
+                          "js-cast",
+                          [
+                            "new",
+                            "js/FormData"
+                          ],
+                          "'app.comp.container/FormDataHost"
+                        ]
+                      ]
+                    ],
+                    [
+                      "form",
+                      ".append!",
+                      "|file",
+                      "file"
+                    ],
+                    [
+                      "d!",
+                      [
+                        "schema/Op",
+                        ":log",
+                        [
+                          "str",
+                          "|sending ",
+                          [
+                            ".-name",
+                            "file"
+                          ]
+                        ]
+                      ]
+                    ],
+                    [
+                      "let",
+                      [
+                        [
+                          "promise",
+                          [
+                            "js-cast",
+                            [
+                              "axios",
+                              [
+                                "js-object",
+                                [
+                                  ":url",
+                                  [
+                                    "str",
+                                    [
+                                      ".-protocol",
+                                      "location"
+                                    ],
+                                    "|//",
+                                    [
+                                      ".-host",
+                                      "location"
+                                    ],
+                                    "|/upload"
+                                  ]
+                                ],
+                                [
+                                  ":data",
+                                  "form"
+                                ],
+                                [
+                                  ":method",
+                                  "|post"
+                                ],
+                                [
+                                  ":onUploadProgress",
+                                  [
+                                    "fn",
+                                    [
+                                      "ratio"
+                                    ],
+                                    [
+                                      "let",
+                                      [
+                                        [
+                                          "progress",
+                                          [
+                                            "js-cast",
+                                            "ratio",
+                                            "'app.comp.container/UploadProgressHost"
+                                          ]
+                                        ]
+                                      ],
+                                      [
+                                        "d!",
+                                        [
+                                          "schema/Op",
+                                          ":log",
+                                          [
+                                            "match",
+                                            [
+                                              "js-nullish->option",
+                                              [
+                                                ".-total",
+                                                "progress"
+                                              ]
+                                            ],
+                                            [
+                                              [
+                                                ":some",
+                                                "total"
+                                              ],
+                                              [
+                                                "if",
+                                                [
+                                                  ">",
+                                                  "total",
+                                                  "0"
+                                                ],
+                                                [
+                                                  "str",
+                                                  "|Uploading ",
+                                                  [
+                                                    "format-percent",
+                                                    [
+                                                      ".-loaded",
+                                                      "progress"
+                                                    ],
+                                                    "total"
+                                                  ]
+                                                ],
+                                                [
+                                                  "str",
+                                                  "|Uploading ",
+                                                  [
+                                                    ".-loaded",
+                                                    "progress"
+                                                  ],
+                                                  "| bytes"
+                                                ]
+                                              ]
+                                            ],
+                                            [
+                                              [
+                                                ":none"
+                                              ],
+                                              [
+                                                "str",
+                                                "|Uploading ",
+                                                [
+                                                  ".-loaded",
+                                                  "progress"
+                                                ],
+                                                "| bytes"
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ],
+                            "'app.comp.container/PromiseHost"
+                          ]
+                        ]
+                      ],
+                      [
+                        "let",
+                        [
+                          [
+                            "handled",
+                            [
+                              "promise",
+                              ".then!",
+                              [
+                                "fn",
+                                [
+                                  "response"
+                                ],
+                                [
+                                  "d!",
+                                  [
+                                    "schema/Op",
+                                    ":log",
+                                    [
+                                      "str",
+                                      [
+                                        ".-name",
+                                        "file"
+                                      ],
+                                      "| uploaded!"
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ],
+                        [
+                          "handled",
+                          ".catch!",
+                          [
+                            "fn",
+                            [
+                              "error"
+                            ],
+                            [
+                              "eprintln",
+                              "error"
+                            ],
+                            [
+                              "d!",
+                              [
+                                "schema/Op",
+                                ":log",
+                                [
+                                  "str",
+                                  "error"
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          "&unit"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.comp.container/on-file-selected!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Unit"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              [
+                "::",
+                "'Map",
+                "'Dynamic",
+                "'Dynamic"
+              ],
+              [
+                "::",
+                "'Fn",
+                [
+                  "{}",
+                  [
+                    ":return",
+                    "'Unit"
+                  ],
+                  [
+                    ":args",
+                    [
+                      "[]",
+                      "'Dynamic"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:c7c3e884065e53b66363dea8ed1bb8ca",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "def",
+          "dev?",
+          [
+            "=",
+            "|env",
+            [
+              "option:unwrap-or",
+              [
+                "get-env",
+                "|mode"
+              ],
+              "|release"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.config/dev?",
+        "js_ffi": null,
+        "schema": "'Bool",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:601bf58ba62c0b169f496967feb04c54",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "def",
+          "site",
+          [
+            "{}",
+            [
+              ":storage",
+              "|file-sucker"
+            ],
+            [
+              ":dev-ui",
+              "|http://localhost:8100/main.css"
+            ],
+            [
+              ":release-ui",
+              "|http://cdn.tiye.me/favored-fonts/main.css"
+            ],
+            [
+              ":cdn-url",
+              "|http://cdn.tiye.me/file-sucker/"
+            ],
+            [
+              ":title",
+              "|File Sucker"
+            ],
+            [
+              ":icon",
+              "|http://cdn.tiye.me/logo/mvc-works.png"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.config/site",
+        "js_ffi": null,
+        "schema": [
+          "::",
+          "'Map",
+          "'Tag",
+          "'String"
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:5c0515edbab3efdb1d02e119431c2806",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defref",
+          "*reel",
+          [
+            "typed/new-reel",
+            "schema/store"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.main/*reel",
+        "js_ffi": null,
+        "schema": [
+          "::",
+          "'Ref",
+          [
+            "::",
+            "'reel.typed/State",
+            "'app.schema/Op",
+            "'app.schema/Store"
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:7d38854d8a2fc0e96e218db546814b04",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "dispatch!",
+          [
+            "op"
+          ],
+          [
+            "let",
+            [
+              [
+                "event",
+                [
+                  "if",
+                  [
+                    "enum?",
+                    "op"
+                  ],
+                  "op",
+                  [
+                    "raise",
+                    "|Expected operation Enum"
+                  ]
+                ]
+              ],
+              [
+                "control",
+                [
+                  "typed/decode-control",
+                  "event"
+                ]
+              ]
+            ],
+            [
+              "reset!",
+              "*reel",
+              [
+                "match",
+                "control",
+                [
+                  [
+                    ":some",
+                    "action"
+                  ],
+                  [
+                    "typed/apply-control",
+                    "updater",
+                    "@*reel",
+                    "action"
+                  ]
+                ],
+                [
+                  [
+                    ":none"
+                  ],
+                  [
+                    "typed/record-op",
+                    "updater",
+                    "@*reel",
+                    [
+                      "schema/decode-op",
+                      "event"
+                    ],
+                    [
+                      "generate-id!"
+                    ],
+                    [
+                      ":timestamp",
+                      [
+                        "shared/date-now-snapshot"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          "&unit"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.main/dispatch!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Unit"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'Dynamic"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:1a001683a8eb431340e6be459b934959",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "main!",
+          [],
+          [
+            "when",
+            "config/dev?",
+            [
+              "load-console-formatter!"
+            ]
+          ],
+          [
+            "render-app!"
+          ],
+          [
+            "add-watch!",
+            "*reel",
+            ":changes",
+            [
+              "fn",
+              [
+                "r",
+                "p"
+              ],
+              [
+                "render-app!"
+              ]
+            ]
+          ],
+          [
+            "listen-devtools!",
+            "|k",
+            "dispatch!"
+          ],
+          [
+            "browser/set-before-unload!",
+            [
+              "fn",
+              [
+                "e"
+              ],
+              [
+                "persist-storage!"
+              ]
+            ]
+          ],
+          [
+            "browser/set-interval!",
+            "persist-storage!",
+            "60000"
+          ],
+          [
+            "println",
+            "|App started."
+          ],
+          "&unit"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.main/main!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Unit"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:97104acbd4b65ae17faecd5a6da97a0e",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "mount-target",
+          [],
+          [
+            "option:unwrap",
+            [
+              "dom/query-selector",
+              "|.app"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.main/mount-target",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'respo.dom/DomElement"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:e41abbb378597c57c935433e7c588bba",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "persist-storage!",
+          [],
+          [
+            "browser/storage-set!",
+            [
+              "option:unwrap-or",
+              [
+                "get",
+                "config/site",
+                ":storage"
+              ],
+              "|file-sucker"
+            ],
+            [
+              "format-cirru-edn",
+              [
+                ":store",
+                "@*reel"
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.main/persist-storage!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Unit"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:b3e182fdb5d5206f98c82cea5228135a",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "reload!",
+          [],
+          [
+            "if",
+            [
+              "nil?",
+              "build-errors"
+            ],
+            [
+              "do",
+              [
+                "remove-watch!",
+                "*reel",
+                ":changes"
+              ],
+              [
+                "clear-cache!"
+              ],
+              [
+                "add-watch!",
+                "*reel",
+                ":changes",
+                [
+                  "fn",
+                  [
+                    "reel",
+                    "prev"
+                  ],
+                  [
+                    "render-app!"
+                  ]
+                ]
+              ],
+              [
+                "reset!",
+                "*reel",
+                [
+                  "typed/refresh",
+                  "updater",
+                  "@*reel",
+                  "schema/store"
+                ]
+              ],
+              [
+                "hud!",
+                "|ok~",
+                "|Ok"
+              ]
+            ],
+            [
+              "hud!",
+              "|error",
+              "build-errors"
+            ]
+          ],
+          "&unit"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.main/reload!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Unit"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:a84ef5adedf6c5d283b793c32d8e6c71",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "render-app!",
+          [],
+          [
+            "render!",
+            [
+              "mount-target"
+            ],
+            [
+              "comp-container",
+              "@*reel"
+            ],
+            "dispatch!"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.main/render-app!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Unit"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:01b7af7f48946764ce19be4d1f02368b",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defstruct",
+          "FileInfo",
+          [
+            ":name",
+            "'String"
+          ],
+          [
+            ":size",
+            "'Number"
+          ],
+          [
+            ":created-time",
+            "'Number"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.schema/FileInfo",
+        "js_ffi": null,
+        "schema": "'StructDef",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:a3282c8da36e7086c021c2e33522701a",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defenum",
+          "Op",
+          [
+            ":states",
+            [
+              "::",
+              "'List",
+              "'Dynamic"
+            ],
+            "'Dynamic"
+          ],
+          [
+            ":log",
+            "'String"
+          ],
+          [
+            ":clear-logs"
+          ],
+          [
+            ":hydrate-storage",
+            "'Store"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.schema/Op",
+        "js_ffi": null,
+        "schema": "'EnumDef",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:0df5c0873334b7fa1bc8062c617f3808",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defstruct",
+          "Store",
+          [
+            ":states",
+            "'Map"
+          ],
+          [
+            ":logs",
+            [
+              "::",
+              "'List",
+              "'String"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.schema/Store",
+        "js_ffi": null,
+        "schema": "'StructDef",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:a006d17d82f1a9c3d1239a3e01f8e322",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "decode-op",
+          [
+            "op"
+          ],
+          [
+            "match",
+            "op",
+            [
+              [
+                ":states",
+                "cursor",
+                "value"
+              ],
+              [
+                "if",
+                [
+                  "list?",
+                  "cursor"
+                ],
+                [
+                  "Op",
+                  ":states",
+                  "cursor",
+                  "value"
+                ],
+                [
+                  "raise",
+                  "|Expected state cursor List"
+                ]
+              ]
+            ],
+            [
+              [
+                ":log",
+                "text"
+              ],
+              [
+                "if",
+                [
+                  "string?",
+                  "text"
+                ],
+                [
+                  "Op",
+                  ":log",
+                  "text"
+                ],
+                [
+                  "raise",
+                  "|Expected log String"
+                ]
+              ]
+            ],
+            [
+              [
+                ":clear-logs"
+              ],
+              [
+                "Op",
+                ":clear-logs"
+              ]
+            ],
+            [
+              [
+                ":hydrate-storage",
+                "data"
+              ],
+              [
+                "if",
+                [
+                  "struct?",
+                  "data"
+                ],
+                [
+                  "struct-match",
+                  "data",
+                  [
+                    "Store",
+                    "store",
+                    [
+                      "Op",
+                      ":hydrate-storage",
+                      "store"
+                    ]
+                  ],
+                  [
+                    "_",
+                    "_",
+                    [
+                      "raise",
+                      "|Expected Store"
+                    ]
+                  ]
+                ],
+                [
+                  "raise",
+                  "|Expected Store"
+                ]
+              ]
+            ],
+            [
+              "_",
+              [
+                "raise",
+                "|Unknown application operation"
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.schema/decode-op",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'app.schema/Op"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'Enum"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": [
+          {
+            "code": [
+              "do",
+              [
+                "assert=",
+                [
+                  "Op",
+                  ":log",
+                  "|上传完成"
+                ],
+                [
+                  "decode-op",
+                  [
+                    "::",
+                    ":log",
+                    "|上传完成"
+                  ]
+                ]
+              ],
+              [
+                "assert=",
+                [
+                  "Op",
+                  ":clear-logs"
+                ],
+                [
+                  "decode-op",
+                  [
+                    "::",
+                    ":clear-logs"
+                  ]
+                ]
+              ],
+              [
+                "assert=",
+                [
+                  "Op",
+                  ":states",
+                  [
+                    "[]",
+                    ":upload"
+                  ],
+                  [
+                    "{}",
+                    [
+                      ":progress",
+                      "50"
+                    ]
+                  ]
+                ],
+                [
+                  "decode-op",
+                  [
+                    "::",
+                    ":states",
+                    [
+                      "[]",
+                      ":upload"
+                    ],
+                    [
+                      "{}",
+                      [
+                        ":progress",
+                        "50"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            "name": "operation-contracts",
+            "tags": []
+          }
+        ]
+      },
+      "diagnostics": [],
+      "revision": "md5:a339f15a13ac730758eaef904caeafe0",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "def",
+          "store",
+          [
+            "Store",
+            ":states",
+            [
+              "{}"
+            ],
+            ":logs",
+            [
+              "[]"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.schema/store",
+        "js_ffi": null,
+        "schema": "'app.schema/Store",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:8ba0ce78be6c3c95c81165859c7b33f7",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "AddressArrayHost",
+          [
+            ".for-each!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/AddressArrayHost",
+                    [
+                      "::",
+                      "'Fn",
+                      [
+                        "{}",
+                        [
+                          ":args",
+                          [
+                            "[]",
+                            "'String",
+                            "'Number",
+                            "'Dynamic"
+                          ]
+                        ],
+                        [
+                          ":return",
+                          "'Dynamic"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  ":return",
+                  "'Dynamic"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":for-each!": "forEach"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} $ :for-each! |forEach",
+        "id": "app.server/AddressArrayHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:9c6447386044ed1ed945b9e3c3c30927",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "ChalkHost",
+          [
+            ".yellow!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/ChalkHost",
+                    "'String"
+                  ]
+                ],
+                [
+                  ":return",
+                  "'String"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":yellow!": "yellow"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} $ :yellow! |yellow",
+        "id": "app.server/ChalkHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:0731356a49277d1a316612495f4e43ba",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "DayjsHost",
+          [
+            ".format!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/DayjsHost",
+                    "'String"
+                  ]
+                ],
+                [
+                  ":return",
+                  "'String"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":format!": "format"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} $ :format! |format",
+        "id": "app.server/DayjsHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:81ee5d7478f60a38a29ef460d2835f36",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "FilesHost",
+          [
+            ":file",
+            [
+              "::",
+              "'JsNullish",
+              "'app.server/UploadedFilesHost"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)",
+        "id": "app.server/FilesHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:9ab773d2b375190df18dc462e19f973a",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "FsStatHost",
+          [
+            ":size",
+            "'Number"
+          ],
+          [
+            ":ctime-ms",
+            "'Number"
+          ],
+          [
+            ".is-file?",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/FsStatHost"
+                  ]
+                ],
+                [
+                  ":return",
+                  "'Bool"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":ctime-ms": "ctimeMs",
+            ":is-file?": "isFile"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} (:ctime-ms |ctimeMs) (:is-file? |isFile)",
+        "id": "app.server/FsStatHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:76d8a6724b41ebb2e1a60d4b718c987a",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "HeadersHost",
+          [
+            ":origin",
+            [
+              "::",
+              "'JsNullish",
+              "'String"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)",
+        "id": "app.server/HeadersHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:d336706fb315862ca39aedd9f5fca6a1",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "IncomingFormHost",
+          [
+            ".parse!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/IncomingFormHost",
+                    "'app.server/RequestHost",
+                    [
+                      "::",
+                      "'Fn",
+                      [
+                        "{}",
+                        [
+                          ":args",
+                          [
+                            "[]",
+                            [
+                              "::",
+                              "'JsNullish",
+                              "'JsObject"
+                            ],
+                            "'Dynamic",
+                            "'app.server/FilesHost"
+                          ]
+                        ],
+                        [
+                          ":return",
+                          "'Dynamic"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  ":return",
+                  "'Dynamic"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":parse!": "parse"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} $ :parse! |parse",
+        "id": "app.server/IncomingFormHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:7dd41296eea014de4bea5cfd6976819c",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "PackageHost",
+          [
+            ":name",
+            "'String"
+          ],
+          [
+            ":version",
+            "'String"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)",
+        "id": "app.server/PackageHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:5c8b0cb11a9564e2c859c73442b6a9c8",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "ProcessEnvHost",
+          [
+            ":pwd",
+            "'String"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":pwd": "PWD"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} $ :pwd |PWD",
+        "id": "app.server/ProcessEnvHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:f0f8004c56135711fdfb37bfa94c5580",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "QrcodeHost",
+          [
+            ".generate!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/QrcodeHost",
+                    "'String",
+                    "'JsObject",
+                    "'Dynamic"
+                  ]
+                ],
+                [
+                  ":return",
+                  "'Dynamic"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":generate!": "generate"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} $ :generate! |generate",
+        "id": "app.server/QrcodeHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:075bb2ed2eecb4f8443b619559a1f633",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "RequestHost",
+          [
+            ":headers",
+            "'app.server/HeadersHost"
+          ],
+          [
+            ":method",
+            "'String"
+          ],
+          [
+            ":url",
+            "'String"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          },
+          ":writable": {
+            "__edn_set": [
+              {
+                "__edn_tag": "url"
+              }
+            ]
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :writable $ #{} :url",
+        "id": "app.server/RequestHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:91d7ae53b280f0c373b2e5172468be03",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "ResponseHost",
+          [
+            ".set-header!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/ResponseHost",
+                    "'String",
+                    "'String"
+                  ]
+                ],
+                [
+                  ":return",
+                  "'Dynamic"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":set-header!": "setHeader"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} $ :set-header! |setHeader",
+        "id": "app.server/ResponseHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:42d8523f04815663809a979bc10b0a92",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "TaskArrayHost",
+          [
+            ".push!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/TaskArrayHost",
+                    "'Dynamic"
+                  ]
+                ],
+                [
+                  ":return",
+                  "'Number"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":push!": "push"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} $ :push! |push",
+        "id": "app.server/TaskArrayHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:2dc7ff4d43e23b553b3e28ce38324535",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "UploadedFileHost",
+          [
+            ":original-filename",
+            [
+              "::",
+              "'JsNullish",
+              "'String"
+            ]
+          ],
+          [
+            ":filepath",
+            "'String"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)",
+        "id": "app.server/UploadedFileHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:1661b24d5665c214e4d9218bb7b1e840",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "UploadedFilesHost",
+          [
+            ".at",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/UploadedFilesHost",
+                    "'Number"
+                  ]
+                ],
+                [
+                  ":return",
+                  [
+                    "::",
+                    "'JsNullish",
+                    "'app.server/UploadedFileHost"
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)",
+        "id": "app.server/UploadedFilesHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:7b9fd7ab99d989752835856a1207ec49",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "deftrait",
+          "UrlModuleHost",
+          [
+            ".file-url-to-path!",
+            [
+              "::",
+              "'Fn",
+              [
+                "{}",
+                [
+                  ":args",
+                  [
+                    "[]",
+                    "'app.server/UrlModuleHost",
+                    "'JsObject"
+                  ]
+                ],
+                [
+                  ":return",
+                  "'String"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": {
+          ":backend": {
+            "__edn_tag": "js"
+          },
+          ":kind": {
+            "__edn_tag": "external-object"
+          },
+          ":names": {
+            ":file-url-to-path!": "fileURLToPath"
+          },
+          ":target": {
+            "__edn_tag": "node"
+          }
+        },
+        "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :node)\n  :names $ {} $ :file-url-to-path! |fileURLToPath",
+        "id": "app.server/UrlModuleHost",
+        "js_ffi": null,
+        "schema": "'Trait",
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:8ff2603ddec2b27ed5d704621edc0e91",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "as-file-info-list",
+          [
+            "value"
+          ],
+          [
+            "map",
+            [
+              "decode-map-as",
+              [
+                "to-calcit-data",
+                "value"
+              ],
+              [
+                "::",
+                "'List",
+                "'Dynamic"
+              ]
+            ],
+            [
+              "fn",
+              [
+                "item"
+              ],
+              [
+                "decode-map-as",
+                [
+                  "if",
+                  [
+                    "struct?",
+                    "item"
+                  ],
+                  [
+                    "&struct:to-map",
+                    "item"
+                  ],
+                  "item"
+                ],
+                "'app.schema/FileInfo"
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/as-file-info-list",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'Dynamic"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ],
+          [
+            ":return",
+            [
+              "::",
+              "'List",
+              "'app.schema/FileInfo"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:e6254d55e5eaad866b0d31def637aac4",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "as-fs-stat",
+          [
+            "value"
+          ],
+          [
+            "js-cast",
+            "value",
+            "app.server/FsStatHost"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/as-fs-stat",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'app.server/FsStatHost"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'Dynamic"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:827234384778876750622311a6ab1a6e",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "check-version!",
+          [],
+          [
+            "hint-fn",
+            [
+              "{}",
+              [
+                ":async",
+                "true"
+              ],
+              [
+                ":args",
+                [
+                  "[]"
+                ]
+              ],
+              [
+                ":return",
+                "'Dynamic"
+              ],
+              [
+                ":features",
+                [
+                  "#{}",
+                  ":js-ffi"
+                ]
+              ]
+            ]
+          ],
+          [
+            "let",
+            [
+              [
+                "pkg",
+                [
+                  "read-package-info"
+                ]
+              ],
+              [
+                "version",
+                [
+                  ".-version",
+                  "pkg"
+                ]
+              ],
+              [
+                "npm-version",
+                [
+                  "let",
+                  [
+                    [
+                      "version",
+                      [
+                        "js-await",
+                        [
+                          "latest-version",
+                          [
+                            ".-name",
+                            "pkg"
+                          ]
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "if",
+                    [
+                      "string?",
+                      "version"
+                    ],
+                    "version",
+                    [
+                      "raise",
+                      "|Registry version must be a String"
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [
+                "=",
+                "npm-version",
+                "version"
+              ],
+              [
+                "println",
+                "|Running latest version",
+                "version"
+              ],
+              [
+                "println",
+                [
+                  "yellow-text",
+                  [
+                    "str",
+                    "|New version ",
+                    "npm-version",
+                    "| available, current one is ",
+                    "version",
+                    "| . Please upgrade!",
+                    "|\n\nyarn global add file-sucker\n"
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/check-version!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Dynamic"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:b7f73cfdc3c8098a640a8a06b904665a",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "dirname",
+          [],
+          [
+            "let",
+            [
+              [
+                "url-module",
+                [
+                  "js-cast",
+                  "url",
+                  "app.server/UrlModuleHost"
+                ]
+              ]
+            ],
+            [
+              "node/path-dirname",
+              [
+                "url-module",
+                ".file-url-to-path!",
+                [
+                  "new",
+                  "js/URL",
+                  "|",
+                  "js/import.meta.url"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/dirname",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'String"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:6b22e54a90b9654670fc20dcf3a1e7a2",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "first-uploaded-file",
+          [
+            "files"
+          ],
+          [
+            "match",
+            [
+              "js-nullish->option",
+              [
+                ".-file",
+                "files"
+              ]
+            ],
+            [
+              [
+                ":none"
+              ],
+              [
+                "Option",
+                ":none"
+              ]
+            ],
+            [
+              [
+                ":some",
+                "items"
+              ],
+              [
+                "js-nullish->option",
+                [
+                  "items",
+                  ".at",
+                  "0"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/first-uploaded-file",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'app.server/FilesHost"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ],
+          [
+            ":return",
+            [
+              "::",
+              "'Option",
+              "'app.server/UploadedFileHost"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:e3c448efd2d9fbae4a15c4e8ad223c98",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "format-created-time",
+          [
+            "timestamp"
+          ],
+          [
+            "let",
+            [
+              [
+                "value",
+                [
+                  "js-cast",
+                  [
+                    "dayjs",
+                    "timestamp"
+                  ],
+                  "app.server/DayjsHost"
+                ]
+              ]
+            ],
+            [
+              "value",
+              ".format!",
+              "|MM-DD HH:mm"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/format-created-time",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'String"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'Number"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:c1bb0cc0c3e1465f80bfcfb6a1880927",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "is-file-path?",
+          [
+            "filename"
+          ],
+          [
+            "let",
+            [
+              [
+                "stat",
+                [
+                  "js-cast",
+                  [
+                    "fs/lstatSync",
+                    "filename"
+                  ],
+                  "app.server/FsStatHost"
+                ]
+              ]
+            ],
+            [
+              "stat",
+              ".is-file?"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/is-file-path?",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Bool"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'String"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:35a14db723591d06ed957b130ee0954b",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "load-stats!",
+          [
+            "xs"
+          ],
+          [
+            "hint-fn",
+            [
+              "{}",
+              [
+                ":async",
+                "true"
+              ],
+              [
+                ":args",
+                [
+                  "[]",
+                  [
+                    "::",
+                    "'List",
+                    "'String"
+                  ]
+                ]
+              ],
+              [
+                ":return",
+                "'Dynamic"
+              ],
+              [
+                ":features",
+                [
+                  "#{}",
+                  ":js-ffi"
+                ]
+              ]
+            ]
+          ],
+          [
+            "let",
+            [
+              [
+                "tasks",
+                [
+                  "make-task-array"
+                ]
+              ]
+            ],
+            [
+              "&doseq",
+              [
+                "x",
+                "xs"
+              ],
+              [
+                "tasks",
+                ".push!",
+                [
+                  "new",
+                  "js/Promise",
+                  [
+                    "fn",
+                    [
+                      "resolve",
+                      "reject"
+                    ],
+                    [
+                      "fs/stat",
+                      "x",
+                      [
+                        "fn",
+                        [
+                          "err",
+                          "stat-value"
+                        ],
+                        [
+                          "let",
+                          [
+                            [
+                              "stat",
+                              [
+                                "as-fs-stat",
+                                "stat-value"
+                              ]
+                            ]
+                          ],
+                          [
+                            "resolve",
+                            [
+                              "app.schema/FileInfo",
+                              ":name",
+                              "x",
+                              ":size",
+                              [
+                                ".-size",
+                                "stat"
+                              ],
+                              ":created-time",
+                              [
+                                ".-ctime-ms",
+                                "stat"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "js/Promise.all",
+              "tasks"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/load-stats!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Dynamic"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              [
+                "::",
+                "'List",
+                "'String"
+              ]
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:30332419876a532434208fb91b0140e8",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "main!",
+          [],
+          [
+            "let",
+            [
+              [
+                "port",
+                [
+                  "decode-map-as",
+                  [
+                    "js/parseInt",
+                    [
+                      "node/env-or",
+                      "|PORT",
+                      [
+                        "node/env-or",
+                        "|port",
+                        "|4000"
+                      ]
+                    ]
+                  ],
+                  "'Number"
+                ]
+              ],
+              [
+                "host",
+                [
+                  "node/env-or",
+                  "|HOST",
+                  "|0.0.0.0"
+                ]
+              ],
+              [
+                "address-list",
+                [
+                  "js-cast",
+                  [
+                    "if",
+                    [
+                      "=",
+                      "host",
+                      "|0.0.0.0"
+                    ],
+                    "addresses",
+                    [
+                      "js-array",
+                      "host"
+                    ]
+                  ],
+                  "'app.server/AddressArrayHost"
+                ]
+              ],
+              [
+                "qrcode-client",
+                [
+                  "js-cast",
+                  "qrcode",
+                  "'app.server/QrcodeHost"
+                ]
+              ]
+            ],
+            [
+              "skir/create-server!",
+              "on-request!",
+              [
+                "Option",
+                ":some",
+                [
+                  "{}",
+                  [
+                    ":port",
+                    "port"
+                  ],
+                  [
+                    ":host",
+                    "host"
+                  ],
+                  [
+                    ":after-start",
+                    [
+                      "fn",
+                      [
+                        "_options"
+                      ],
+                      [
+                        "address-list",
+                        ".for-each!",
+                        [
+                          "fn",
+                          [
+                            "ip-address",
+                            "_idx",
+                            "_array"
+                          ],
+                          [
+                            "let",
+                            [
+                              [
+                                "address",
+                                [
+                                  "str",
+                                  "|http://",
+                                  "ip-address",
+                                  "|:",
+                                  "port"
+                                ]
+                              ]
+                            ],
+                            [
+                              "println",
+                              "|Open page on your phone and send file:",
+                              "&newline",
+                              "address"
+                            ],
+                            [
+                              "qrcode-client",
+                              ".generate!",
+                              "address",
+                              [
+                                "js-object",
+                                [
+                                  ":small",
+                                  "true"
+                                ]
+                              ],
+                              [
+                                "fn",
+                                [
+                                  "text"
+                                ],
+                                [
+                                  "hint-fn",
+                                  [
+                                    "{}",
+                                    [
+                                      ":args",
+                                      [
+                                        "[]",
+                                        "'String"
+                                      ]
+                                    ],
+                                    [
+                                      ":return",
+                                      "'Unit"
+                                    ]
+                                  ]
+                                ],
+                                [
+                                  "println",
+                                  "text"
+                                ],
+                                "&unit"
+                              ]
+                            ],
+                            "&unit"
+                          ]
+                        ]
+                      ],
+                      [
+                        "match",
+                        [
+                          "node/env-get",
+                          "|NO_VERSION_CHECK"
+                        ],
+                        [
+                          [
+                            ":none"
+                          ],
+                          [
+                            "check-version!"
+                          ]
+                        ],
+                        [
+                          [
+                            ":some",
+                            "value"
+                          ],
+                          [
+                            "if",
+                            [
+                              "=",
+                              "value",
+                              "|false"
+                            ],
+                            [
+                              "check-version!"
+                            ],
+                            [
+                              "println",
+                              "|[INFO] skipped version checking."
+                            ]
+                          ]
+                        ]
+                      ],
+                      "&unit"
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            "&unit"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/main!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Unit"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:326d2296a48486ee0b52c6ea53d18cce",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "make-task-array",
+          [],
+          [
+            "js-cast",
+            [
+              "js-array"
+            ],
+            "app.server/TaskArrayHost"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/make-task-array",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'app.server/TaskArrayHost"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:372d086312242a3848a2db9d54e6aade",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "on-download!",
+          [
+            "req",
+            "res"
+          ],
+          [
+            "set!",
+            [
+              ".-url",
+              "req"
+            ],
+            [
+              "&str:replace",
+              [
+                ".-url",
+                "req"
+              ],
+              "|/files/",
+              "|/"
+            ]
+          ],
+          [
+            "println",
+            "|url",
+            [
+              ".-url",
+              "req"
+            ]
+          ],
+          [
+            "serve-files!",
+            "req",
+            "res"
+          ],
+          ":effect"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/on-download!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Dynamic"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'app.server/RequestHost",
+              "'js-ffi.node/NodeServerResponseHost"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:d055a7e6c50a656cc23fc8bbc2a1092d",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "on-file-indexed!",
+          [
+            "req",
+            "res"
+          ],
+          [
+            "hint-fn",
+            [
+              "{}",
+              [
+                ":async",
+                "true"
+              ],
+              [
+                ":args",
+                [
+                  "[]",
+                  "'app.server/RequestHost",
+                  "'app.server/ResponseHost"
+                ]
+              ],
+              [
+                ":return",
+                "'Dynamic"
+              ],
+              [
+                ":features",
+                [
+                  "#{}",
+                  ":js-ffi"
+                ]
+              ]
+            ]
+          ],
+          [
+            "let",
+            [
+              [
+                "filenames",
+                [
+                  "filter",
+                  [
+                    "read-file-names"
+                  ],
+                  "is-file-path?"
+                ]
+              ],
+              [
+                "files-info",
+                [
+                  "js-await",
+                  [
+                    "load-stats!",
+                    "filenames"
+                  ]
+                ]
+              ],
+              [
+                "file-list",
+                [
+                  "as-file-info-list",
+                  "files-info"
+                ]
+              ],
+              [
+                "sorted-files",
+                [
+                  "sort",
+                  "file-list",
+                  [
+                    "fn",
+                    [
+                      "a",
+                      "b"
+                    ],
+                    [
+                      "&compare",
+                      "b.:created-time",
+                      "a.:created-time"
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "result",
+                [
+                  "make-string",
+                  [
+                    "html",
+                    [
+                      "{}"
+                    ],
+                    [
+                      "head",
+                      [
+                        "{}"
+                      ],
+                      [
+                        "create-element",
+                        ":meta",
+                        [
+                          "{}",
+                          [
+                            ":content",
+                            "|width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"
+                          ],
+                          [
+                            ":name",
+                            "|viewport"
+                          ]
+                        ]
+                      ],
+                      [
+                        "create-element",
+                        ":meta",
+                        [
+                          "{}",
+                          [
+                            ":charset",
+                            "|utf8"
+                          ]
+                        ]
+                      ],
+                      [
+                        "link",
+                        [
+                          "{}",
+                          [
+                            ":rel",
+                            "|stylesheet"
+                          ],
+                          [
+                            ":href",
+                            "|http://cdn.tiye.me/favored-fonts/josefin-sans.css"
+                          ]
+                        ]
+                      ]
+                    ],
+                    [
+                      "body",
+                      [
+                        "{}"
+                      ],
+                      [
+                        "div",
+                        [
+                          "{}"
+                        ],
+                        [
+                          "if",
+                          [
+                            "empty?",
+                            "filenames"
+                          ],
+                          [
+                            "div",
+                            [
+                              "{}",
+                              [
+                                ":style",
+                                [
+                                  "merge",
+                                  "ui/center",
+                                  [
+                                    "{}",
+                                    [
+                                      ":padding",
+                                      "|80px"
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "<>",
+                              "|No files",
+                              [
+                                "{}",
+                                [
+                                  ":font-family",
+                                  "ui/font-fancy"
+                                ],
+                                [
+                                  ":color",
+                                  [
+                                    "hsl",
+                                    "0",
+                                    "0",
+                                    "80"
+                                  ]
+                                ],
+                                [
+                                  ":font-size",
+                                  "40"
+                                ],
+                                [
+                                  ":font-weight",
+                                  "300"
+                                ]
+                              ]
+                            ]
+                          ]
+                        ],
+                        [
+                          "list->",
+                          [
+                            "{}",
+                            [
+                              ":style",
+                              [
+                                "{}",
+                                [
+                                  ":padding",
+                                  "|24px 8px"
+                                ]
+                              ]
+                            ]
+                          ],
+                          [
+                            "map",
+                            "sorted-files",
+                            [
+                              "fn",
+                              [
+                                "file"
+                              ],
+                              [
+                                "hint-fn",
+                                [
+                                  "{}",
+                                  [
+                                    ":args",
+                                    [
+                                      "[]",
+                                      "'app.schema/FileInfo"
+                                    ]
+                                  ],
+                                  [
+                                    ":return",
+                                    [
+                                      "::",
+                                      "'List",
+                                      "'Dynamic"
+                                    ]
+                                  ]
+                                ]
+                              ],
+                              [
+                                "[]",
+                                "file.:name",
+                                [
+                                  "div",
+                                  [
+                                    "{}",
+                                    [
+                                      ":style",
+                                      [
+                                        "merge",
+                                        "ui/row",
+                                        [
+                                          "{}",
+                                          [
+                                            ":line-height",
+                                            "|40px"
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ],
+                                  [
+                                    "a",
+                                    [
+                                      "{}",
+                                      [
+                                        ":href",
+                                        [
+                                          "str",
+                                          "|/files/",
+                                          "file.:name"
+                                        ]
+                                      ],
+                                      [
+                                        ":inner-text",
+                                        "file.:name"
+                                      ],
+                                      [
+                                        ":style",
+                                        [
+                                          "{}",
+                                          [
+                                            ":text-decoration",
+                                            ":none"
+                                          ],
+                                          [
+                                            ":font-family",
+                                            "ui/font-fancy"
+                                          ],
+                                          [
+                                            ":font-size",
+                                            "16"
+                                          ],
+                                          [
+                                            ":max-width",
+                                            "|50vw"
+                                          ],
+                                          [
+                                            ":overflow",
+                                            ":hidden"
+                                          ],
+                                          [
+                                            ":text-overflow",
+                                            ":ellipsis"
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ],
+                                  [
+                                    "=<",
+                                    "16",
+                                    "nil"
+                                  ],
+                                  [
+                                    "<>",
+                                    [
+                                      "let",
+                                      [
+                                        [
+                                          "size-text",
+                                          [
+                                            "prettysize",
+                                            "file.:size"
+                                          ]
+                                        ]
+                                      ],
+                                      [
+                                        "if",
+                                        [
+                                          "string?",
+                                          "size-text"
+                                        ],
+                                        "size-text",
+                                        [
+                                          "raise",
+                                          "|File size formatter must return a String"
+                                        ]
+                                      ]
+                                    ],
+                                    [
+                                      "{}",
+                                      [
+                                        ":font-family",
+                                        "ui/font-fancy"
+                                      ],
+                                      [
+                                        ":color",
+                                        [
+                                          "hsl",
+                                          "0",
+                                          "0",
+                                          "70"
+                                        ]
+                                      ],
+                                      [
+                                        ":font-size",
+                                        "12"
+                                      ]
+                                    ]
+                                  ],
+                                  [
+                                    "=<",
+                                    "16",
+                                    "nil"
+                                  ],
+                                  [
+                                    "<>",
+                                    [
+                                      "format-created-time",
+                                      "file.:created-time"
+                                    ],
+                                    [
+                                      "{}",
+                                      [
+                                        ":font-family",
+                                        "ui/font-fancy"
+                                      ],
+                                      [
+                                        ":color",
+                                        [
+                                          "hsl",
+                                          "0",
+                                          "0",
+                                          "70"
+                                        ]
+                                      ],
+                                      [
+                                        ":font-size",
+                                        "12"
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "{}",
+              [
+                ":code",
+                "200"
+              ],
+              [
+                ":headers",
+                [
+                  "{}",
+                  [
+                    "|Content-Type",
+                    "|text/html"
+                  ]
+                ]
+              ],
+              [
+                ":body",
+                "result"
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/on-file-indexed!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Dynamic"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'app.server/RequestHost",
+              "'js-ffi.node/NodeServerResponseHost"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:1e8de60dcccaab18a7a45111e0c64d59",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "on-page!",
+          [
+            "req",
+            "res"
+          ],
+          [
+            "serve",
+            "req",
+            "res"
+          ],
+          ":effect"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/on-page!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Dynamic"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'app.server/RequestHost",
+              "'js-ffi.node/NodeServerResponseHost"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:7ef2de84a6a0ea249a5083865c38b63a",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "on-request!",
+          [
+            "req-edn",
+            "res"
+          ],
+          [
+            "match",
+            [
+              ":original-request",
+              "req-edn"
+            ],
+            [
+              [
+                ":none"
+              ],
+              [
+                "{}",
+                [
+                  ":code",
+                  "500"
+                ],
+                [
+                  ":body",
+                  "|Missing original Node request"
+                ]
+              ]
+            ],
+            [
+              [
+                ":some",
+                "original"
+              ],
+              [
+                "let",
+                [
+                  [
+                    "req",
+                    [
+                      "js-cast",
+                      "original",
+                      "'app.server/RequestHost"
+                    ]
+                  ],
+                  [
+                    "req-url",
+                    [
+                      ":url",
+                      "req-edn"
+                    ]
+                  ]
+                ],
+                [
+                  "cond",
+                  [
+                    [
+                      "=",
+                      "|/upload",
+                      "req-url"
+                    ],
+                    [
+                      "on-upload!",
+                      "req",
+                      "res"
+                    ]
+                  ],
+                  [
+                    [
+                      "or",
+                      [
+                        "=",
+                        "req-url",
+                        "|/files"
+                      ],
+                      [
+                        "=",
+                        "req-url",
+                        "|/files/"
+                      ]
+                    ],
+                    [
+                      "on-file-indexed!",
+                      "req",
+                      "res"
+                    ]
+                  ],
+                  [
+                    [
+                      "starts-with?",
+                      "req-url",
+                      "|/files/"
+                    ],
+                    [
+                      "on-download!",
+                      "req",
+                      "res"
+                    ]
+                  ],
+                  [
+                    "true",
+                    [
+                      "on-page!",
+                      "req",
+                      "res"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/on-request!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Dynamic"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'skir.schema/Request",
+              "'js-ffi.node/NodeServerResponseHost"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:7115909a1b342e3d4ce2828742510439",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "on-upload!",
+          [
+            "req",
+            "res"
+          ],
+          [
+            "match",
+            [
+              "js-nullish->option",
+              [
+                ".-origin",
+                [
+                  ".-headers",
+                  "req"
+                ]
+              ]
+            ],
+            [
+              [
+                ":some",
+                "origin"
+              ],
+              [
+                "res",
+                ".set-header",
+                "|Access-Control-Allow-Origin",
+                "origin"
+              ]
+            ],
+            [
+              [
+                ":none"
+              ],
+              "&unit"
+            ]
+          ],
+          [
+            "res",
+            ".set-header",
+            "|Access-Control-Allow-Methods",
+            "|POST,GET,OPTIONS"
+          ],
+          [
+            "match",
+            [
+              ".-method",
+              "req"
+            ],
+            [
+              "|POST",
+              [
+                "fn",
+                [
+                  "send!"
+                ],
+                [
+                  "hint-fn",
+                  [
+                    "{}",
+                    [
+                      ":args",
+                      [
+                        "[]",
+                        [
+                          "::",
+                          "'Fn",
+                          [
+                            "{}",
+                            [
+                              ":return",
+                              "'Unit"
+                            ],
+                            [
+                              ":args",
+                              [
+                                "[]",
+                                "'Dynamic"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ],
+                    [
+                      ":return",
+                      "'Unit"
+                    ],
+                    [
+                      ":features",
+                      [
+                        "#{}",
+                        ":js-ffi"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "let",
+                  [
+                    [
+                      "size-limit",
+                      [
+                        "*",
+                        "4",
+                        "1024",
+                        "1024",
+                        "1024"
+                      ]
+                    ],
+                    [
+                      "form",
+                      [
+                        "js-cast",
+                        [
+                          "formidable",
+                          [
+                            "js-object",
+                            [
+                              ":maxFieldsSize",
+                              "size-limit"
+                            ],
+                            [
+                              ":maxFileSize",
+                              "size-limit"
+                            ],
+                            [
+                              ":maxTotalFileSize",
+                              "size-limit"
+                            ],
+                            [
+                              ":maxFiles",
+                              "1"
+                            ]
+                          ]
+                        ],
+                        "'app.server/IncomingFormHost"
+                      ]
+                    ]
+                  ],
+                  [
+                    "println",
+                    "|New request of file transferring..."
+                  ],
+                  [
+                    "form",
+                    ".parse!",
+                    "req",
+                    [
+                      "fn",
+                      [
+                        "error",
+                        "fields",
+                        "files"
+                      ],
+                      [
+                        "if",
+                        [
+                          "js-nullish?",
+                          "error"
+                        ],
+                        [
+                          "match",
+                          [
+                            "first-uploaded-file",
+                            "files"
+                          ],
+                          [
+                            [
+                              ":none"
+                            ],
+                            [
+                              "send!",
+                              [
+                                "{}",
+                                [
+                                  ":code",
+                                  "400"
+                                ],
+                                [
+                                  ":body",
+                                  "|Missing file"
+                                ]
+                              ]
+                            ]
+                          ],
+                          [
+                            [
+                              ":some",
+                              "file"
+                            ],
+                            [
+                              "match",
+                              [
+                                "js-nullish->option",
+                                [
+                                  ".-original-filename",
+                                  "file"
+                                ]
+                              ],
+                              [
+                                [
+                                  ":none"
+                                ],
+                                [
+                                  "send!",
+                                  [
+                                    "{}",
+                                    [
+                                      ":code",
+                                      "400"
+                                    ],
+                                    [
+                                      ":body",
+                                      "|Missing filename"
+                                    ]
+                                  ]
+                                ]
+                              ],
+                              [
+                                [
+                                  ":some",
+                                  "original-name"
+                                ],
+                                [
+                                  "let",
+                                  [
+                                    [
+                                      "filename",
+                                      [
+                                        "node/path-basename",
+                                        "original-name"
+                                      ]
+                                    ],
+                                    [
+                                      "filepath",
+                                      [
+                                        ".-filepath",
+                                        "file"
+                                      ]
+                                    ]
+                                  ],
+                                  [
+                                    "if",
+                                    [
+                                      "or",
+                                      [
+                                        "empty?",
+                                        "filename"
+                                      ],
+                                      [
+                                        "=",
+                                        "filename",
+                                        "|."
+                                      ],
+                                      [
+                                        "=",
+                                        "filename",
+                                        "|.."
+                                      ]
+                                    ],
+                                    [
+                                      "send!",
+                                      [
+                                        "{}",
+                                        [
+                                          ":code",
+                                          "400"
+                                        ],
+                                        [
+                                          ":body",
+                                          "|Invalid filename"
+                                        ]
+                                      ]
+                                    ],
+                                    [
+                                      "do",
+                                      [
+                                        "println",
+                                        "|Received file:",
+                                        "filename"
+                                      ],
+                                      [
+                                        "fs/rename",
+                                        "filepath",
+                                        [
+                                          "node/path-join",
+                                          [
+                                            "node/cwd"
+                                          ],
+                                          "filename"
+                                        ],
+                                        [
+                                          "fn",
+                                          [
+                                            "rename-error"
+                                          ],
+                                          [
+                                            "hint-fn",
+                                            [
+                                              "{}",
+                                              [
+                                                ":args",
+                                                [
+                                                  "[]",
+                                                  [
+                                                    "::",
+                                                    "'JsNullish",
+                                                    "'JsObject"
+                                                  ]
+                                                ]
+                                              ],
+                                              [
+                                                ":return",
+                                                "'Unit"
+                                              ],
+                                              [
+                                                ":features",
+                                                [
+                                                  "#{}",
+                                                  ":js-ffi"
+                                                ]
+                                              ]
+                                            ]
+                                          ],
+                                          [
+                                            "if",
+                                            [
+                                              "js-nullish?",
+                                              "rename-error"
+                                            ],
+                                            [
+                                              "send!",
+                                              [
+                                                "{}",
+                                                [
+                                                  ":code",
+                                                  "200"
+                                                ],
+                                                [
+                                                  ":headers",
+                                                  [
+                                                    "{}"
+                                                  ]
+                                                ],
+                                                [
+                                                  ":message",
+                                                  "|Uploaded"
+                                                ]
+                                              ]
+                                            ],
+                                            [
+                                              "send!",
+                                              [
+                                                "{}",
+                                                [
+                                                  ":code",
+                                                  "500"
+                                                ],
+                                                [
+                                                  ":body",
+                                                  "|Could not save uploaded file"
+                                                ]
+                                              ]
+                                            ]
+                                          ],
+                                          "&unit"
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ],
+                        [
+                          "send!",
+                          [
+                            "{}",
+                            [
+                              ":code",
+                              "400"
+                            ],
+                            [
+                              ":body",
+                              "|Invalid upload"
+                            ]
+                          ]
+                        ]
+                      ],
+                      "&unit"
+                    ]
+                  ],
+                  "&unit"
+                ]
+              ]
+            ],
+            [
+              "|GET",
+              [
+                "{}",
+                [
+                  ":code",
+                  "200"
+                ],
+                [
+                  ":body",
+                  "|use POST"
+                ]
+              ]
+            ],
+            [
+              "|OPTIONS",
+              [
+                "{}",
+                [
+                  ":code",
+                  "200"
+                ],
+                [
+                  ":body",
+                  "|ok"
+                ]
+              ]
+            ],
+            [
+              "_",
+              [
+                "{}",
+                [
+                  ":code",
+                  "404"
+                ],
+                [
+                  ":body",
+                  "|method not supported"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/on-upload!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Dynamic"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'app.server/RequestHost",
+              "'js-ffi.node/NodeServerResponseHost"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:def5b290d612af667c17a3a48a56eebb",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "read-file-names",
+          [],
+          [
+            "node/read-dir!",
+            "|."
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/read-file-names",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ],
+          [
+            ":return",
+            [
+              "::",
+              "'List",
+              "'String"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:6b48a2ba9895455bc33f03f9fe229560",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "read-package-info",
+          [],
+          [
+            "js-cast",
+            [
+              "js/JSON.parse",
+              [
+                "node/read-text!",
+                [
+                  "node/path-join",
+                  [
+                    "dirname"
+                  ],
+                  "|../package.json"
+                ]
+              ]
+            ],
+            "'app.server/PackageHost"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/read-package-info",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'app.server/PackageHost"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:41c830e5b1370a4b385e1f38f7bd8d32",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "reload!",
+          [],
+          [
+            "println",
+            "|reloaded!"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/reload!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Dynamic"
+          ],
+          [
+            ":args",
+            [
+              "[]"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:3149b0d88bdf823aee853dd5d8cf60fe",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "serve",
+          [
+            "req",
+            "res"
+          ],
+          [
+            "static/servePage",
+            "req",
+            "res"
+          ],
+          "&unit"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/serve",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Unit"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'app.server/RequestHost",
+              "'js-ffi.node/NodeServerResponseHost"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:5df76c4864b28c5d6b79d1b2401ea272",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "serve-files!",
+          [
+            "req",
+            "res"
+          ],
+          [
+            "static/serveFiles",
+            "req",
+            "res"
+          ],
+          "&unit"
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/serve-files!",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'Unit"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'app.server/RequestHost",
+              "'js-ffi.node/NodeServerResponseHost"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:4f34593d84312248284244ab43a741a2",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "turn-list",
+          [
+            "arr"
+          ],
+          [
+            "decode-map-as",
+            [
+              "to-calcit-data",
+              "arr"
+            ],
+            [
+              "::",
+              "'List",
+              "'Dynamic"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/turn-list",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'JsObject"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ],
+          [
+            ":return",
+            [
+              "::",
+              "'List",
+              "'Dynamic"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:96166c41b055a73b0559e8d35af4b8ed",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "yellow-text",
+          [
+            "text"
+          ],
+          [
+            "let",
+            [
+              [
+                "chalk-client",
+                [
+                  "js-cast",
+                  "chalk",
+                  "app.server/ChalkHost"
+                ]
+              ]
+            ],
+            [
+              "chalk-client",
+              ".yellow!",
+              "text"
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.server/yellow-text",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'String"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'String"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:ba82a51d3dac41ec84ea01f15ccd67fb",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "updater",
+          [
+            "store",
+            "op",
+            "op-id",
+            "op-time"
+          ],
+          [
+            "match",
+            "op",
+            [
+              [
+                ":states",
+                "cursor",
+                "s"
+              ],
+              [
+                "assoc",
+                "store",
+                ":states",
+                [
+                  "decode-map-as",
+                  [
+                    "respo.cursor/update-state-tree",
+                    [
+                      ":states",
+                      "store"
+                    ],
+                    "cursor",
+                    "s"
+                  ],
+                  "'Map"
+                ]
+              ]
+            ],
+            [
+              [
+                ":hydrate-storage",
+                "data"
+              ],
+              "data"
+            ],
+            [
+              [
+                ":log",
+                "data"
+              ],
+              [
+                "assoc",
+                "store",
+                ":logs",
+                [
+                  "prepend",
+                  [
+                    ":logs",
+                    "store"
+                  ],
+                  "data"
+                ]
+              ]
+            ],
+            [
+              [
+                ":clear-logs"
+              ],
+              [
+                "assoc",
+                "store",
+                ":logs",
+                [
+                  "[]"
+                ]
+              ]
+            ],
+            [
+              "_",
+              [
+                "do",
+                [
+                  "println",
+                  "|Unknown op:",
+                  "op"
+                ],
+                "store"
+              ]
+            ]
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.updater/updater",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'app.schema/Store"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'app.schema/Store",
+              "'app.schema/Op",
+              "'String",
+              "'Number"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:86a6fa0039914ab5fb3be2db76390e45",
+      "schema_version": 1
+    },
+    {
+      "command": "query.def",
+      "data": {
+        "code": [
+          "defn",
+          "format-percent",
+          [
+            "part",
+            "total"
+          ],
+          [
+            "str",
+            [
+              ".!toFixed",
+              [
+                "*",
+                "100",
+                [
+                  "/",
+                  "part",
+                  "total"
+                ]
+              ],
+              "1"
+            ],
+            "|%"
+          ]
+        ],
+        "doc": "",
+        "examples": [],
+        "ffi": null,
+        "ffi_edn": null,
+        "id": "app.util/format-percent",
+        "js_ffi": null,
+        "schema": [
+          "{}",
+          [
+            ":kind",
+            ":fn"
+          ],
+          [
+            ":return",
+            "'String"
+          ],
+          [
+            ":args",
+            [
+              "[]",
+              "'Number",
+              "'Number"
+            ]
+          ],
+          [
+            ":features",
+            [
+              "#{}",
+              ":js-ffi"
+            ]
+          ]
+        ],
+        "tags": [],
+        "tests": []
+      },
+      "diagnostics": [],
+      "revision": "md5:8948afb0abff25412b4d2d5fb0ace228",
+      "schema_version": 1
+    }
+  ]
+}
