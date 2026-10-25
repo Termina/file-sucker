@@ -43,6 +43,7 @@ jobs:
         caps --strict --ci
         yarn install --immutable
         caps verify --toolchain
+        git diff --quiet -- deps.cirru package.json yarn.lock .yarnrc.yml
 
     - name: Validate Calcit snapshot and types
       run: |

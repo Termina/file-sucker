@@ -26,10 +26,14 @@ Environment variable:
 
 ### 本次迁移影响
 
-CLI 和 `@calcit/procs` 配对为精确正式 `0.30.1`，模块更新为 Reel 0.6.41、
-Markdown 0.4.59、UI 0.8.0、Respo 0.16.124、Skir 0.0.32、js-ffi 0.2.5，
-传递 Router 0.8.37。升级后重启开发服务并完整刷新页面。
-本轮不改 Snapshot、上传/同名覆盖/下载合同和服务监听默认值；不启用旧本地状态恢复。
+CLI 和 `@calcit/procs` 继续配对精确正式 `0.30.1`，完整正式模块图更新为 Reel 0.6.42、
+Markdown 0.4.60、UI 0.8.1、Respo 0.16.126、Skir 0.0.33、js-ffi 0.2.6，
+传递 Router 0.8.38，Vite 更新至正式 8.3.3。升级后重新安装、重启开发服务并完整刷新页面。
+迁移四处 Option helper 和六处 Map 合并，保留缺失时原失败/fallback 行为及 Map 从左向右覆盖顺序。
+上传事件的 Map key 按真实 Respo EventHandler 收窄为 Tag，仍检查原宿主对象，派发合同不伪装为封闭业务类型。
+静态样式改为准确 String：长度带 px，opacity/font-weight 无单位，避免把字重和透明度误写为无效 px 值。
+这可能修正原页面字重、上传控件透明度；不承诺逐像素相同，不新增布局或交互。
+上传/同名覆盖/下载合同、4 GiB 限制、原生文件选择、服务监听默认值和 `hud!` 保留；不启用旧本地状态恢复。
 使用 Node 24、Yarn 4.18.0，以及 canonical `calcit.cirru` / `deps.cirru`；
 不再使用 compact.cirru/package.cirru，也不提交生成目录。
 
@@ -38,6 +42,9 @@ COS 只托管公开 Demo 的前端构建资源，不接收用户上传文件，�
 原网页 rsync 路径保持不变。COS action 使用自身 `public-base-url` 内置校验，
 没有新增校验脚本。PR 使用独立预览前缀，不触发原站部署。
 PR 的已编译前后端只暂存三天，供隔离回环验收，不打包进 npm 或部署 Node 后端。
+本迁移 PR 不合并或部署应用，不创建 Release（原 Release 工作流会发布 npm），也不发布 npm。
+隔离验收另发现既有文件名 `#` 下载链接未编码问题，见 [#39](https://github.com/Termina/file-sucker/issues/39)。
+文件仍在且编码后的路径可读取；本次保持原路由逻辑，不把源码迁移通过当作所有文件名已经验收。
 
 Formidable 升至正式 3.5.4，按新版文件数组及工厂 options 处理上传；
 serve-static 升至正式 2.2.1。上传先填充 FormData 再发请求，进度没有总大小时

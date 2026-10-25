@@ -84,26 +84,26 @@
                 states $ :states store
                 location $ browser/location-host
               div
-                {} $ :style $ merge ui/global ui/column
+                {} $ :style $ .merge ui/global ui/column
                   {} (:padding |16px) (:font-size |16px)
                 div
-                  {} $ :style $ merge ui/row
-                    {} (:font-size 16)
+                  {} $ :style $ .merge ui/row
+                    {} (:font-size |16px)
                       :color $ hsl 0 0 50
-                      :font-weight 500
+                      :font-weight |500
                   a
                     {} (:href |/files)
                       :style $ {} $ :font-family ui/font-fancy
                     <> "|Browse files"
                 =< nil 16
                 div
-                  {} $ :style $ merge ui/center
-                    {} (:padding 8) (:position :relative)
+                  {} $ :style $ .merge ui/center
+                    {} (:padding |8px) (:position |relative)
                       :background-color $ hsl 240 80 70
-                      :height 120
-                  <> "|Select files to upload" $ {} (:color :white) (:font-size 24) (:font-family ui/font-fancy)
+                      :height |120px
+                  <> "|Select files to upload" $ {} (:color |white) (:font-size |24px) (:font-family ui/font-fancy)
                   input $ {} (:type |file) (:multiple true) (:on-change on-file-selected!)
-                    :style $ {} (:position :absolute) (:top 0) (:bottom 0) (:left 0) (:right 0) (:width |100%) (:opacity 0)
+                    :style $ {} (:position |absolute) (:top |0px) (:bottom |0px) (:left |0px) (:right |0px) (:width |100%) (:opacity |0)
                 =< nil 16
                 list->
                   {} $ :style $ {}
@@ -116,10 +116,10 @@
                           :line-height |24px
                         <> log
                 div
-                  {} $ :style $ merge ui/row
-                    {} (:font-size 16)
+                  {} $ :style $ .merge ui/row
+                    {} (:font-size |16px)
                       :color $ hsl 0 0 50
-                      :font-weight 500
+                      :font-weight |500
                   <> $ str "|Connected to "
                   =< 8 nil
                   a
@@ -137,7 +137,7 @@
           :code $ quote $ defn on-file-selected! (e d!)
             let
                 event $ js-cast
-                  option:unwrap $ get e :event
+                  .unwrap $ get e :event
                   , 'app.comp.container/EventHost
                 target $ .-target event
                 location $ browser/location-host
@@ -183,7 +183,7 @@
             , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] (:: 'Map 'Dynamic 'Dynamic)
+            :args $ [] (:: 'Map 'Tag 'Dynamic)
               :: 'Fn $ {} (:return 'Unit)
                 :args $ [] 'Dynamic
             :features $ #{} :js-ffi
@@ -205,7 +205,7 @@
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
-            = |env $ option:unwrap-or (get-env |mode) |release
+            = |env $ .unwrap-or (get-env |mode) |release
           :examples $ []
           :schema $ :: 'Bool
         'site $ %{} 'CodeEntry (:doc |)
@@ -251,7 +251,7 @@
             :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn mount-target ()
-            option:unwrap $ dom/query-selector |.app
+            .unwrap $ dom/query-selector |.app
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
             :args $ []
@@ -259,7 +259,7 @@
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             browser/storage-set!
-              option:unwrap-or (get config/site :storage) |file-sucker
+              .unwrap-or (get config/site :storage) |file-sucker
               format-cirru-edn $ :store @*reel
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
@@ -659,12 +659,12 @@
                     div ({})
                       if (empty? filenames)
                         div
-                          {} $ :style $ merge ui/center
+                          {} $ :style $ .merge ui/center
                             {} $ :padding |80px
                           <> "|No files" $ {} (:font-family ui/font-fancy)
                             :color $ hsl 0 0 80
-                            :font-size 40
-                            :font-weight 300
+                            :font-size |40px
+                            :font-weight |300
                       list->
                         {} $ :style $ {} (:padding "|24px 8px")
                         map sorted-files $ fn (file)
@@ -672,12 +672,12 @@
                             :args $ [] 'app.schema/FileInfo
                             :return $ :: 'List 'Dynamic
                           [] file.:name $ div
-                            {} $ :style $ merge ui/row
+                            {} $ :style $ .merge ui/row
                               {} $ :line-height |40px
                             a $ {}
                               :href $ str |/files/ file.:name
                               :inner-text file.:name
-                              :style $ {} (:text-decoration :none) (:font-family ui/font-fancy) (:font-size 16) (:max-width |50vw) (:overflow :hidden) (:text-overflow :ellipsis)
+                              :style $ {} (:text-decoration |none) (:font-family ui/font-fancy) (:font-size |16px) (:max-width |50vw) (:overflow |hidden) (:text-overflow |ellipsis)
                             =< 16 nil
                             <>
                               let
@@ -685,12 +685,12 @@
                                 if (string? size-text) size-text $ raise "|File size formatter must return a String"
                               {} (:font-family ui/font-fancy)
                                 :color $ hsl 0 0 70
-                                :font-size 12
+                                :font-size |12px
                             =< 16 nil
                             <> (format-created-time file.:created-time)
                               {} (:font-family ui/font-fancy)
                                 :color $ hsl 0 0 70
-                                :font-size 12
+                                :font-size |12px
               {} (:code 200)
                 :headers $ {} $ |Content-Type |text/html
                 :body result
