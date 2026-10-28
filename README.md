@@ -24,7 +24,23 @@ Environment variable:
 * `HOST`, listening address (default `0.0.0.0`; use `127.0.0.1` for isolated tests)
 * `NO_VERSION_CHECK=1`, skip version checking (`false` or unset checks once)
 
-### 本次迁移影响
+### Calcit 0.31.0 迁移影响
+
+CLI/procs 配对正式 0.31.0，需重新安装依赖并构建浏览器与 Node 两个入口。
+Skir 0.0.34、JS-FFI 0.2.7 使用正式 tag；Respo 0.17.0-alpha.4、UI 0.9.0-alpha.4、
+Reel 0.7.0-alpha.4、Markdown 0.5.0-alpha.4 和传递 Router 0.9.0-alpha.3 仍明确为 alpha。
+文件上传、同名覆盖、4 GiB 限制、下载路径及服务监听默认值不变。
+本地/npm 网页保持相对资源，COS 仍只承载公开 Demo 前端，不接收上传文件或部署后端。
+
+`on-file-indexed!` 的函数体 hint 改为它原有 schema 声明的 NodeServerResponseHost，
+消除不同宿主 Trait 声明不一致；不新增转换或改变响应逻辑。
+两个入口绑定现有 Enum 派发合同，仍保留实际 dispatch! 的 Enum 检查及原业务操作解码。
+两套完整 strict、原质量预算、原 schema 测试及两套构建通过；原 unsafe=0 不变。
+保留 hud!、原工作流及 COS 内置校验，不新增检查脚本，不创建 Release 或发布 npm。
+实际隔离回环验收通过：原生文件选择上传合成文本，文件列表显示 56 Bytes，下载链接返回完整 Unicode 文本，接收文件与原文件逐字节一致。
+未测试真实手机或 4 GiB 大文件；以下历史记录不代表本轮验收结果。
+
+### 此前 0.30.1 迁移影响
 
 CLI 和 `@calcit/procs` 继续配对精确正式 `0.30.1`，完整正式模块图更新为 Reel 0.6.42、
 Markdown 0.4.60、UI 0.8.1、Respo 0.16.126、Skir 0.0.33、js-ffi 0.2.6，
