@@ -6,11 +6,11 @@
     :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/ |js-ffi/
-      :type-slots $ {}
+      :type-slots $ {} $ :dispatch-op |app.schema/DispatchOp
     :server $ {} (:description |) (:init-fn 'app.server/main!) (:mode :js) (:reload-fn 'app.server/reload!) (:target :node)
       :feature-policy $ {}
       :modules $ [] |skir/ |respo.calcit/ |respo-ui.calcit/
-      :type-slots $ {}
+      :type-slots $ {} $ :dispatch-op |app.schema/DispatchOp
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -301,6 +301,10 @@
             js-ffi.shared :as shared
     'app.schema $ %{} 'FileEntry
       :defs $ {}
+        'DispatchOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def DispatchOp (:: :unhandled)
+          :examples $ []
+          :schema $ :: 'Enum
         'FileInfo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct FileInfo (:name 'String) (:size 'Number) (:created-time 'Number)
           :examples $ []
@@ -639,7 +643,7 @@
         'on-file-indexed! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-indexed! (req res)
             hint-fn $ {} (:async true)
-              :args $ [] 'app.server/RequestHost 'app.server/ResponseHost
+              :args $ [] 'app.server/RequestHost 'js-ffi.node/NodeServerResponseHost
               :return 'Dynamic
               :features $ #{} :js-ffi
             let

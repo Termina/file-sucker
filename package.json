@@ -34,7 +34,7 @@
     "vite": "8.3.3"
   },
   "dependencies": {
-    "@calcit/procs": "0.30.1",
+    "@calcit/procs": "0.31.0",
     "chalk": "^5.2.0",
     "dayjs": "^1.11.7",
     "finalhandler": "^1.2.0",
