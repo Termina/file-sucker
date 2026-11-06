@@ -21,7 +21,7 @@
           :schema $ quote Trait
         'FileArrayHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FileArrayHost
-            .for-each! $ quote $ Fn app.comp.container/FileArrayHost
+            .for-each! $ Fn app.comp.container/FileArrayHost
               Fn app.comp.container/FileHost Number Dynamic $ -> Dynamic
               -> Dynamic
           :examples $ []
@@ -35,14 +35,14 @@
           :schema $ quote Trait
         'FormDataHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FormDataHost
-            .append! $ quote $ Fn app.comp.container/FormDataHost String app.comp.container/FileHost (-> Dynamic)
+            .append! $ Fn app.comp.container/FormDataHost String app.comp.container/FileHost $ -> Dynamic
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :append! |append
           :schema $ quote Trait
         'InputTargetHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait InputTargetHost
-            :files $ quote $ JsNullish JsObject
+            :files $ JsNullish JsObject
             :value 'String
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
@@ -50,10 +50,10 @@
           :schema $ quote Trait
         'PromiseHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait PromiseHost
-            .then! $ quote $ Fn app.comp.container/PromiseHost
+            .then! $ Fn app.comp.container/PromiseHost
               Fn Dynamic $ -> Dynamic
               -> app.comp.container/PromiseHost
-            .catch! $ quote $ Fn app.comp.container/PromiseHost
+            .catch! $ Fn app.comp.container/PromiseHost
               Fn Dynamic $ -> Dynamic
               -> app.comp.container/PromiseHost
           :examples $ []
@@ -62,7 +62,7 @@
           :schema $ quote Trait
         'UploadProgressHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait UploadProgressHost (:loaded 'Number)
-            :total $ quote $ JsNullish Number
+            :total $ JsNullish Number
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
           :schema $ quote Trait
@@ -84,7 +84,7 @@
                     {} (:href |/files)
                       :style $ {} $ :font-family ui/font-fancy
                     <> "|Browse files"
-                =< nil 16
+                space-y 16
                 div
                   {} $ :style $ .merge ui/center
                     {} (:padding |8px) (:position |relative)
@@ -93,7 +93,7 @@
                   <> "|Select files to upload" $ {} (:color |white) (:font-size |24px) (:font-family ui/font-fancy)
                   input $ {} (:type |file) (:multiple true) (:on-change on-file-selected!)
                     :style $ {} (:position |absolute) (:top |0px) (:bottom |0px) (:left |0px) (:right |0px) (:width |100%) (:opacity |0)
-                =< nil 16
+                space-y 16
                 list->
                   {} $ :style $ {}
                   -> (:logs store)
@@ -110,14 +110,16 @@
                       :color $ hsl 0 0 50
                       :font-weight |500
                   <> $ str "|Connected to "
-                  =< 8 nil
+                  space-x 8
                   a
                     {} $ :style $ {}
                       :color $ hsl 240 80 60
                       :font-family ui/font-fancy
                     <> $ .-host location
-                when dev? $ comp-typed-reel (>> states :reel) (assoc reel :display? false)
-                  {} $ :width |100%
+                if dev?
+                  Option :some $ comp-typed-reel (>> states :reel) (assoc reel :display? false)
+                    {} $ :width |100%
+                  Option :none
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (-> respo.schema/Component) (:features :js-ffi)
         'on-file-selected! $ %{} 'CodeEntry (:doc |)
@@ -179,7 +181,7 @@
             respo-ui.core :refer $ hsl
             respo-ui.core :as ui
             respo.core :refer $ defcomp >> <> list-> div button textarea input span a
-            respo.comp.space :refer $ =<
+            respo.comp.space :refer $ space-x space-y
             respo-md.comp.md :refer $ comp-md
             app.config :refer $ dev?
             |axios :default axios
@@ -210,16 +212,15 @@
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             let
-                event $ if (enum? op) op $ raise "|Expected operation Enum"
-                control $ typed/decode-control event
+                control $ typed/decode-control op
               reset! *reel $ match control
                 (:some action) (typed/apply-control updater @*reel action)
                 (:none)
-                  typed/record-op updater @*reel (schema/decode-op event) (generate-id!)
+                  typed/record-op updater @*reel (schema/decode-op op) (generate-id!)
                     :timestamp $ shared/date-now-snapshot
             , &unit
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Unit)
+          :schema $ quote $ Fn AnyEnum (-> Unit)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             when config/dev? $ load-console-formatter!
@@ -280,31 +281,33 @@
         'DispatchOp $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def DispatchOp (:: :unhandled)
           :examples $ []
-          :schema $ quote Enum
+          :schema $ quote AnyEnum
         'FileInfo $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct FileInfo (:name 'String) (:size 'Number) (:created-time 'Number)
+          :code $ quote $ defstruct FileInfo (:name String) (:size Number) (:created-time Number)
           :examples $ []
           :schema $ quote StructDef
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states
-              quote $ List Dynamic
-              , 'Dynamic
-            :log 'String
+            :states (List respo.schema/CoordKey) Dynamic
+            :log String
             :clear-logs
-            :hydrate-storage 'Store
+            :hydrate-storage Store
           :examples $ []
           :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store (:states 'Map)
-            :logs $ quote $ List String
+          :code $ quote $ defstruct Store (:states Map)
+            :logs $ List String
           :examples $ []
           :schema $ quote StructDef
         'decode-op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-op (op)
             match op
               (:states cursor value)
-                if (list? cursor) (Op :states cursor value) (raise "|Expected state cursor List")
+                if (list? cursor)
+                  Op :states
+                    decode-map-as cursor $ List respo.schema/CoordKey
+                    , value
+                  raise "|Expected state cursor List"
               (:log text)
                 if (string? text) (Op :log text) (raise "|Expected log String")
               (:clear-logs) (Op :clear-logs)
@@ -316,7 +319,7 @@
                   raise "|Expected Store"
               _ $ raise "|Unknown application operation"
           :examples $ []
-          :schema $ quote $ Fn Enum (-> app.schema/Op)
+          :schema $ quote $ Fn AnyEnum (-> app.schema/Op)
           :tests $ [] $ %{} 'TestEntry (:name |operation-contracts)
             :code $ quote $ do
               assert= (Op :log "|上传完成")
@@ -339,7 +342,7 @@
       :defs $ {}
         'AddressArrayHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait AddressArrayHost
-            .for-each! $ quote $ Fn app.server/AddressArrayHost
+            .for-each! $ Fn app.server/AddressArrayHost
               Fn String Number Dynamic $ -> Dynamic
               -> Dynamic
           :examples $ []
@@ -348,40 +351,40 @@
           :schema $ quote Trait
         'ChalkHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait ChalkHost
-            .yellow! $ quote $ Fn app.server/ChalkHost String (-> String)
+            .yellow! $ Fn app.server/ChalkHost String $ -> String
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :yellow! |yellow
           :schema $ quote Trait
         'DayjsHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait DayjsHost
-            .format! $ quote $ Fn app.server/DayjsHost String (-> String)
+            .format! $ Fn app.server/DayjsHost String $ -> String
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :format! |format
           :schema $ quote Trait
         'FilesHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FilesHost
-            :file $ quote $ JsNullish app.server/UploadedFilesHost
+            :file $ JsNullish app.server/UploadedFilesHost
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
           :schema $ quote Trait
         'FsStatHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FsStatHost (:size 'Number) (:ctime-ms 'Number)
-            .is-file? $ quote $ Fn app.server/FsStatHost (-> Bool)
+            .is-file? $ Fn app.server/FsStatHost $ -> Bool
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} (:ctime-ms |ctimeMs) (:is-file? |isFile)
           :schema $ quote Trait
         'HeadersHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait HeadersHost
-            :origin $ quote $ JsNullish String
+            :origin $ JsNullish String
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
           :schema $ quote Trait
         'IncomingFormHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait IncomingFormHost
-            .parse! $ quote $ Fn app.server/IncomingFormHost app.server/RequestHost
+            .parse! $ Fn app.server/IncomingFormHost app.server/RequestHost
               Fn (JsNullish JsObject) Dynamic app.server/FilesHost $ -> Dynamic
               -> Dynamic
           :examples $ []
@@ -401,7 +404,7 @@
           :schema $ quote Trait
         'QrcodeHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait QrcodeHost
-            .generate! $ quote $ Fn app.server/QrcodeHost String JsObject Dynamic (-> Dynamic)
+            .generate! $ Fn app.server/QrcodeHost String JsObject Dynamic $ -> Dynamic
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :generate! |generate
@@ -414,35 +417,34 @@
           :schema $ quote Trait
         'ResponseHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait ResponseHost
-            .set-header! $ quote $ Fn app.server/ResponseHost String String (-> Dynamic)
+            .set-header! $ Fn app.server/ResponseHost String String $ -> Dynamic
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :set-header! |setHeader
           :schema $ quote Trait
         'TaskArrayHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait TaskArrayHost
-            .push! $ quote $ Fn app.server/TaskArrayHost Dynamic (-> Number)
+            .push! $ Fn app.server/TaskArrayHost Dynamic $ -> Number
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :push! |push
           :schema $ quote Trait
         'UploadedFileHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait UploadedFileHost
-            :original-filename $ quote $ JsNullish String
+            :original-filename $ JsNullish String
             :filepath 'String
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
           :schema $ quote Trait
         'UploadedFilesHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait UploadedFilesHost
-            .at $ quote $ Fn app.server/UploadedFilesHost Number
-              -> $ JsNullish app.server/UploadedFileHost
+            .at $ Fn app.server/UploadedFilesHost Number $ -> (JsNullish app.server/UploadedFileHost)
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
           :schema $ quote Trait
         'UrlModuleHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait UrlModuleHost
-            .file-url-to-path! $ quote $ Fn app.server/UrlModuleHost JsObject (-> String)
+            .file-url-to-path! $ Fn app.server/UrlModuleHost JsObject $ -> String
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :file-url-to-path! |fileURLToPath
@@ -450,7 +452,7 @@
         'as-file-info-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-file-info-list (value)
             map
-              decode-map-as (to-calcit-data value) (:: 'List 'Dynamic)
+              decode-map-as (to-calcit-data value) (List Dynamic)
               fn (item)
                 decode-map-as
                   if (struct? item) (&struct:to-map item) item
@@ -587,13 +589,14 @@
                   body ({})
                     div ({})
                       if (empty? filenames)
-                        div
+                        Option :some $ div
                           {} $ :style $ .merge ui/center
                             {} $ :padding |80px
                           <> "|No files" $ {} (:font-family ui/font-fancy)
                             :color $ hsl 0 0 80
                             :font-size |40px
                             :font-weight |300
+                        Option :none
                       list->
                         {} $ :style $ {} (:padding "|24px 8px")
                         map sorted-files $ fn (file)
@@ -605,7 +608,7 @@
                               :href $ str |/files/ file.:name
                               :inner-text file.:name
                               :style $ {} (:text-decoration |none) (:font-family ui/font-fancy) (:font-size |16px) (:max-width |50vw) (:overflow |hidden) (:text-overflow |ellipsis)
-                            =< 16 nil
+                            space-x 16
                             <>
                               let
                                   size-text $ prettysize file.:size
@@ -613,7 +616,7 @@
                               {} (:font-family ui/font-fancy)
                                 :color $ hsl 0 0 70
                                 :font-size |12px
-                            =< 16 nil
+                            space-x 16
                             <> (format-created-time file.:created-time)
                               {} (:font-family ui/font-fancy)
                                 :color $ hsl 0 0 70
@@ -727,7 +730,7 @@
           :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost (-> Unit) (:features :js-ffi)
         'turn-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn turn-list (arr)
-            decode-map-as (to-calcit-data arr) (:: 'List 'Dynamic)
+            decode-map-as (to-calcit-data arr) (List Dynamic)
           :examples $ []
           :schema $ quote $ Fn JsObject
             -> $ List Dynamic
@@ -748,7 +751,7 @@
             respo-ui.core :as ui
             respo-ui.core :refer $ hsl
             skir.core :as skir
-            respo.comp.space :refer $ =<
+            respo.comp.space :refer $ space-x space-y
             |../entry/address.mjs :refer $ addresses
             |url :default url
             js-ffi.node :as node
