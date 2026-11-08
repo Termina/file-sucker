@@ -24,13 +24,13 @@ Environment variable:
 * `HOST`, listening address (default `0.0.0.0`; use `127.0.0.1` for isolated tests)
 * `NO_VERSION_CHECK=1`, skip version checking (`false` or unset checks once)
 
-### Calcit 0.35.1 源码迁移
+### Calcit 0.37.0 源码迁移
 
-源码构建需成套使用正式 CLI / `@calcit/procs` **0.35.1**，重新安装依赖并生成浏览器、Node 两个入口。
-采用正式 Skir 0.0.39、JS FFI 0.2.13、Respo 0.19.4、UI 0.15.1、Reel 0.9.2 和 Markdown 0.8.1，传递 Router 0.12.1。
+源码构建需成套使用正式 CLI / `@calcit/procs` **0.37.0**，重新安装依赖并生成浏览器、Node 两个入口。
+采用正式 Skir 0.0.40、JS FFI 0.2.13、Respo 0.19.5、UI 0.15.2、Reel 0.10.0 和 Markdown 0.8.2，传递 Router 0.12.2。
 不以本地覆盖、hash 或关闭 Caps strict 替代安装。npm版本保持0.1.14；本PR不创建会触发npm发布的Release，也不合并、发布或部署后端。
 
-派发使用 AnyEnum，状态路径按 CoordKey union 校验。空文件列表提示和开发工具子节点使用显式 Option。
+Respo/Reel 的派发入口接收开放枚举，上传回调使用具体应用 Op，状态路径按 CoordKey union 校验。文件索引行的名称和元素由 FileIndexItem union 表达。空文件列表提示和开发工具子节点使用显式 Option。
 上传、同名覆盖、4 GiB限制、下载路径、HOST/PORT默认值、禁用的旧状态恢复与 `hud!` 保持。
 浏览器/服务器分别运行完整strict、公开定义检查、动态方法/弃用检查和两份原质量预算；预算文件不变，unsafe仍为0，不增加强转、checker或基线。
 
@@ -40,7 +40,7 @@ Environment variable:
 
 ### 构建与验收
 
-使用Node24、Yarn4.18.0、Caps0.1.1和Calcit0.35.1：
+使用Node24、Yarn4.18.0、Caps0.1.1和Calcit0.37.0：
 
 ```bash
 caps --strict --ci

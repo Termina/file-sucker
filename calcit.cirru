@@ -6,11 +6,11 @@
     :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/ |js-ffi/
-      :type-slots $ {} $ :dispatch-op |app.schema/DispatchOp
+      :type-slots $ {} $ :dispatch-op 'app.schema/DispatchOp
     :server $ {} (:description |) (:init-fn 'app.server/main!) (:mode :js) (:reload-fn 'app.server/reload!) (:target :node)
       :feature-policy $ {}
       :modules $ [] |skir/ |respo.calcit/ |respo-ui.calcit/
-      :type-slots $ {} $ :dispatch-op |app.schema/DispatchOp
+      :type-slots $ {} $ :dispatch-op 'app.schema/DispatchOp
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -172,7 +172,7 @@
             , &unit
           :examples $ []
           :schema $ quote $ Fn (Map Tag Dynamic)
-            Fn Dynamic $ -> Unit
+            Fn app.schema/Op $ -> Unit
             -> Unit
             :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
@@ -363,6 +363,10 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :format! |format
           :schema $ quote Trait
+        'FileIndexItem $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion FileIndexItem String respo.schema/Element
+          :examples $ []
+          :schema $ quote UnionDef
         'FilesHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FilesHost
             :file $ JsNullish app.server/UploadedFilesHost
@@ -600,7 +604,7 @@
                       list->
                         {} $ :style $ {} (:padding "|24px 8px")
                         map sorted-files $ fn (file)
-                          hint-fn $ Fn app.schema/FileInfo $ -> (List Dynamic)
+                          hint-fn $ Fn app.schema/FileInfo $ -> (List app.server/FileIndexItem)
                           [] file.:name $ div
                             {} $ :style $ .merge ui/row
                               {} $ :line-height |40px
