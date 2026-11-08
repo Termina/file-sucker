@@ -22,8 +22,8 @@
         'FileArrayHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FileArrayHost
             .for-each! $ Fn app.comp.container/FileArrayHost
-              Fn app.comp.container/FileHost Number Dynamic $ -> Dynamic
-              -> Dynamic
+              Fn app.comp.container/FileHost Number app.comp.container/FileArrayHost $ -> Unit
+              -> Unit
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :for-each! |forEach
@@ -35,7 +35,7 @@
           :schema $ quote Trait
         'FormDataHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FormDataHost
-            .append! $ Fn app.comp.container/FormDataHost String app.comp.container/FileHost $ -> Dynamic
+            .append! $ Fn app.comp.container/FormDataHost String app.comp.container/FileHost $ -> Unit
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :append! |append
@@ -125,9 +125,7 @@
         'on-file-selected! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-selected! (e d!)
             let
-                event $ js-cast
-                  .unwrap $ get e :event
-                  , 'app.comp.container/EventHost
+                event $ js-cast (:event e) 'app.comp.container/EventHost
                 target $ .-target event
                 location $ browser/location-host
                 files $ js-cast
@@ -169,9 +167,10 @@
                             d! $ schema/Op :log $ str (.-name file) "| uploaded!"
                         handled .catch! $ fn (error) (eprintln error)
                           d! $ schema/Op :log $ str error
+                , &unit
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic)
+          :schema $ quote $ Fn respo.schema/RespoEvent
             Fn app.schema/Op $ -> Unit
             -> Unit
             :features :js-ffi

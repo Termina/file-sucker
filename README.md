@@ -24,9 +24,10 @@ Environment variable:
 * `HOST`, listening address (default `0.0.0.0`; use `127.0.0.1` for isolated tests)
 * `NO_VERSION_CHECK=1`, skip version checking (`false` or unset checks once)
 
-### Calcit 0.37.0 源码迁移
+### Calcit 0.38.0 源码迁移
 
-源码构建需成套使用正式 CLI / `@calcit/procs` **0.37.0**，重新安装依赖并生成浏览器、Node 两个入口。
+源码构建需成套使用正式 CLI / `@calcit/procs` **0.38.0**，重新安装依赖并生成浏览器、Node 两个入口。
+文件选择使用 `RespoEvent`，数组遍历和 FormData 写入标明实际宿主参数与返回类型。
 采用正式 Skir 0.0.40、JS FFI 0.2.13、Respo 0.19.5、UI 0.15.2、Reel 0.10.0 和 Markdown 0.8.2，传递 Router 0.12.2。
 不以本地覆盖、hash 或关闭 Caps strict 替代安装。npm版本保持0.1.14；本PR不创建会触发npm发布的Release，也不合并、发布或部署后端。
 
@@ -40,7 +41,7 @@ Respo/Reel 的派发入口接收开放枚举，上传回调使用具体应用 Op
 
 ### 构建与验收
 
-使用Node24、Yarn4.18.0、Caps0.1.1和Calcit0.37.0：
+使用 Node 24、Yarn 4.18.0、Caps 0.1.1 和 Calcit 0.38.0：
 
 ```bash
 caps --strict --ci
