@@ -51,10 +51,10 @@
         'PromiseHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait PromiseHost
             .then! $ Fn app.comp.container/PromiseHost
-              Fn Dynamic $ -> Dynamic
+              Fn JsObject $ -> Unit
               -> app.comp.container/PromiseHost
             .catch! $ Fn app.comp.container/PromiseHost
-              Fn Dynamic $ -> Dynamic
+              Fn Dynamic $ -> Unit
               -> app.comp.container/PromiseHost
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
@@ -342,8 +342,8 @@
         'AddressArrayHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait AddressArrayHost
             .for-each! $ Fn app.server/AddressArrayHost
-              Fn String Number Dynamic $ -> Dynamic
-              -> Dynamic
+              Fn String Number app.server/AddressArrayHost $ -> Unit
+              -> Unit
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :for-each! |forEach
@@ -388,8 +388,8 @@
         'IncomingFormHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait IncomingFormHost
             .parse! $ Fn app.server/IncomingFormHost app.server/RequestHost
-              Fn (JsNullish JsObject) Dynamic app.server/FilesHost $ -> Dynamic
-              -> Dynamic
+              Fn (JsNullish JsObject) JsObject app.server/FilesHost $ -> Unit
+              -> JsObject
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :parse! |parse
@@ -407,7 +407,9 @@
           :schema $ quote Trait
         'QrcodeHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait QrcodeHost
-            .generate! $ Fn app.server/QrcodeHost String JsObject Dynamic $ -> Dynamic
+            .generate! $ Fn app.server/QrcodeHost String JsObject
+              Fn String $ -> Unit
+              -> Unit
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :generate! |generate
@@ -427,7 +429,7 @@
           :schema $ quote Trait
         'TaskArrayHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait TaskArrayHost
-            .push! $ Fn app.server/TaskArrayHost Dynamic $ -> Number
+            .push! $ Fn app.server/TaskArrayHost JsObject $ -> Number
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :push! |push
@@ -515,7 +517,10 @@
           :schema $ quote $ Fn String (-> Bool) (:features :js-ffi)
         'load-stats! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn load-stats! (xs)
-            hint-fn $ Fn (List String) (-> Dynamic) (:features :js-ffi) (:async)
+            hint-fn $ Fn (List String)
+              -> $ List app.schema/FileInfo
+              :features :js-ffi
+              :async
             let
                 tasks $ make-task-array
               &doseq (x xs)
@@ -524,9 +529,12 @@
                     let
                         stat $ as-fs-stat stat-value
                       resolve $ app.schema/FileInfo :name x :size (.-size stat) :created-time $ .-ctime-ms stat
-              js/Promise.all tasks
+              as-file-info-list $ js-await $ js/Promise.all tasks
           :examples $ []
-          :schema $ quote $ Fn (List String) (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn (List String)
+            -> $ List app.schema/FileInfo
+            :features :js-ffi
+            :async
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             let
@@ -575,11 +583,13 @@
           :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
         'on-file-indexed! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-indexed! (req res)
-            hint-fn $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi) (:async)
+            hint-fn $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost
+              -> $ Map Tag Dynamic
+              :features :js-ffi
+              :async
             let
                 filenames $ filter (read-file-names) is-file-path?
-                files-info $ js-await $ load-stats! filenames
-                file-list $ as-file-info-list files-info
+                file-list $ js-await $ load-stats! filenames
                 sorted-files $ sort file-list $ fn (a b) (&compare b.:created-time a.:created-time)
                 result $ make-string $ html ({})
                   head ({})
@@ -628,7 +638,10 @@
                 :headers $ {} $ |Content-Type |text/html
                 :body result
           :examples $ []
-          :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost
+            -> $ Map Tag Dynamic
+            :features :js-ffi
+            :async
         'on-page! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-page! (req res) (serve req res) :effect
           :examples $ []
