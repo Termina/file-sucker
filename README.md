@@ -24,16 +24,17 @@ Environment variable:
 * `HOST`, listening address (default `0.0.0.0`; use `127.0.0.1` for isolated tests)
 * `NO_VERSION_CHECK=1`, skip version checking (`false` or unset checks once)
 
-### Calcit 0.40.0 源码迁移
+### Calcit 0.41.0 源码迁移
 
-源码构建需成套使用正式 CLI / `@calcit/procs` **0.40.0**，重新安装依赖并生成浏览器、Node 两个入口。
+源码构建需成套使用正式 CLI / `@calcit/procs` **0.41.0**，重新安装依赖并生成浏览器、Node 两个入口。
 文件选择使用 `RespoEvent`，数组遍历和 FormData 写入标明实际宿主参数与返回类型。
 采用正式 Skir 0.0.40、JS FFI 0.2.13、Respo 0.19.5、UI 0.15.2、Reel 0.11.0 和 Markdown 0.8.2，传递 Router 0.12.2。
-不以本地覆盖、hash 或关闭 Caps strict 替代安装。npm版本保持0.1.14；本PR不创建会触发npm发布的Release，也不合并、发布或部署后端。
+依赖按正式版本解析并执行 Caps strict。本轮源码候选沿用 npm 版本 0.1.14。
 
 上传与日志派发使用具名应用 Op，Reel 控制使用独立回调，状态路径按 CoordKey union 校验。文件索引行的名称和元素由 FileIndexItem union 表达。空文件列表提示和开发工具子节点使用显式 Option。
 上传、同名覆盖、4 GiB限制、下载路径、HOST/PORT默认值、禁用的旧状态恢复与 `hud!` 保持。
-浏览器/服务器分别运行完整strict、公开定义检查、动态方法/弃用检查和两份原质量预算；预算文件不变，unsafe仍为0，不增加强转、checker或基线。
+浏览器与服务器分别运行完整 strict、公开定义、动态方法与弃用调用检查。两份旧质量预算由 0.41.0 的类型覆盖和弱类型检查接替。仅列出的五处宿主边界可保留各一项动态签名，unsafe 上限为 0。
+静态页面和下载处理器的返回值明确为 Tag，版本检查和服务端热重载明确返回 Unit。
 
 本地/npm网页保持相对资源；COS只承载公开Demo前端，不接收上传文件或部署Node后端。
 原PR独立预览前缀、action自身verify、生产前端rsync目录和三天构建artifact保持。
@@ -41,7 +42,7 @@ Environment variable:
 
 ### 构建与验收
 
-使用 Node 24、Yarn 4.18.0、Caps 0.1.1 和 Calcit 0.40.0：
+使用 Node 24、Yarn 4.18.0、Caps 0.1.1 和 Calcit 0.41.0：
 
 ```bash
 caps --strict --ci
