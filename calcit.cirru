@@ -6,11 +6,11 @@
     :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |skir/ |js-ffi/
-      :type-slots $ {} $ :dispatch-op 'app.schema/DispatchOp
+      :type-slots $ {} $ :dispatch-op 'app.schema/Op
     :server $ {} (:description |) (:init-fn 'app.server/main!) (:mode :js) (:reload-fn 'app.server/reload!) (:target :node)
       :feature-policy $ {}
       :modules $ [] |skir/ |respo.calcit/ |respo-ui.calcit/
-      :type-slots $ {} $ :dispatch-op 'app.schema/DispatchOp
+      :type-slots $ {} $ :dispatch-op 'app.schema/Op
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -67,10 +67,9 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
           :schema $ quote Trait
         'comp-container $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defcomp comp-container (reel)
+          :code $ quote $ defcomp comp-container (reel on-control)
             let
                 store $ :store reel
-                states $ :states store
                 location $ browser/location-host
               div
                 {} $ :style $ .merge ui/global ui/column
@@ -117,11 +116,15 @@
                       :font-family ui/font-fancy
                     <> $ .-host location
                 if dev?
-                  Option :some $ comp-typed-reel (>> states :reel) (assoc reel :display? false)
+                  Option :some $ comp-controlled-reel (assoc reel :display? false)
                     {} $ :width |100%
+                    , on-control
                   Option :none
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (-> respo.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store)
+            Fn reel.typed/Control $ -> Unit
+            -> respo.schema/Component
+            :features :js-ffi
         'on-file-selected! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-selected! (e d!)
             let
@@ -179,13 +182,13 @@
           :require
             respo-ui.core :refer $ hsl
             respo-ui.core :as ui
-            respo.core :refer $ defcomp >> <> list-> div button textarea input span a
+            respo.core :refer $ defcomp <> list-> div button textarea input span a
             respo.comp.space :refer $ space-x space-y
             respo-md.comp.md :refer $ comp-md
             app.config :refer $ dev?
             |axios :default axios
             app.util :refer $ format-percent
-            reel.comp.reel :refer $ comp-typed-reel
+            reel.comp.reel :refer $ comp-controlled-reel
             js-ffi.browser :as browser
             app.schema :as schema
     'app.config $ %{} 'FileEntry
@@ -210,22 +213,17 @@
           :schema $ quote $ Ref (reel.typed/State app.schema/Op app.schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            let
-                control $ typed/decode-control op
-              reset! *reel $ match control
-                (:some action) (typed/apply-control updater @*reel action)
-                (:none)
-                  typed/record-op updater @*reel (schema/decode-op op) (generate-id!)
-                    :timestamp $ shared/date-now-snapshot
+            reset! *reel $ typed/record-op updater @*reel op (generate-id!)
+              :timestamp $ shared/date-now-snapshot
             , &unit
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit)
+          :schema $ quote $ Fn app.schema/Op (-> Unit)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             when config/dev? $ load-console-formatter!
             render-app!
             add-watch! *reel :changes $ fn (r p) (render-app!)
-            listen-devtools! |k dispatch!
+            listen-devtools! |k on-control!
             browser/set-before-unload! $ fn (e) (persist-storage!)
             browser/set-interval! persist-storage! 60000
             println "|App started."
@@ -237,6 +235,12 @@
             .unwrap $ dom/query-selector |.app
           :examples $ []
           :schema $ quote $ Fn (-> respo.dom/DomElement) (:features :js-ffi)
+        'on-control! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn on-control! (control)
+            reset! *reel $ typed/apply-control updater @*reel control
+            , &unit
+          :examples $ []
+          :schema $ quote $ Fn reel.typed/Control (-> Unit)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             browser/storage-set!
@@ -257,7 +261,7 @@
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*reel) dispatch!
+            render! (mount-target) (comp-container @*reel on-control!) dispatch!
           :examples $ []
           :schema $ quote $ Fn (-> Unit)
       :ns $ %{} 'NsEntry (:doc |)
@@ -277,10 +281,6 @@
             js-ffi.shared :as shared
     'app.schema $ %{} 'FileEntry
       :defs $ {}
-        'DispatchOp $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def DispatchOp (:: :unhandled)
-          :examples $ []
-          :schema $ quote AnyEnum
         'FileInfo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct FileInfo (:name String) (:size Number) (:created-time Number)
           :examples $ []
@@ -298,43 +298,23 @@
             :logs $ List String
           :examples $ []
           :schema $ quote StructDef
-        'decode-op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn decode-op (op)
-            match op
-              (:states cursor value)
-                if (list? cursor)
-                  Op :states
-                    decode-map-as cursor $ List respo.schema/CoordKey
-                    , value
-                  raise "|Expected state cursor List"
-              (:log text)
-                if (string? text) (Op :log text) (raise "|Expected log String")
-              (:clear-logs) (Op :clear-logs)
-              (:hydrate-storage data)
-                if (struct? data)
-                  struct-match data
-                    Store store $ Op :hydrate-storage store
-                    _ _ $ raise "|Expected Store"
-                  raise "|Expected Store"
-              _ $ raise "|Unknown application operation"
-          :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> app.schema/Op)
-          :tests $ [] $ %{} 'TestEntry (:name |operation-contracts)
-            :code $ quote $ do
-              assert= (Op :log "|上传完成")
-                decode-op $ :: :log "|上传完成"
-              assert= (Op :clear-logs)
-                decode-op $ :: :clear-logs
-              assert=
-                Op :states ([] :upload)
-                  {} $ :progress 50
-                decode-op $ :: :states ([] :upload)
-                  {} $ :progress 50
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :states ({}) :logs $ []
           :examples $ []
           :schema $ quote app.schema/Store
+          :tests $ [] $ %{} 'TestEntry (:name |operation-contracts)
+            :code $ quote $ let
+                logged $ app.updater/updater store (Op :log "|上传完成") |fixture 0
+                cleared $ app.updater/updater logged (Op :clear-logs) |fixture 1
+                updated $ app.updater/updater cleared
+                  Op :states ([] :upload)
+                    {} $ :progress 50
+                  , |fixture 2
+              assert= ([] "|上传完成") (:logs logged)
+              assert= ([]) (:logs cleared)
+              assert= (Result :ok 50)
+                get-in (:states updated) ([] :upload :data :progress)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.server $ %{} 'FileEntry
