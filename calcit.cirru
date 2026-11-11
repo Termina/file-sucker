@@ -116,12 +116,12 @@
                       :font-family ui/font-fancy
                     <> $ .-host location
                 if dev?
-                  Option :some $ comp-controlled-reel (assoc reel :display? false)
+                  Some $ comp-controlled-reel (assoc reel :display? false)
                     {} $ :width |100%
                     , on-control
-                  Option :none
+                  , None
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store)
+          :schema $ quote $ Fn (reel.typed/State schema/Op schema/Store)
             Fn reel.typed/Control $ -> Unit
             -> respo.schema/Component
             :features :js-ffi
@@ -174,7 +174,7 @@
             , &unit
           :examples $ []
           :schema $ quote $ Fn respo.schema/RespoEvent
-            Fn app.schema/Op $ -> Unit
+            Fn schema/Op $ -> Unit
             -> Unit
             :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
@@ -210,14 +210,14 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ quote $ Ref (reel.typed/State app.schema/Op app.schema/Store)
+          :schema $ quote $ Ref (typed/State schema/Op schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             reset! *reel $ typed/record-op updater @*reel op (generate-id!)
               :timestamp $ shared/date-now-snapshot
             , &unit
           :examples $ []
-          :schema $ quote $ Fn app.schema/Op (-> Unit)
+          :schema $ quote $ Fn schema/Op (-> Unit)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             when config/dev? $ load-console-formatter!
@@ -240,7 +240,7 @@
             reset! *reel $ typed/apply-control updater @*reel control
             , &unit
           :examples $ []
-          :schema $ quote $ Fn reel.typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             browser/storage-set!
@@ -302,7 +302,7 @@
           :code $ quote $ def store
             Store :states ({}) :logs $ []
           :examples $ []
-          :schema $ quote app.schema/Store
+          :schema $ quote Store
           :tests $ [] $ %{} 'TestEntry (:name |operation-contracts)
             :code $ quote $ let
                 logged $ app.updater/updater store (Op :log "|上传完成") |fixture 0
@@ -400,13 +400,6 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :writable $ #{} :url
           :schema $ quote Trait
-        'ResponseHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait ResponseHost
-            .set-header! $ Fn app.server/ResponseHost String String $ -> Dynamic
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
-            :names $ {} $ :set-header! |setHeader
-          :schema $ quote Trait
         'TaskArrayHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait TaskArrayHost
             .push! $ Fn app.server/TaskArrayHost JsObject $ -> Number
@@ -449,10 +442,10 @@
         'as-fs-stat $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-fs-stat (value) (js-cast value app.server/FsStatHost)
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> app.server/FsStatHost) (:features :js-ffi)
+          :schema $ quote $ Fn Dynamic (-> FsStatHost) (:features :js-ffi)
         'check-version! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn check-version! ()
-            hint-fn $ Fn (-> Dynamic) (:features :js-ffi) (:async)
+            hint-fn $ Fn (-> Unit) (:features :js-ffi) (:async)
             let
                 pkg $ read-package-info
                 version $ .-version pkg
@@ -461,8 +454,9 @@
                   if (string? version) version $ raise "|Registry version must be a String"
               if (= npm-version version) (println "|Running latest version" version)
                 println $ yellow-text $ str "|New version " npm-version "| available, current one is " version "| . Please upgrade!" "|\n\nyarn global add file-sucker\n"
+            , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi) (:async)
         'dirname $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dirname ()
             let
@@ -474,12 +468,12 @@
           :code $ quote $ defn first-uploaded-file (files)
             match
               js-nullish->option $ .-file files
-              (:none) (Option :none)
+              (:none) None
               (:some items)
                 js-nullish->option $ items .at 0
           :examples $ []
-          :schema $ quote $ Fn app.server/FilesHost
-            -> $ Option app.server/UploadedFileHost
+          :schema $ quote $ Fn FilesHost
+            -> $ Option UploadedFileHost
             :features :js-ffi
         'format-created-time $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn format-created-time (timestamp)
@@ -526,7 +520,7 @@
                   if (= host |0.0.0.0) addresses $ js-array host
                   , 'app.server/AddressArrayHost
                 qrcode-client $ js-cast qrcode 'app.server/QrcodeHost
-              skir/create-server! on-request! $ Option :some $ {} (:port port) (:host host)
+              skir/create-server! on-request! $ Some $ {} (:port port) (:host host)
                 :after-start $ fn (_options)
                   address-list .for-each! $ fn (ip-address _idx _array)
                     let
@@ -551,7 +545,7 @@
           :code $ quote $ defn make-task-array ()
             js-cast (js-array) app.server/TaskArrayHost
           :examples $ []
-          :schema $ quote $ Fn (-> app.server/TaskArrayHost) (:features :js-ffi)
+          :schema $ quote $ Fn (-> TaskArrayHost) (:features :js-ffi)
         'on-download! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-download! (req res)
             set! (.-url req)
@@ -560,7 +554,7 @@
             serve-files! req res
             , :effect
           :examples $ []
-          :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Tag) (:features :js-ffi)
         'on-file-indexed! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-indexed! (req res)
             hint-fn $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost
@@ -582,14 +576,14 @@
                   body ({})
                     div ({})
                       if (empty? filenames)
-                        Option :some $ div
+                        Some $ div
                           {} $ :style $ .merge ui/center
                             {} $ :padding |80px
                           <> "|No files" $ {} (:font-family ui/font-fancy)
                             :color $ hsl 0 0 80
                             :font-size |40px
                             :font-weight |300
-                        Option :none
+                        , None
                       list->
                         {} $ :style $ {} (:padding "|24px 8px")
                         map sorted-files $ fn (file)
@@ -618,14 +612,14 @@
                 :headers $ {} $ |Content-Type |text/html
                 :body result
           :examples $ []
-          :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost
             -> $ Map Tag Dynamic
             :features :js-ffi
             :async
         'on-page! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-page! (req res) (serve req res) :effect
           :examples $ []
-          :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Tag) (:features :js-ffi)
         'on-request! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-request! (req-edn res)
             match (:original-request req-edn)
@@ -643,7 +637,7 @@
                     (starts-with? req-url |/files/) (on-download! req res)
                     true $ on-page! req res
           :examples $ []
-          :schema $ quote $ Fn skir.schema/Request js-ffi.node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn skir.schema/Request node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
         'on-upload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-upload! (req res)
             match
@@ -698,7 +692,7 @@
               |OPTIONS $ {} (:code 200) (:body |ok)
               _ $ {} (:code 404) (:body "|method not supported")
           :examples $ []
-          :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
         'read-file-names $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-file-names () (node/read-dir! |.)
           :examples $ []
@@ -711,26 +705,19 @@
               js/JSON.parse $ node/read-text! $ node/path-join (dirname) |../package.json
               , 'app.server/PackageHost
           :examples $ []
-          :schema $ quote $ Fn (-> app.server/PackageHost) (:features :js-ffi)
+          :schema $ quote $ Fn (-> PackageHost) (:features :js-ffi)
         'reload! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn reload! () (println |reloaded!)
+          :code $ quote $ defn reload! () (println |reloaded!) &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'serve $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn serve (req res) (static/servePage req res) &unit
           :examples $ []
-          :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Unit) (:features :js-ffi)
         'serve-files! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn serve-files! (req res) (static/serveFiles req res) &unit
           :examples $ []
-          :schema $ quote $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost (-> Unit) (:features :js-ffi)
-        'turn-list $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn turn-list (arr)
-            decode-map-as (to-calcit-data arr) (List Dynamic)
-          :examples $ []
-          :schema $ quote $ Fn JsObject
-            -> $ List Dynamic
-            :features :js-ffi
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Unit) (:features :js-ffi)
         'yellow-text $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn yellow-text (text)
             let
