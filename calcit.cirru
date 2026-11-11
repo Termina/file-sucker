@@ -346,6 +346,10 @@
           :code $ quote $ defunion FileIndexItem String respo.schema/Element
           :examples $ []
           :schema $ quote UnionDef
+        'FileIndexResponseValue $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion FileIndexResponseValue Number String (Map String String)
+          :examples $ []
+          :schema $ quote UnionDef
         'FilesHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FilesHost
             :file $ JsNullish app.server/UploadedFilesHost
@@ -558,7 +562,7 @@
         'on-file-indexed! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-indexed! (req res)
             hint-fn $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost
-              -> $ Map Tag Dynamic
+              -> $ Map Tag app.server/FileIndexResponseValue
               :features :js-ffi
               :async
             let
@@ -608,12 +612,14 @@
                               {} (:font-family ui/font-fancy)
                                 :color $ hsl 0 0 70
                                 :font-size |12px
-              {} (:code 200)
-                :headers $ {} $ |Content-Type |text/html
-                :body result
+              assert-type
+                {} (:code 200)
+                  :headers $ {} $ |Content-Type |text/html
+                  :body result
+                Map Tag app.server/FileIndexResponseValue
           :examples $ []
           :schema $ quote $ Fn RequestHost node/NodeServerResponseHost
-            -> $ Map Tag Dynamic
+            -> $ Map Tag FileIndexResponseValue
             :features :js-ffi
             :async
         'on-page! $ %{} 'CodeEntry (:doc |)
