@@ -346,10 +346,6 @@
           :code $ quote $ defunion FileIndexItem String respo.schema/Element
           :examples $ []
           :schema $ quote UnionDef
-        'FileIndexResponseValue $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defunion FileIndexResponseValue Number String (Map String String)
-          :examples $ []
-          :schema $ quote UnionDef
         'FilesHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FilesHost
             :file $ JsNullish app.server/UploadedFilesHost
@@ -369,6 +365,10 @@
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
           :schema $ quote Trait
+        'HttpResponseField $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion HttpResponseField Number String (Map String String)
+          :examples $ []
+          :schema $ quote UnionDef
         'IncomingFormHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait IncomingFormHost
             .parse! $ Fn app.server/IncomingFormHost app.server/RequestHost
@@ -411,6 +411,14 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :push! |push
           :schema $ quote Trait
+        'UploadRouteResult $ %{} 'CodeEntry
+          :doc "|An immediate HTTP response or a deferred upload handler."
+          :code $ quote $ defunion UploadRouteResult (Map Tag HttpResponseField)
+            Fn
+              Fn (Map Tag HttpResponseField) (-> Unit)
+              -> Unit
+          :examples $ []
+          :schema $ quote UnionDef
         'UploadedFileHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait UploadedFileHost
             :original-filename $ JsNullish String
@@ -561,8 +569,8 @@
           :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Tag) (:features :js-ffi)
         'on-file-indexed! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-indexed! (req res)
-            hint-fn $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost
-              -> $ Map Tag app.server/FileIndexResponseValue
+            hint-fn $ Fn RequestHost node/NodeServerResponseHost
+              -> $ Map Tag HttpResponseField
               :features :js-ffi
               :async
             let
@@ -591,7 +599,7 @@
                       list->
                         {} $ :style $ {} (:padding "|24px 8px")
                         map sorted-files $ fn (file)
-                          hint-fn $ Fn app.schema/FileInfo $ -> (List app.server/FileIndexItem)
+                          hint-fn $ Fn app.schema/FileInfo $ -> (List FileIndexItem)
                           [] file.:name $ div
                             {} $ :style $ .merge ui/row
                               {} $ :line-height |40px
@@ -616,10 +624,10 @@
                 {} (:code 200)
                   :headers $ {} $ |Content-Type |text/html
                   :body result
-                Map Tag app.server/FileIndexResponseValue
+                Map Tag HttpResponseField
           :examples $ []
           :schema $ quote $ Fn RequestHost node/NodeServerResponseHost
-            -> $ Map Tag FileIndexResponseValue
+            -> $ Map Tag HttpResponseField
             :features :js-ffi
             :async
         'on-page! $ %{} 'CodeEntry (:doc |)
@@ -654,7 +662,7 @@
             match (.-method req)
               |POST $ fn (send!)
                 hint-fn $ Fn
-                  Fn Dynamic $ -> Unit
+                  Fn (Map Tag HttpResponseField) (-> Unit)
                   -> Unit
                   :features :js-ffi
                 let
@@ -698,7 +706,7 @@
               |OPTIONS $ {} (:code 200) (:body |ok)
               _ $ {} (:code 404) (:body "|method not supported")
           :examples $ []
-          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> UploadRouteResult) (:features :js-ffi)
         'read-file-names $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-file-names () (node/read-dir! |.)
           :examples $ []
