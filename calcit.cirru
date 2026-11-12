@@ -439,18 +439,6 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :file-url-to-path! |fileURLToPath
           :schema $ quote Trait
-        'as-file-info-list $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn as-file-info-list (value)
-            map
-              decode-map-as (to-calcit-data value) (List Dynamic)
-              fn (item)
-                decode-map-as
-                  if (struct? item) (&struct:to-map item) item
-                  , 'app.schema/FileInfo
-          :examples $ []
-          :schema $ quote $ Fn Dynamic
-            -> $ List app.schema/FileInfo
-            :features :js-ffi
         'as-fs-stat $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-fs-stat (value) (js-cast value app.server/FsStatHost)
           :examples $ []
@@ -515,7 +503,9 @@
                     let
                         stat $ as-fs-stat stat-value
                       resolve $ app.schema/FileInfo :name x :size (.-size stat) :created-time $ .-ctime-ms stat
-              as-file-info-list $ js-await $ js/Promise.all tasks
+              decode-map-as
+                to-calcit-data $ js-await $ js/Promise.all tasks
+                List app.schema/FileInfo
           :examples $ []
           :schema $ quote $ Fn (List String)
             -> $ List app.schema/FileInfo
