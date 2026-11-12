@@ -346,10 +346,6 @@
           :code $ quote $ defunion FileIndexItem String respo.schema/Element
           :examples $ []
           :schema $ quote UnionDef
-        'FileIndexResponseValue $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defunion FileIndexResponseValue Number String (Map String String)
-          :examples $ []
-          :schema $ quote UnionDef
         'FilesHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FilesHost
             :file $ JsNullish app.server/UploadedFilesHost
@@ -369,6 +365,10 @@
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
           :schema $ quote Trait
+        'HttpResponseField $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion HttpResponseField Number String (Map String String)
+          :examples $ []
+          :schema $ quote UnionDef
         'IncomingFormHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait IncomingFormHost
             .parse! $ Fn app.server/IncomingFormHost app.server/RequestHost
@@ -411,6 +411,14 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :push! |push
           :schema $ quote Trait
+        'UploadRouteResult $ %{} 'CodeEntry
+          :doc "|An immediate HTTP response or a deferred upload handler."
+          :code $ quote $ defunion UploadRouteResult (Map Tag HttpResponseField)
+            Fn
+              Fn (Map Tag HttpResponseField) (-> Unit)
+              -> Unit
+          :examples $ []
+          :schema $ quote UnionDef
         'UploadedFileHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait UploadedFileHost
             :original-filename $ JsNullish String
@@ -431,22 +439,6 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :file-url-to-path! |fileURLToPath
           :schema $ quote Trait
-        'as-file-info-list $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn as-file-info-list (value)
-            map
-              decode-map-as (to-calcit-data value) (List Dynamic)
-              fn (item)
-                decode-map-as
-                  if (struct? item) (&struct:to-map item) item
-                  , 'app.schema/FileInfo
-          :examples $ []
-          :schema $ quote $ Fn Dynamic
-            -> $ List app.schema/FileInfo
-            :features :js-ffi
-        'as-fs-stat $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn as-fs-stat (value) (js-cast value app.server/FsStatHost)
-          :examples $ []
-          :schema $ quote $ Fn Dynamic (-> FsStatHost) (:features :js-ffi)
         'check-version! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn check-version! ()
             hint-fn $ Fn (-> Unit) (:features :js-ffi) (:async)
@@ -501,13 +493,14 @@
               :async
             let
                 tasks $ make-task-array
-              &doseq (x xs)
-                tasks .push! $ new js/Promise $ fn (resolve reject)
-                  fs/stat x $ fn (err stat-value)
-                    let
-                        stat $ as-fs-stat stat-value
-                      resolve $ app.schema/FileInfo :name x :size (.-size stat) :created-time $ .-ctime-ms stat
-              as-file-info-list $ js-await $ js/Promise.all tasks
+              &doseq (name xs)
+                tasks .push! $ fs-promises/stat name
+              let
+                  stats $ js-await $ js/Promise.all tasks
+                map-indexed xs $ fn (idx name)
+                  let
+                      stat $ js-cast (aget stats idx) app.server/FsStatHost
+                    app.schema/FileInfo :name name :size (.-size stat) :created-time $ .-ctime-ms stat
           :examples $ []
           :schema $ quote $ Fn (List String)
             -> $ List app.schema/FileInfo
@@ -561,8 +554,8 @@
           :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Tag) (:features :js-ffi)
         'on-file-indexed! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-indexed! (req res)
-            hint-fn $ Fn app.server/RequestHost js-ffi.node/NodeServerResponseHost
-              -> $ Map Tag app.server/FileIndexResponseValue
+            hint-fn $ Fn RequestHost node/NodeServerResponseHost
+              -> $ Map Tag HttpResponseField
               :features :js-ffi
               :async
             let
@@ -591,7 +584,7 @@
                       list->
                         {} $ :style $ {} (:padding "|24px 8px")
                         map sorted-files $ fn (file)
-                          hint-fn $ Fn app.schema/FileInfo $ -> (List app.server/FileIndexItem)
+                          hint-fn $ Fn app.schema/FileInfo $ -> (List FileIndexItem)
                           [] file.:name $ div
                             {} $ :style $ .merge ui/row
                               {} $ :line-height |40px
@@ -616,10 +609,10 @@
                 {} (:code 200)
                   :headers $ {} $ |Content-Type |text/html
                   :body result
-                Map Tag app.server/FileIndexResponseValue
+                Map Tag HttpResponseField
           :examples $ []
           :schema $ quote $ Fn RequestHost node/NodeServerResponseHost
-            -> $ Map Tag FileIndexResponseValue
+            -> $ Map Tag HttpResponseField
             :features :js-ffi
             :async
         'on-page! $ %{} 'CodeEntry (:doc |)
@@ -654,7 +647,7 @@
             match (.-method req)
               |POST $ fn (send!)
                 hint-fn $ Fn
-                  Fn Dynamic $ -> Unit
+                  Fn (Map Tag HttpResponseField) (-> Unit)
                   -> Unit
                   :features :js-ffi
                 let
@@ -698,7 +691,7 @@
               |OPTIONS $ {} (:code 200) (:body |ok)
               _ $ {} (:code 404) (:body "|method not supported")
           :examples $ []
-          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> UploadRouteResult) (:features :js-ffi)
         'read-file-names $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-file-names () (node/read-dir! |.)
           :examples $ []
@@ -745,6 +738,7 @@
             |url :default url
             js-ffi.node :as node
             |../entry/static.mjs :as static
+            |node:fs/promises :as fs-promises
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
