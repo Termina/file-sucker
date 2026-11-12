@@ -439,10 +439,6 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :file-url-to-path! |fileURLToPath
           :schema $ quote Trait
-        'as-fs-stat $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn as-fs-stat (value) (js-cast value app.server/FsStatHost)
-          :examples $ []
-          :schema $ quote $ Fn Dynamic (-> FsStatHost) (:features :js-ffi)
         'check-version! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn check-version! ()
             hint-fn $ Fn (-> Unit) (:features :js-ffi) (:async)
@@ -497,15 +493,14 @@
               :async
             let
                 tasks $ make-task-array
-              &doseq (x xs)
-                tasks .push! $ new js/Promise $ fn (resolve reject)
-                  fs/stat x $ fn (err stat-value)
-                    let
-                        stat $ as-fs-stat stat-value
-                      resolve $ app.schema/FileInfo :name x :size (.-size stat) :created-time $ .-ctime-ms stat
-              decode-map-as
-                to-calcit-data $ js-await $ js/Promise.all tasks
-                List app.schema/FileInfo
+              &doseq (name xs)
+                tasks .push! $ fs-promises/stat name
+              let
+                  stats $ js-await $ js/Promise.all tasks
+                map-indexed xs $ fn (idx name)
+                  let
+                      stat $ js-cast (aget stats idx) app.server/FsStatHost
+                    app.schema/FileInfo :name name :size (.-size stat) :created-time $ .-ctime-ms stat
           :examples $ []
           :schema $ quote $ Fn (List String)
             -> $ List app.schema/FileInfo
@@ -743,6 +738,7 @@
             |url :default url
             js-ffi.node :as node
             |../entry/static.mjs :as static
+            |node:fs/promises :as fs-promises
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)

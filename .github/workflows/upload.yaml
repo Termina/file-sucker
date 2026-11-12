@@ -59,12 +59,12 @@ jobs:
         calcit --entry server analyze weak-types --only dynamic-method --summary-only --format json | jq -e '.data.summary.findings == 0'
         calcit --entry server analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
         calcit analyze weak-types --only coverage --summary-only --format json |
-          jq -e '.data.summary.levels | .none == 0 and .partial <= 2'
+          jq -e '.data.summary.levels | .none == 0 and .partial <= 1'
         calcit analyze weak-types --format json |
           jq -e '
-            .data.summary.hits <= 2 and
+            .data.summary.hits <= 1 and
             all(.data.definitions[];
-              (.id == "app.server/as-fs-stat" or .id == "app.server/on-request!") and
+              .id == "app.server/on-request!" and
               (.occurrences | length == 1) and
               all(.occurrences[]; .kind == "schema-dynamic" and .intent == "intentional-js-ffi"))'
 
