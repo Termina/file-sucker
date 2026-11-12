@@ -124,7 +124,7 @@
           :schema $ quote $ Fn (reel.typed/State schema/Op schema/Store)
             Fn reel.typed/Control $ -> Unit
             -> respo.schema/Component
-            :features :js-ffi
+            :features :io :js-ffi
         'on-file-selected! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-selected! (e d!)
             let
@@ -176,7 +176,7 @@
           :schema $ quote $ Fn respo.schema/RespoEvent
             Fn schema/Op $ -> Unit
             -> Unit
-            :features :js-ffi
+            :features :io :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
@@ -217,7 +217,7 @@
               :timestamp $ shared/date-now-snapshot
             , &unit
           :examples $ []
-          :schema $ quote $ Fn schema/Op (-> Unit)
+          :schema $ quote $ Fn schema/Op (-> Unit) (:features :io :state)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             when config/dev? $ load-console-formatter!
@@ -229,7 +229,7 @@
             println "|App started."
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn mount-target ()
             .unwrap $ dom/query-selector |.app
@@ -240,14 +240,14 @@
             reset! *reel $ typed/apply-control updater @*reel control
             , &unit
           :examples $ []
-          :schema $ quote $ Fn typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit) (:features :io :state)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             browser/storage-set!
               .unwrap-or (get config/site :storage) |file-sucker
               format-cirru-edn $ :store @*reel
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi :state)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
@@ -258,12 +258,12 @@
               hud! |error build-errors
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render! (mount-target) (comp-container @*reel on-control!) dispatch!
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :io :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
@@ -351,6 +351,15 @@
           :code $ quote $ defunion FileIndexItem String respo.schema/Element
           :examples $ []
           :schema $ quote UnionDef
+        'FileIndexPromiseHost $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ deftrait FileIndexPromiseHost
+            .then! $ Fn app.server/FileIndexPromiseHost
+              Fn (Map Tag HttpResponseField) (-> Unit)
+              -> app.server/FileIndexPromiseHost
+          :examples $ []
+          :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
+            :names $ {} $ :then! |then
+          :schema $ quote Trait
         'FilesHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FilesHost
             :file $ JsNullish app.server/UploadedFilesHost
@@ -370,6 +379,14 @@
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
           :schema $ quote Trait
+        'HttpResponse $ %{} 'CodeEntry
+          :doc "|An immediate HTTP response or a deferred handler."
+          :code $ quote $ defunion HttpResponse (Map Tag HttpResponseField)
+            Fn
+              Fn (Map Tag HttpResponseField) (-> Unit)
+              -> Unit
+          :examples $ []
+          :schema $ quote UnionDef
         'HttpResponseField $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defunion HttpResponseField Number String (Map String String)
           :examples $ []
@@ -409,6 +426,11 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :writable $ #{} :url
           :schema $ quote Trait
+        'RouteResult $ %{} 'CodeEntry
+          :doc "|An immediate response, deferred response, or completed Node response effect."
+          :code $ quote $ defunion RouteResult HttpResponse Tag
+          :examples $ []
+          :schema $ quote UnionDef
         'TaskArrayHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait TaskArrayHost
             .push! $ Fn app.server/TaskArrayHost JsObject $ -> Number
@@ -416,14 +438,6 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :node)
             :names $ {} $ :push! |push
           :schema $ quote Trait
-        'UploadRouteResult $ %{} 'CodeEntry
-          :doc "|An immediate HTTP response or a deferred upload handler."
-          :code $ quote $ defunion UploadRouteResult (Map Tag HttpResponseField)
-            Fn
-              Fn (Map Tag HttpResponseField) (-> Unit)
-              -> Unit
-          :examples $ []
-          :schema $ quote UnionDef
         'UploadedFileHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait UploadedFileHost
             :original-filename $ JsNullish String
@@ -457,7 +471,7 @@
                 println $ yellow-text $ str "|New version " npm-version "| available, current one is " version "| . Please upgrade!" "|\n\nyarn global add file-sucker\n"
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi) (:async)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi) (:async)
         'dirname $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dirname ()
             let
@@ -542,7 +556,7 @@
                   , &unit
               , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi)
         'make-task-array $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-task-array ()
             js-cast (js-array) app.server/TaskArrayHost
@@ -556,7 +570,7 @@
             serve-files! req res
             , :effect
           :examples $ []
-          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Tag) (:features :js-ffi)
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> Tag) (:features :io :js-ffi)
         'on-file-indexed! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-indexed! (req res)
             hint-fn $ Fn RequestHost node/NodeServerResponseHost
@@ -628,7 +642,9 @@
           :code $ quote $ defn on-request! (req-edn res)
             match (:original-request req-edn)
               (:none)
-                {} (:code 500) (:body "|Missing original Node request")
+                assert-type
+                  {} (:code 500) (:body "|Missing original Node request")
+                  Map Tag HttpResponseField
               (:some original)
                 let
                     req $ js-cast original 'app.server/RequestHost
@@ -637,11 +653,19 @@
                       = |/upload req-url
                       on-upload! req res
                     (or (= req-url |/files) (= req-url |/files/))
-                      on-file-indexed! req res
+                      fn (send!)
+                        hint-fn $ Fn
+                          Fn (Map Tag HttpResponseField) (-> Unit)
+                          -> Unit
+                          :features :js-ffi :io
+                        let
+                            index-promise $ js-cast (on-file-indexed! req res) 'app.server/FileIndexPromiseHost
+                          index-promise .then! send!
+                          , &unit
                     (starts-with? req-url |/files/) (on-download! req res)
                     true $ on-page! req res
           :examples $ []
-          :schema $ quote $ Fn skir.schema/Request node/NodeServerResponseHost (-> Dynamic) (:features :js-ffi)
+          :schema $ quote $ Fn skir.schema/Request node/NodeServerResponseHost (-> RouteResult) (:features :io :js-ffi)
         'on-upload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-upload! (req res)
             match
@@ -696,7 +720,7 @@
               |OPTIONS $ {} (:code 200) (:body |ok)
               _ $ {} (:code 404) (:body "|method not supported")
           :examples $ []
-          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> UploadRouteResult) (:features :js-ffi)
+          :schema $ quote $ Fn RequestHost node/NodeServerResponseHost (-> HttpResponse) (:features :io :js-ffi)
         'read-file-names $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-file-names () (node/read-dir! |.)
           :examples $ []
@@ -713,7 +737,7 @@
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! () (println |reloaded!) &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi)
         'serve $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn serve (req res) (static/servePage req res) &unit
           :examples $ []
@@ -760,7 +784,7 @@
                 assoc store :logs $ []
               _ $ do (println "|Unknown op:" op) store
           :examples $ []
-          :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store)
+          :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store) (:features :io)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ respo.cursor :refer $ update-states

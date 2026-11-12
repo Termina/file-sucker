@@ -61,12 +61,7 @@ jobs:
         calcit analyze weak-types --only coverage --summary-only --format json |
           jq -e '.data.summary.levels | .none == 0 and .partial <= 1'
         calcit analyze weak-types --format json |
-          jq -e '
-            .data.summary.hits <= 1 and
-            all(.data.definitions[];
-              .id == "app.server/on-request!" and
-              (.occurrences | length == 1) and
-              all(.occurrences[]; .kind == "schema-dynamic" and .intent == "intentional-js-ffi"))'
+          jq -e '.data.summary.hits == 0'
 
     - name: Compile browser and server bundles
       run: |
