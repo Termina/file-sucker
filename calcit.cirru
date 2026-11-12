@@ -287,14 +287,19 @@
           :schema $ quote StructDef
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states (List respo.schema/CoordKey) Dynamic
+            :states (List respo.schema/CoordKey) StateValue
             :log String
             :clear-logs
             :hydrate-storage Store
           :examples $ []
           :schema $ quote EnumDef
+        'StateValue $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion StateValue Bool Number String Tag (List StateValue) (Map respo.schema/CoordKey StateValue)
+          :examples $ []
+          :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store (:states Map)
+          :code $ quote $ defstruct Store
+            :states $ Map respo.schema/CoordKey StateValue
             :logs $ List String
           :examples $ []
           :schema $ quote StructDef
@@ -747,7 +752,7 @@
               (:states cursor s)
                 assoc store :states $ decode-map-as
                   respo.cursor/update-state-tree (:states store) cursor s
-                  , 'Map
+                  Map respo.schema/CoordKey app.schema/StateValue
               (:hydrate-storage data) data
               (:log data)
                 assoc store :logs $ prepend (:logs store) data
