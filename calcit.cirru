@@ -223,9 +223,11 @@
             when config/dev? $ load-console-formatter!
             render-app!
             add-watch! *reel :changes $ fn (r p) (render-app!)
-            listen-devtools! |k on-control!
+            listen-devtools! |k $ fn (op) (on-control! op)
             browser/set-before-unload! $ fn (e) (persist-storage!)
-            browser/set-interval! persist-storage! 60000
+            browser/set-interval!
+              fn () $ persist-storage!
+              , 60000
             println "|App started."
             , &unit
           :examples $ []
@@ -261,7 +263,9 @@
           :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*reel on-control!) dispatch!
+            render! (mount-target)
+              comp-container @*reel $ fn (op) (on-control! op)
+              fn (op) (dispatch! op)
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :io :state)
       :ns $ %{} 'NsEntry (:doc |)
@@ -385,6 +389,7 @@
             Fn
               Fn (Map Tag HttpResponseField) (-> Unit)
               -> Unit
+              :features :js-ffi :io
           :examples $ []
           :schema $ quote UnionDef
         'HttpResponseField $ %{} 'CodeEntry (:doc |)
@@ -536,24 +541,26 @@
                   if (= host |0.0.0.0) addresses $ js-array host
                   , 'app.server/AddressArrayHost
                 qrcode-client $ js-cast qrcode 'app.server/QrcodeHost
-              skir/create-server! on-request! $ Some $ {} (:port port) (:host host)
-                :after-start $ fn (_options)
-                  address-list .for-each! $ fn (ip-address _idx _array)
-                    let
-                        address $ str |http:// ip-address |: port
-                      println "|Open page on your phone and send file:" &newline address
-                      qrcode-client .generate! address
-                        js-object $ :small true
-                        fn (text)
-                          hint-fn $ Fn String $ -> Unit
-                          println text
-                          , &unit
-                      , &unit
-                  match (node/env-get |NO_VERSION_CHECK)
-                    (:none) (check-version!)
-                    (:some value)
-                      if (= value |false) (check-version!) (println "|[INFO] skipped version checking.")
-                  , &unit
+              skir/create-server!
+                fn (req res) (on-request! req res)
+                Some $ {} (:port port) (:host host)
+                  :after-start $ fn (_options)
+                    address-list .for-each! $ fn (ip-address _idx _array)
+                      let
+                          address $ str |http:// ip-address |: port
+                        println "|Open page on your phone and send file:" &newline address
+                        qrcode-client .generate! address
+                          js-object $ :small true
+                          fn (text)
+                            hint-fn $ Fn String $ -> Unit
+                            println text
+                            , &unit
+                        , &unit
+                    match (node/env-get |NO_VERSION_CHECK)
+                      (:none) (check-version!)
+                      (:some value)
+                        if (= value |false) (check-version!) (println "|[INFO] skipped version checking.")
+                    , &unit
               , &unit
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi)
@@ -782,9 +789,8 @@
                 assoc store :logs $ prepend (:logs store) data
               (:clear-logs)
                 assoc store :logs $ []
-              _ $ do (println "|Unknown op:" op) store
           :examples $ []
-          :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store) (:features :io)
+          :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ respo.cursor :refer $ update-states
