@@ -24,9 +24,9 @@ Environment variable:
 * `HOST`, listening address (default `0.0.0.0`; use `127.0.0.1` for isolated tests)
 * `NO_VERSION_CHECK=1`, skip version checking (`false` or unset checks once)
 
-### Calcit 0.42.1 源码迁移
+### Calcit 0.44.0 源码迁移
 
-源码构建需成套使用正式 CLI / `@calcit/procs` **0.42.1**，重新安装依赖并生成浏览器、Node 两个入口。
+源码构建需成套使用正式 CLI / `@calcit/procs` **0.44.0**，重新安装依赖并生成浏览器、Node 两个入口。
 文件选择使用 `RespoEvent`，数组遍历和 FormData 写入标明实际宿主参数与返回类型。
 采用正式 Skir 0.0.40、JS FFI 0.2.13、Respo 0.19.5、UI 0.15.2、Reel 0.11.0 和 Markdown 0.8.2，传递 Router 0.12.2。
 依赖按正式版本解析并执行 Caps strict。本轮源码候选沿用 npm 版本 0.1.14。
@@ -42,7 +42,7 @@ Environment variable:
 
 ### 构建与验收
 
-使用 Node 24、Yarn 4.18.0、Caps 0.1.1 和 Calcit 0.42.1：
+使用 Node 24、Yarn 4.18.0、Caps 0.1.1 和 Calcit 0.44.0：
 
 ```bash
 caps --strict --ci
@@ -61,7 +61,7 @@ npm原运行文件allowlist、两个运行期bridge和全部原工作流保持�
 不读取真实文件，不上传远端；本轮没有重新操作浏览器文件选择器，也未测试真实手机、4 GiB大文件或生产环境。
 既有 `#` 文件名链接未编码问题仍由 [#39](https://github.com/Termina/file-sucker/issues/39) 跟踪，不把源码迁移通过当作全部文件名合同已验收。
 
-两套原预算保留其已审阅的真实边界，不能把unsafe=0等同于完全闭合的宿主与UI类型。
+两端的覆盖率和弱类型门禁保留；不能把 unsafe=0 等同于完全闭合的宿主与 UI 类型。
 严格结果、原schema测试和构建以本次精确提交的Linux CI为准；版本号与候选验收不代表已发布npm。
 
 ### License
