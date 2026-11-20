@@ -52,14 +52,16 @@ jobs:
         calcit --check-only --ns 'app.$meta' --ns app.comp.container --ns app.config --ns app.main --ns app.schema --ns app.updater --ns app.util
         calcit analyze weak-types --only dynamic-method --summary-only --format json | jq -e '.data.summary.findings == 0'
         calcit analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
-        calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
+        calcit analyze weak-types --only coverage --summary-only --format json | jq -e '.data.summary.levels | .none == 0 and .partial <= 1'
+        calcit analyze weak-types --format json | jq -e '.data.summary.hits == 0'
         calcit --entry server --check-only --ns app.server --ns app.schema --ns app.util
         calcit fix --workflow strict --verify --format edn
         calcit --entry server fix --workflow strict --verify --format edn
         calcit test app.schema --require-match
         calcit --entry server analyze weak-types --only dynamic-method --summary-only --format json | jq -e '.data.summary.findings == 0'
         calcit --entry server analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
-        calcit calcit.cirru --entry server analyze quality --baseline config/calcit-quality-server.cirru
+        calcit --entry server analyze weak-types --only coverage --summary-only --format json | jq -e '.data.summary.levels | .none == 0 and .partial == 0'
+        calcit --entry server analyze weak-types --format json | jq -e '.data.summary.hits == 0'
 
     - name: Compile browser and server bundles
       run: |
