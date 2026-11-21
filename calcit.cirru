@@ -124,7 +124,7 @@
           :schema $ quote $ Fn (reel.typed/State schema/Op schema/Store)
             Fn reel.typed/Control $ -> Unit
             -> respo.schema/Component
-            :features :io :js-ffi
+            :features :io :js-ffi :state
         'on-file-selected! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-file-selected! (e d!)
             let
@@ -563,7 +563,7 @@
                     , &unit
               , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'make-task-array $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-task-array ()
             js-cast (js-array) app.server/TaskArrayHost
@@ -582,7 +582,7 @@
           :code $ quote $ defn on-file-indexed! (req res)
             hint-fn $ Fn RequestHost node/NodeServerResponseHost
               -> $ Map Tag HttpResponseField
-              :features :js-ffi
+              :features :io :js-ffi
               :async
             let
                 filenames $ filter (read-file-names) is-file-path?
@@ -639,7 +639,7 @@
           :examples $ []
           :schema $ quote $ Fn RequestHost node/NodeServerResponseHost
             -> $ Map Tag HttpResponseField
-            :features :js-ffi
+            :features :io :js-ffi
             :async
         'on-page! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-page! (req res) (serve req res) :effect
