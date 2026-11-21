@@ -28,7 +28,7 @@ Environment variable:
 
 源码构建需成套使用正式 CLI / `@calcit/procs` **0.44.0**，重新安装依赖并生成浏览器、Node 两个入口。
 文件选择使用 `RespoEvent`，数组遍历和 FormData 写入标明实际宿主参数与返回类型。
-采用正式 Skir 0.0.40、JS FFI 0.2.13、Respo 0.19.5、UI 0.15.2、Reel 0.11.0 和 Markdown 0.8.2，传递 Router 0.12.2。
+采用正式 Skir 0.0.42、JS FFI 0.2.19、Respo 0.19.13、UI 0.15.7、Reel 0.11.5 和 Markdown 0.9.5，传递 Router 0.12.11。
 依赖按正式版本解析并执行 Caps strict。本轮源码候选沿用 npm 版本 0.1.14。
 
 上传与日志派发使用具名应用 Op，Reel 控制使用独立回调，状态路径按 CoordKey union 校验，控件树的列表、映射和标量使用递归 StateValue union。文件索引行的名称和元素由 FileIndexItem union 表达。空文件列表提示和开发工具子节点使用显式 Option。
