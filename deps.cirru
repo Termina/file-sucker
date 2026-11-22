@@ -5,5 +5,5 @@
     |Respo/respo-markdown.calcit |0.9.5
     |Respo/respo-ui.calcit |0.15.7
     |Respo/respo.calcit |0.19.13
-    |calcit-lang/skir |0.0.42
+    |calcit-lang/skir |0.0.43
     |calcit-lang/js-ffi |0.2.19
