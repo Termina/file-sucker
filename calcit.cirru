@@ -541,26 +541,24 @@
                   if (= host |0.0.0.0) addresses $ js-array host
                   , 'app.server/AddressArrayHost
                 qrcode-client $ js-cast qrcode 'app.server/QrcodeHost
-              skir/create-server!
-                fn (req res) (on-request! req res)
-                Some $ {} (:port port) (:host host)
-                  :after-start $ fn (_options)
-                    address-list .for-each! $ fn (ip-address _idx _array)
-                      let
-                          address $ str |http:// ip-address |: port
-                        println "|Open page on your phone and send file:" &newline address
-                        qrcode-client .generate! address
-                          js-object $ :small true
-                          fn (text)
-                            hint-fn $ Fn String $ -> Unit
-                            println text
-                            , &unit
-                        , &unit
-                    match (node/env-get |NO_VERSION_CHECK)
-                      (:none) (check-version!)
-                      (:some value)
-                        if (= value |false) (check-version!) (println "|[INFO] skipped version checking.")
-                    , &unit
+              skir/create-server! on-request! $ Some $ {} (:port port) (:host host)
+                :after-start $ fn (_options)
+                  address-list .for-each! $ fn (ip-address _idx _array)
+                    let
+                        address $ str |http:// ip-address |: port
+                      println "|Open page on your phone and send file:" &newline address
+                      qrcode-client .generate! address
+                        js-object $ :small true
+                        fn (text)
+                          hint-fn $ Fn String $ -> Unit
+                          println text
+                          , &unit
+                      , &unit
+                  match (node/env-get |NO_VERSION_CHECK)
+                    (:none) (check-version!)
+                    (:some value)
+                      if (= value |false) (check-version!) (println "|[INFO] skipped version checking.")
+                  , &unit
               , &unit
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
