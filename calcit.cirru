@@ -93,11 +93,11 @@
                   input $ {} (:type |file) (:multiple true) (:on-change on-file-selected!)
                     :style $ {} (:position |absolute) (:top |0px) (:bottom |0px) (:left |0px) (:right |0px) (:width |100%) (:opacity |0)
                 space-y 16
-                list->
+                respo.core/keyed->
                   {} $ :style $ {}
                   -> (:logs store)
                     map-indexed $ fn (idx log)
-                      [] idx $ div
+                      respo.core/keyed-element idx $ div
                         {} $ :style $ {}
                           :color $ hsl 0 0 60
                           :font-family ui/font-fancy
@@ -182,7 +182,7 @@
           :require
             respo-ui.core :refer $ hsl
             respo-ui.core :as ui
-            respo.core :refer $ defcomp <> list-> div button textarea input span a
+            respo.core :refer $ defcomp <> div button textarea input span a
             respo.comp.space :refer $ space-x space-y
             respo-md.comp.md :refer $ comp-md
             app.config :refer $ dev?
@@ -605,11 +605,11 @@
                             :font-size |40px
                             :font-weight |300
                         , None
-                      list->
+                      respo.core/keyed->
                         {} $ :style $ {} (:padding "|24px 8px")
                         map sorted-files $ fn (file)
-                          hint-fn $ Fn app.schema/FileInfo $ -> (List FileIndexItem)
-                          [] file.:name $ div
+                          hint-fn $ Fn app.schema/FileInfo $ -> respo.schema/ChildPair
+                          respo.core/keyed-element file.:name $ div
                             {} $ :style $ .merge ui/row
                               {} $ :line-height |40px
                             a $ {}
@@ -762,7 +762,7 @@
         :code $ quote $ ns app.server
           :require (|formidable :default formidable) (|fs :as fs) (|qrcode-terminal :default qrcode) (|dayjs :default dayjs) (|prettysize :default prettysize) (|latest-version :default latest-version) (|chalk :default chalk)
             respo.render.html :refer $ make-string
-            respo.core :refer $ div html head body list-> <> span a style link create-element
+            respo.core :refer $ div html head body <> span a style link create-element
             respo.comp.space :refer $ comp-space
             respo-ui.core :as ui
             respo-ui.core :refer $ hsl
